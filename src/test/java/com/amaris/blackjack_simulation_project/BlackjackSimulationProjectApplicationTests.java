@@ -28,6 +28,7 @@ class BlackjackSimulationProjectApplicationTests {
 		assertEquals(16,player.handScore);
 		assertEquals(3, player.checkPairStrategy(dealerCard,player.handCards));
 	}
+	
 	@Test
 	 void test_Hard_Strategy(){
 		//Set player's hand for testing
@@ -47,5 +48,7 @@ class BlackjackSimulationProjectApplicationTests {
 		assertEquals(1,player.checkHardStrategy(dealerCard, testHand));
 		
 	}
-
+	//TODO Add soft strategy test
+	//TODO Move shoe creation and shuffle test here
+	//TODO Move 1 player test here
 }
