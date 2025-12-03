@@ -178,7 +178,7 @@ public class Player {
         return hardStrategyTable[handScore - 8][dealerCard.getValue() - 2];
           }
 
-    //Debug method to add cards to hand and see other functions work properly
+    //Debug helper  method to add cards to hand and see other functions work properly
     public void debugSetHand(Card[] hand) {
         //add cards to first hand only for testing
         this.hands[currentHand].setCards(hand);
