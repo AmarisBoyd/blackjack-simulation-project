@@ -92,7 +92,7 @@ public class Player {
     protected int checkPairStrategy(Card dealerCard, Card[] hand) {
         // Pair strategy table  rows represent player's pair (2-10,A) columns represent dealer's upcard (2-10,A)
         // Reminder 0=hit 1=stand 2=double 3=split 
-        //TODO fill in correct strategy values as this was generated from memory
+
         int[][] pairStrategyTableNoDouble = {
             // Dealer's upcard: 2 3 4 5 6 7 8 9 10 A
                          /*2*/ {0,0,3,3,3,3,0,0,0,0},
