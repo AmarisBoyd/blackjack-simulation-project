@@ -15,8 +15,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class BlackjackSimulationProjectApplication {
 
 	public static void main(String[] args) {
-		//disabling spring application so i can get the core functionality running before i mess with that nonsense 
-		//SpringApplication.run(BlackjackSimulationProjectApplication.class, args);
+		SpringApplication.run(BlackjackSimulationProjectApplication.class, args);
 		onePlayerTest();
 	
 	}
@@ -30,7 +29,7 @@ public class BlackjackSimulationProjectApplication {
 		try {
 			// load the card data from the Cards.Json file
 			table.loadDeck();
-			// Initatlize how big the shoe is 
+			// Initialize how big the shoe is 
 			table.initalizeShoeSize();
 			// Load the shoe up with copies of the deck
 			table.loadShoe();
