@@ -1,6 +1,5 @@
 package com.amaris.blackjack_simulation_project;
 
-//TODO change access modifiers so that subclasses can access necessary methods and variables
 
 
 
@@ -58,7 +57,7 @@ public class Player {
          //Array to hold current hand's cards for easier reading
           handCards = this.hands[currentHand].getCards();
         //Get current hand score
-        int handScore = this.hands[currentHand].getScore();
+        this.handScore = this.hands[currentHand].getScore();
 
         //Check to see if pair 
         if(handCards.length==2){
@@ -185,6 +184,12 @@ public class Player {
         System.out.println(this.hands[currentHand].toString());
 
         
+    }
+    public void calcHandScore(){
+        for (Card card : handCards) {
+            this.handScore+=card.getValue();
+        }
+
     }
 
 
