@@ -8,6 +8,13 @@ public class Card {
     
     //Integer to hold value of card
     int value;
+    boolean toString;
+    public Card(){
+      this.suit="";
+      this.rank ="";
+      this.value=0;
+      this.suitAndRank="";
+    }
     //Constructor to initialize suitAndRank and value
     public Card(String suitAndRank, int value) {
     this.suitAndRank = suitAndRank;
@@ -18,6 +25,7 @@ public class Card {
     this.value = value;  
     this.suitAndRank = suit+" "+rank;
   }
+ 
 
    public void setSuit(String suit) {
         this.suit = suit;
@@ -47,9 +55,9 @@ public class Card {
 
     @Override
     public String toString() {
+       this.suitAndRank= this.suit+" "+this.rank;
+       return this.suitAndRank + ": " + this.value;
        
-       String cardString = this.suitAndRank + " (Value: " + this.value + ")";
-       return cardString;
     }
     
 }
