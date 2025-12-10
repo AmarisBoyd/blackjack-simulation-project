@@ -17,8 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 // Class to represent a blackjack table
 public class Table {
     //Variables to hold game state
-    // Array to hold dealers hand using "Plenty big" approach to avoid dynamic resizing 
-    
+    // Array to hold dealers hand using "Plenty big" approach to avoid dynamic resizing
     Card[] dealerHand = new Card[12];
    
     //Array to hold a single deck of cards for loading the shoe 
@@ -29,7 +28,11 @@ public class Table {
     ArrayList<Card> discard;
     //Array to hold players at the table
     Player[] players;
+    //Object to hold specfic table rules
     TableRules rules;
+    //integer to keep track of where the cut card is to stop the shoe
+    int cutCard=0;
+
     // constructor using default blackjack  house rules
     public Table() {
         this.rules= new TableRules();
