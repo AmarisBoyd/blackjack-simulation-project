@@ -4,6 +4,7 @@ import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -14,7 +15,7 @@ import java.util.Objects;
 
 import static org.apache.tomcat.util.http.fileupload.FileUtils.*;
 
-@SpringBootApplication
+@SpringBootTest
 public class TableTest {
     Table testTable;
 
