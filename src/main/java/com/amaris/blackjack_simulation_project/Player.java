@@ -146,7 +146,7 @@ public class Player {
         /*Return based on soft hand strategy table 
         Subtract 13 from hand score to get correct row and dealer card value -2 for correct column
         */
-        return softStrategyTable[handScore - 13][dealerCard.getValue() - 2];
+        return softStrategyTable[handScore - 13][dealerCard.getValue()-2];
           }
     // Method to check hard hand strategy
     protected int checkHardStrategy(Card dealerCard, Card[] hand) {
@@ -186,6 +186,8 @@ public class Player {
         
     }
     public void calcHandScore(){
+        //set to 0 to avoid multiple calls to this function adding more than needed
+        this.handScore = 0;
         for (Card card : handCards) {
             this.handScore+=card.getValue();
         }
