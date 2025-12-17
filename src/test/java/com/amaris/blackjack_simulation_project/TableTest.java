@@ -1,10 +1,10 @@
 package com.amaris.blackjack_simulation_project;
 
 import org.apache.tomcat.util.http.fileupload.FileUtils;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.util.Assert;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -19,8 +19,20 @@ import static org.apache.tomcat.util.http.fileupload.FileUtils.*;
 public class TableTest {
     Table testTable;
 
-    public TableTest() {
+    TableTest(){
         testTable = new Table();
+    }
+    @BeforeEach
+    public void setUp(){
+        // load the card data from the Cards.Json file
+        testTable.loadDeck();
+        // Initialize how big the shoe is
+        testTable.initalizeShoeSize();
+        // Load the shoe up with copies of the deck
+        testTable.loadShoe();
+        int cutPosition = testTable.shoe.length-52;
+        testTable.cutShoe(cutPosition);
+
     }
 
 
@@ -76,6 +88,102 @@ public class TableTest {
             e.printStackTrace();
         }
 
+
+
+    }
+    @Test
+    void testCutShoe(){
+        // load the card data from the Cards.Json file
+        testTable.loadDeck();
+        // Initialize how big the shoe is
+        testTable.initalizeShoeSize();
+        // Load the shoe up with copies of the deck
+        testTable.loadShoe();
+        //make a copy of the shoe to compare
+        Card[] oldShoe = Arrays.copyOf(testTable.getShoe(), testTable.getShoe().length);
+        //set cut position to one deck in;
+        int cutPosition = testTable.shoe.length-52;
+        testTable.cutShoe(cutPosition);
+        Assertions.assertFalse(Objects.deepEquals(oldShoe, testTable.getShoe()));
+        Assertions.assertNotEquals(0, testTable.getCutPosition());
+
+    }
+    @Test
+    void testAddPlayer(){
+
+        int cutPosition = testTable.shoe.length-52;
+        testTable.cutShoe(cutPosition);
+        Player playerOne = new Player();
+        testTable.addPlayer(playerOne);
+        Assertions.assertNotNull(testTable.players[0]);
+
+
+
+
+
+    }
+    @Test
+    void testAddTwoPlayers(){
+        Player playerOne = new Player();
+        testTable.addPlayer(playerOne);
+        Player playerTwo = new Player();
+        testTable.addPlayer(playerTwo);
+        Assertions.assertNotNull(testTable.players[0]);
+        Assertions.assertNotNull(testTable.players[1]);
+
+    }
+    @Test
+    void testAddXPlayers(){
+        Player[] players= new Player[5];
+        for(int i=0;i<players.length;i++){
+            players[i] = new Player();
+            testTable.addPlayer(players[i]);
+        }
+        for(int j=0;j<5;j++){
+            Assertions.assertNotNull(testTable.players[j]);
+        }
+    }
+    @Test
+    void testDealInitialCardsOnePlayer(){
+        int cutPosition = testTable.shoe.length-52;
+        testTable.cutShoe(cutPosition);
+        Player playerOne = new Player();
+        testTable.addPlayer(playerOne);
+
+        testTable.dealInitialCards();
+        System.out.println(testTable.players[0]);
+        Assertions.assertNotNull(testTable.players[0].getHand());
+        Assertions.assertNotNull(testTable.dealer.getHand());
+    }
+    @Test
+    void testDealInitialCardsTwoPlayers(){
+        int cutPosition = testTable.shoe.length-52;
+        testTable.cutShoe(cutPosition);
+        Player playerOne = new Player();
+        testTable.addPlayer(playerOne);
+        Player playerTwo = new Player();
+        testTable.addPlayer(playerTwo);
+        testTable.dealInitialCards();
+        for (int i = 0; i < testTable.getPlayerCount(); i++) {
+           Assertions.assertNotNull(testTable.players[i].getHand());
+        }
+        Assertions.assertNotNull(testTable.dealer.getHand());
+
+    }
+    @Test
+    void testDealInitialCardsSixPlayers(){
+        Player[] players= new Player[5];
+        for(int i=0;i<players.length;i++){
+            players[i] = new Player();
+            testTable.addPlayer(players[i]);
+        }
+
+        testTable.dealInitialCards();
+        for (int i = 0; i < testTable.getPlayerCount(); i++) {
+            Assertions.assertNotNull(testTable.players[i].getHand());
+
+        }
+        Assertions.assertNotNull(testTable.dealer.getHand());
 
 
     }
