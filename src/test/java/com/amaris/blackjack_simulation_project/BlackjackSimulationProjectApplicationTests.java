@@ -10,11 +10,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class BlackjackSimulationProjectApplicationTests {
 
-	// Helper function to make creating other test quicker since adding cards to hand is a bit tedious
+	
 
 
 
 
-	//TODO Move shoe creation and shuffle test here
-	//TODO Move 1 player test here
 }
