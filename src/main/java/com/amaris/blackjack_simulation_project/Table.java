@@ -1,166 +1,203 @@
 package com.amaris.blackjack_simulation_project;
 //import arrays for array manipulation
+
+import com.fasterxml.jackson.databind.DatabindException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-//import collections for shuffling
 import java.util.Collections;
-
-
-
-
-import com.fasterxml.jackson.databind.DatabindException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 // Class to represent a blackjack table
 public class Table {
     //Variables to hold game state
-    // Array to hold dealers hand using "Plenty big" approach to avoid dynamic resizing
-    Card[] dealerHand = new Card[12];
-   
+    //Dealer object to keep logic of table consistent
+    Dealer dealer;
     //Array to hold a single deck of cards for loading the shoe 
     Card[] deck;
-     //Array to hold "shoe" of cards (multiple decks)
+    //Array to hold "shoe" of cards (multiple decks)
     Card[] shoe;
     //Arraylist to hold the discard pile
     ArrayList<Card> discard;
     //Array to hold players at the table
     Player[] players;
-    //Object to hold specfic table rules
+    //Object to hold specific table rules
     TableRules rules;
     //integer to keep track of where the cut card is to stop the shoe
-    int cutCard=0;
+    int cutCard = 0;
+    //Pointer to keep track of where we are in the deck
+    int index;
+    private int playerCount = 0;
 
     // constructor using default blackjack  house rules
     public Table() {
-        this.rules= new TableRules();
+        this.rules = new TableRules();
+        this.players = new Player[this.rules.getMaxplayers()];
+        this.dealer = new Dealer();
+
 
     }
 
-    
 
-  
-   
     public void dealInitialCards() {
         //Deal two cards to each player and dealer from the shoe
-        // Placeholder for loop through players and dealer to assign cards from shoe array
+        for (int i = 0; i < 2; i++) {
+
+            for (int j = 0; j < this.playerCount; j++) {
+
+                players[j].dealCard(shoe[index]);
+                //decrement the index
+                index--;
+
+
+            }
+            //give the dealer the next card
+            this.dealer.dealCard(shoe[index]);
+            //decrement the index
+            index--;
+
+        }
+
     }
+
     public void playerActions() {
+        for (int i = 0; i < this.playerCount; i++) {
+            //Do Stuff
+            continue;
+        }
         //Loop through each player and have them make decisions based on their strategy
         // Placeholder implementation probably a for loop through players array and a while loop for each player's hand
     }
+
     public void dealerActions() {
+        Boolean dealerStop = false;
+        while (!dealerStop) {
+            continue;
+        }
+        //This feels like a very bad idea passing a table that includes the dealer itself to the dealer
+        this.dealer.checkTableState(this);
+        this.dealer.cleanTable(this);
+
         //Have dealer play out their hand according to standard blackjack rules
         // Placeholder implementation while loop until dealer's hand value is 17 or higher or busts
 
-        }
+    }
+    //clean up the table after a hand
+
+
     public void shuffleShoe() {
         //Shuffle the shoe of cards
         Collections.shuffle(Arrays.asList(this.shoe));
-        // Placeholder implementation could use a simple random shuffle algorithm
+
     }
+
     public void cutShoe(int cutPosition) {
         //Create new shoe array to hold cut shoe
-        Card[] newShoe = new Card[this.shoe.length]; 
+        Card[] newShoe = new Card[this.shoe.length];
         //Copy the end of the shoe from cutPosition to end into new shoe
-        newShoe=Arrays.copyOfRange(this.shoe, cutPosition, this.shoe.length);
+        newShoe = Arrays.copyOfRange(this.shoe, cutPosition, this.shoe.length);
         //Append the start of the shoe to the end of the new shoe
         newShoe = Arrays.copyOfRange(this.shoe, 0, cutPosition);
+        //Place the cut card aprox 1 deck into the back of the shoe
+        this.cutCard = java.util.concurrent.ThreadLocalRandom.current().nextInt(40, 60);
         //Return the now cut shoe
-        this.shoe= newShoe;
+        this.shoe = newShoe;
+        //Set the first card to be dealt to one after the last card in the shoe to simulate burning the first card
+        this.index = shoe.length - 2;
 
     }
 
     // Set the shoe size to number of decks* cards in a deck
-    public void initalizeShoeSize(){
-        this.shoe =  new Card[rules.getDeckNumber()*52];
+    public void initalizeShoeSize() {
+        this.shoe = new Card[rules.getDeckNumber() * 52];
     }
-  
-    //method to read a json file that contains all the cards in a standard deck
-    
+
+    //method to read a JSON file that contains all the cards in a standard deck
+
     public void loadDeck() {
         //location of cards config file make this selectable later
         String src = "src/main/resources/Cards.json";
-        Card[] cards =null;
+        Card[] cards = null;
         try {
             File cardsFile = new File(src);
             ObjectMapper objectMapper = new ObjectMapper();
-            cards =objectMapper.readValue(cardsFile, Card[].class);
-           this.setDeck(cards);
-        
-        }
-        catch(DatabindException d){
+            cards = objectMapper.readValue(cardsFile, Card[].class);
+            this.setDeck(cards);
+
+        } catch (DatabindException d) {
             d.printStackTrace();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
-        
-        
-       }
+
+
+    }
 
 
     // load up the shoe based on max number of decks and cards in the "deck"
-    public void loadShoe(){
-        int shoeIndex=0;
-			for (int i = 0; i < this.rules.getDeckNumber(); i++) {
-				for(int k=0;k<52;k++){
-                this.shoe[shoeIndex]=deck[k];
-				shoeIndex++;}
+    public void loadShoe() {
+        int shoeIndex = 0;
+        for (int i = 0; i < this.rules.getDeckNumber(); i++) {
+            for (int k = 0; k < 52; k++) {
+                this.shoe[shoeIndex] = deck[k];
+                shoeIndex++;
+            }
 
-				
-			}
+
+        }
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
+
     //Getters and setters banished to the near bottom like usual 
 
     //Method to get dealer's upcard value
-     public int getDealerScore() {
+    public int getDealerScore() {
         //return The value of the dealer's upcard which should be the second card in dealerHand
         // (assuming first card is face down)
-        return this.dealerHand[1].getValue();
-        
+        return this.dealer.getHand()[0].getScore();
+
     }
 
-    public void addPlayer(Player player){
-        this.players[0]=player;
+    public void addPlayer(Player player) {
+        this.players[playerCount] = player;
+        playerCount++;
     }
-      public Card[] getShoe(){
+
+    public Card[] getShoe() {
         return this.shoe;
     }
-    
-    public void setDeck(Card[] deck) {
-        this.deck = deck;
-    }
+
     public Card[] getDeck() {
         return deck;
     }
 
-   
-     
-        
-    
+    public void setDeck(Card[] deck) {
+        this.deck = deck;
+    }
+
+    public int getCutPosition() {
+        return this.cutCard;
+    }
+
+
     @Override
-    public String toString(){
-         StringBuilder shoeString = new StringBuilder("The shoe contains:\n");
-         for (Card card  : shoe) {
+    public String toString() {
+        StringBuilder shoeString = new StringBuilder("The shoe contains:\n");
+        for (Card card : shoe) {
             shoeString.append(card.toString()).append("\n");
-         }
+        }
 
         return shoeString.toString();
     }
-		
-	}
+
+
+    public int getPlayerCount() {
+        return this.playerCount;
+    }
+}
 
     
 
