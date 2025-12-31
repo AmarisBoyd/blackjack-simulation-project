@@ -64,16 +64,53 @@ public class Table {
     }
 
     public void playerActions() {
+        Player currentPlayer;
+        int result=0;
         for (int i = 0; i < this.playerCount; i++) {
             //Do Stuff
-            continue;
+            currentPlayer = this.players[i];
+
+           while (result!=1) {
+              result= currentPlayer.strategy(dealer.getUpCard());
+              if(result==0){
+                  currentPlayer.dealCard(shoe[index]);
+                  index--;
+              }
+              //player stands check if we need to move to next split
+               if(result==1){
+                   //if the current hand is not equal to the max number of total hands
+                   if(!(currentPlayer.getCurrentHand() ==currentPlayer.getTotalHands())){
+                       currentPlayer.setCurrentHand(currentPlayer.getCurrentHand()+1);
+                   }
+               }
+              //player doubles down on the hand  only gets one card
+             if(result==2){
+                 currentPlayer.dealCard(shoe[index]);
+                 index--;
+                 result=1;
+             }
+             //player splits
+             if(result==3){
+                 //check if the pair is a pair of aces
+                 //if it is split them and then check if multiple splits on aces is allowed
+                 //if not give one card to each new hand
+                 //set result to stand
+                 //if it is or if not aces
+                 //increment the number of hands
+                 currentPlayer.setTotalHands(currentPlayer.getTotalHands() + 1);
+                 //take second card from current hand and put it in a new hand
+
+
+             }
+
+           }
+
         }
-        //Loop through each player and have them make decisions based on their strategy
-        // Placeholder implementation probably a for loop through players array and a while loop for each player's hand
+
     }
 
     public void dealerActions() {
-        Boolean dealerStop = false;
+        boolean dealerStop = false;
         while (!dealerStop) {
             continue;
         }
@@ -111,7 +148,7 @@ public class Table {
     }
 
     // Set the shoe size to number of decks* cards in a deck
-    public void initalizeShoeSize() {
+    public void initializeShoeSize() {
         this.shoe = new Card[rules.getDeckNumber() * 52];
     }
 
@@ -153,13 +190,6 @@ public class Table {
 
     //Getters and setters banished to the near bottom like usual 
 
-    //Method to get dealer's upcard value
-    public int getDealerScore() {
-        //return The value of the dealer's upcard which should be the second card in dealerHand
-        // (assuming first card is face down)
-        return this.dealer.getHand()[0].getScore();
-
-    }
 
     public void addPlayer(Player player) {
         this.players[playerCount] = player;
