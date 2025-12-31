@@ -5,18 +5,18 @@ import java.util.Arrays;
 
 /*
 Class to act as a "player"  holding the score of the hand  basic player will follow the basic strategy */
-public class Player {
+public class Player extends Person {
     //Integer to track current hand for splits
     protected int currentHand = 0;
+    //used to track if we have reached the end of the hands counting first hand as "hand Zero"
+    protected int totalHands = 0;
+
     //Arrays to hold cards in hand multiple hands for splits for our each player will otherwise have only one hand
-    //Default to max 4 hands with max 11 cards each (theoretical max in blackjack)
     protected Hand[] hands;
     //Record of wins losses and pushes for player
     protected int wins = 0;
     protected int losses = 0;
     protected int pushes = 0;
-    //Integer to track hand score for strategy decisions
-    protected int handScore = 0;
     //Array to hold current hand's cards for easier reading
     Card[] handCards;
     //Copy of table rules so the players can make some choices 
@@ -24,7 +24,7 @@ public class Player {
 
     //Default constructor Uses most common blackjack rules
     public Player() {
-        // Make the default table rules 
+        // Make the default table rules
         this.rules = new TableRules();
         //get max splits from the table rules add one to make total number of hands after splits
         int maxHands = rules.getMaxSplits() + 1;
@@ -52,7 +52,7 @@ public class Player {
     }
 
     //Method to decide what action to take based on dealer's card and player's hand
-    public int strategy(Card dealerCard, int currentHand) {
+    public int strategy(Card dealerCard) {
         // Int to hold "choice" of what to do 0=hit 1=stand 2=double 3=split default to hit
         int decision;
         //Array to hold current hand's cards for easier reading
@@ -71,9 +71,13 @@ public class Player {
         hands[currentHand].setIsSoft(hands[currentHand].checksoft(handCards));
 
 
-        if (hands[currentHand].getIsPair()) {
-            //check against pair strategy table
-            decision = checkPairStrategy(dealerCard, handCards);
+        if (hands[currentHand].getIsPair()&&totalHands<rules.getMaxSplits()) {
+            //check to see if splitting is allowed
+
+                //check against pair strategy table
+                decision = checkPairStrategy(dealerCard, handCards);
+
+
         } else if (hands[currentHand].getIsSoft()) {
             //check against soft hand strategy table
             decision = checkSoftStrategy(dealerCard, handCards);
@@ -200,6 +204,7 @@ public class Player {
     public void dealCard(Card card) {
         //Add the card given by the dealer to the current working hand
         this.hands[currentHand].addCard(card);
+       this.handScore =hands[currentHand].getScore();
     }
 
 
@@ -219,5 +224,20 @@ public class Player {
 
     public Hand[] getHand() {
         return hands;
+    }
+
+    public void setTotalHands(int i) {
+        this.totalHands = i;
+    }
+    public void setCurrentHand(int i) {
+        this.currentHand = i;
+    }
+
+    public int getCurrentHand() {
+        return this.currentHand;
+    }
+
+    public int getTotalHands() {
+        return this.totalHands;
     }
 }
