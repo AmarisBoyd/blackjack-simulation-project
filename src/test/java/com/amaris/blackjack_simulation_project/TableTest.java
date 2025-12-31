@@ -1,19 +1,12 @@
 package com.amaris.blackjack_simulation_project;
 
-import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.junit.jupiter.api.*;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.util.Assert;
 
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Objects;
-
-
-import static org.apache.tomcat.util.http.fileupload.FileUtils.*;
 
 @SpringBootTest
 public class TableTest {
@@ -27,7 +20,7 @@ public class TableTest {
         // load the card data from the Cards.Json file
         testTable.loadDeck();
         // Initialize how big the shoe is
-        testTable.initalizeShoeSize();
+        testTable.initializeShoeSize();
         // Load the shoe up with copies of the deck
         testTable.loadShoe();
         int cutPosition = testTable.shoe.length-52;
@@ -45,13 +38,13 @@ public class TableTest {
     }
     @Test
     void testInitalizeShoeSize(){
-        testTable.initalizeShoeSize();
+        testTable.initializeShoeSize();
         Assertions.assertEquals(52*6,testTable.shoe.length);
     }
     @Test
     void testLoadShoe(){
         testTable.loadDeck();
-        testTable.initalizeShoeSize();
+        testTable.initializeShoeSize();
         testTable.loadShoe();
         Assertions.assertNotNull(testTable.getShoe());
     }
@@ -65,7 +58,7 @@ public class TableTest {
             // load the card data from the Cards.Json file
             testTable.loadDeck();
             // Initialize how big the shoe is
-            testTable.initalizeShoeSize();
+            testTable.initializeShoeSize();
             // Load the shoe up with copies of the deck
             testTable.loadShoe();
             //Write current configuration of the shoe to a file for easier testing
@@ -96,7 +89,7 @@ public class TableTest {
         // load the card data from the Cards.Json file
         testTable.loadDeck();
         // Initialize how big the shoe is
-        testTable.initalizeShoeSize();
+        testTable.initializeShoeSize();
         // Load the shoe up with copies of the deck
         testTable.loadShoe();
         //make a copy of the shoe to compare
@@ -153,7 +146,7 @@ public class TableTest {
         testTable.dealInitialCards();
         System.out.println(testTable.players[0]);
         Assertions.assertNotNull(testTable.players[0].getHand());
-        Assertions.assertNotNull(testTable.dealer.getHand());
+        Assertions.assertNotNull(testTable.dealer.getDealerHand());
     }
     @Test
     void testDealInitialCardsTwoPlayers(){
@@ -167,7 +160,7 @@ public class TableTest {
         for (int i = 0; i < testTable.getPlayerCount(); i++) {
            Assertions.assertNotNull(testTable.players[i].getHand());
         }
-        Assertions.assertNotNull(testTable.dealer.getHand());
+        Assertions.assertNotNull(testTable.dealer.getDealerHand());
 
     }
     @Test
@@ -183,7 +176,7 @@ public class TableTest {
             Assertions.assertNotNull(testTable.players[i].getHand());
 
         }
-        Assertions.assertNotNull(testTable.dealer.getHand());
+        Assertions.assertNotNull(testTable.dealer.getDealerHand());
 
 
     }
