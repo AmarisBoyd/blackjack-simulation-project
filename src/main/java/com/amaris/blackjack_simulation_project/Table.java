@@ -26,8 +26,6 @@ public class Table {
     TableRules rules;
     //integer to keep track of where the cut card is to stop the shoe
     int cutCard = 0;
-    //Pointer to keep track of where we are in the deck
-    int index;
     private int playerCount = 0;
 
     // constructor using default blackjack  house rules
@@ -86,6 +84,8 @@ public class Table {
                 if (result == 3) {
                     //check if the pair is a pair of aces
                     if (checkAces(currentPlayer)) {
+                        //set split aces to true
+                        currentPlayer.setSplitAces(true);
                         //check if resplitting aces is allowed
                         if (!rules.getResplitAces()) {
                             result = noResplitAces(currentPlayer);
@@ -102,8 +102,8 @@ public class Table {
 
                 //player stands check if we need to move to next split
                 if (result == 1) {
-                    //if the current player has split
-                    if(currentPlayer.isHasSplit()){
+                    //if the current player has split and they are not aces
+                    if(currentPlayer.isHasSplit()&&!currentPlayer.isSplitAces()){
                         //if the current hand is not equal to the max number of total hands
                         if (!(currentPlayer.getCurrentHand() == currentPlayer.getTotalHands())) {
                             //set the current hand for the player to the next hand they have
@@ -115,6 +115,8 @@ public class Table {
                     }
                 }
 
+
+
             }
 
         }
@@ -122,6 +124,7 @@ public class Table {
     }
 
     private int noResplitAces(Player currentPlayer) {
+
         Hand originalhand = currentPlayer.getHand()[currentPlayer.getCurrentHand()];
         Hand seconHand = currentPlayer.getHand()[currentPlayer.getCurrentHand()+1];
         //set the split tag
@@ -142,6 +145,15 @@ public class Table {
         return 1;
     }
 
+    private int splitAces(Player currentPlayer) {
+
+        //check
+        currentPlayer.setTotalHands(currentPlayer.getTotalHands() + 1);
+        //take second card from current hand and put it in a new hand
+        //since the player hasn't stood return 0
+        return 0;
+    }
+
     private boolean checkAces(Player currentPlayer) {
         Hand workingHand = currentPlayer.getHand()[currentPlayer.getCurrentHand()];
 
@@ -152,13 +164,7 @@ public class Table {
         return 0;
     }
 
-    private int splitAces(Player currentPlayer) {
-        //check
-        currentPlayer.setTotalHands(currentPlayer.getTotalHands() + 1);
-        //take second card from current hand and put it in a new hand
-        //since the player hasn't stood return 0
-        return 0;
-    }
+
 
     private int hit(Player currentPlayer) {
         Hand workingHand = currentPlayer.getHand()[currentPlayer.getCurrentHand()];
@@ -174,8 +180,13 @@ public class Table {
     }
 
     private int doubleDown(Player currentPlayer) {
+        Hand workingHand = currentPlayer.getHand()[currentPlayer.getCurrentHand()];
         // give the player the next card
         currentPlayer.dealCard(shoe);
+        //check if they bust in case of doubling on hard number
+        if ( dealer.checkBust(workingHand) ) {
+            dealer.clearBust(currentPlayer, discard);
+        }
         //return that the player can no longer hit on this hand
         return 1;
     }
