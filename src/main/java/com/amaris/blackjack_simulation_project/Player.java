@@ -1,6 +1,7 @@
 package com.amaris.blackjack_simulation_project;
 
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /*
@@ -21,6 +22,10 @@ public class Player extends Person {
     Card[] handCards;
     //Copy of table rules so the players can make some choices 
     TableRules rules;
+    // Boolean to track if the player has split defaulting to false
+    boolean hasSplit =false;
+    //boolean to track if player has busted
+    boolean hasBust =false;
 
     //Default constructor Uses most common blackjack rules
     public Player() {
@@ -68,7 +73,7 @@ public class Player extends Person {
 
 
         //Check for soft hand
-        hands[currentHand].setIsSoft(hands[currentHand].checksoft(handCards));
+        hands[currentHand].setIsSoft(hands[currentHand].checkSoft(handCards));
 
 
         if (hands[currentHand].getIsPair()&&totalHands<rules.getMaxSplits()) {
@@ -207,21 +212,6 @@ public class Player extends Person {
        this.handScore =hands[currentHand].getScore();
     }
 
-
-    @Override
-    public String toString() {
-        return "Player{" +
-                "currentHand=" + currentHand +
-                ", handCards=" + Arrays.toString(handCards) +
-                ", hands=" + Arrays.toString(hands) +
-                ", wins=" + wins +
-                ", losses=" + losses +
-                ", pushes=" + pushes +
-                ", handScore=" + handScore +
-                ", rules=" + rules +
-                '}';
-    }
-
     public Hand[] getHand() {
         return hands;
     }
@@ -240,4 +230,36 @@ public class Player extends Person {
     public int getTotalHands() {
         return this.totalHands;
     }
+
+    public boolean isHasSplit() {
+        return hasSplit;
+    }
+
+    public void setHasSplit(boolean hasSplit) {
+        this.hasSplit = hasSplit;
+    }
+
+    public boolean isHasBust() {
+        return hasBust;
+    }
+
+    public void setHasBust(boolean hasBust) {
+        this.hasBust = hasBust;
+    }
+
+    @Override
+    public String toString() {
+        return "Player{" +
+                "currentHand=" + currentHand +
+                ", handCards=" + Arrays.toString(handCards) +
+                ", hands=" + Arrays.toString(hands) +
+                ", wins=" + wins +
+                ", losses=" + losses +
+                ", pushes=" + pushes +
+                ", handScore=" + handScore +
+                ", rules=" + rules +
+                '}';
+    }
+
+
 }
