@@ -1,7 +1,7 @@
 package com.amaris.blackjack_simulation_project;
 
 public class Hand {
-    //Create array with max handize of 11 cards (theoretical max in blackjack) this could be an arraylist but for simplicity using array
+    //Create array with max hand size of 11 cards (theoretical max in blackjack) this could be an arraylist but for simplicity using array
     private Card[] cards = new Card[11];
     //integer to track current score of hand
     private int score;
@@ -40,7 +40,7 @@ public class Hand {
 
 
     //check for soft hand
-    public boolean checksoft(Card[] hand) {
+    public boolean checkSoft(Card[] hand) {
         /*  Placeholder implementation the logic works, but it relies on Aces being able to be changed
         between 1 and 11 and that could be wasteful to reset after each hand */
         for (Card card : hand) {
@@ -130,5 +130,6 @@ public class Hand {
         return handString.toString();
 
     }
+
 
 }
