@@ -11,9 +11,9 @@ public class Dealer extends Person {
     }
 
     @Override
-    public void dealCard(Card card) {
+    public void dealCard(ArrayList<Card> Shoe) {
         //add the card to the hand
-        this.dealerHand.addCard(card);
+        this.dealerHand.addCard(Shoe.getLast());
         //update the current score
         this.handScore=this.dealerHand.getScore();
     }
@@ -76,5 +76,38 @@ public class Dealer extends Person {
             currentPlayer.setHasBust(true);
         }
 
+    }
+
+    public boolean checkBust(Hand hand) {
+        //local variables for readability
+        ArrayList<Integer> softAces = hand.getSoftAceLocations();
+        Card[] handCards = hand.getCards();
+
+        //if the score of the current hand isn't higher than 21
+        if (hand.getScore()<21)
+            //return false so we don't bother with other logic
+            return false;
+        //if the hand is not soft
+        if(!hand.checkSoft(hand.getCards())){
+            //and hand score is over 21 return true
+
+            return hand.getScore()>21;
+        }
+        for(Integer i : softAces){
+            if (hand.getScore()>21){
+                //set the value of the ace to 1
+                handCards[softAces.get(i)].setValue(1);
+                //decrement the hand score by 10
+                hand.setScore(hand.getScore() - 10);
+
+
+            }
+            else {
+                //if the hand score is no longer  above 21 leave the loop
+                return false;
+            }
+        }
+
+        return true;
     }
 }
