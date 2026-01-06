@@ -7,8 +7,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 
 // Class to represent a blackjack table
@@ -19,7 +19,7 @@ public class Table {
     //Array to hold a single deck of cards for loading the shoe 
     Card[] deck;
     //Array to hold "shoe" of cards (multiple decks)
-    Card[] shoe;
+    ArrayList<Card> shoe;
     //Arraylist to hold the discard pile
     ArrayList<Card> discard;
     //Array to hold players at the table
@@ -48,14 +48,14 @@ public class Table {
 
             for (int j = 0; j < this.playerCount; j++) {
 
-                players[j].dealCard(shoe[index]);
+                players[j].dealCard(shoe.get(index));
                 //decrement the index
                 index--;
 
 
             }
             //give the dealer the next card
-            this.dealer.dealCard(shoe[index]);
+            this.dealer.dealCard(shoe.get(index));
             //decrement the index
             index--;
 
@@ -65,43 +65,56 @@ public class Table {
 
     public void playerActions() {
         Player currentPlayer;
+        //initialize a result to keep track of what each player decides to do
         int result=0;
+        // loop through all players
         for (int i = 0; i < this.playerCount; i++) {
-            //Do Stuff
+            //select current player from the array for easier access
             currentPlayer = this.players[i];
-
+           //while this player hasn't stood on their last hand
            while (result!=1) {
+               //check the strategy based on the hand
               result= currentPlayer.strategy(dealer.getUpCard());
+               //if they say give them a card
               if(result==0){
-                  currentPlayer.dealCard(shoe[index]);
-                  index--;
+                   result =hit(currentPlayer);
+
               }
-              //player stands check if we need to move to next split
-               if(result==1){
-                   //if the current hand is not equal to the max number of total hands
-                   if(!(currentPlayer.getCurrentHand() ==currentPlayer.getTotalHands())){
-                       currentPlayer.setCurrentHand(currentPlayer.getCurrentHand()+1);
-                   }
-               }
+
               //player doubles down on the hand  only gets one card
              if(result==2){
-                 currentPlayer.dealCard(shoe[index]);
-                 index--;
-                 result=1;
+                result= doubleDown(currentPlayer);
+
              }
              //player splits
              if(result==3){
                  //check if the pair is a pair of aces
-                 //if it is split them and then check if multiple splits on aces is allowed
-                 //if not give one card to each new hand
-                 //set result to stand
-                 //if it is or if not aces
-                 //increment the number of hands
-                 currentPlayer.setTotalHands(currentPlayer.getTotalHands() + 1);
-                 //take second card from current hand and put it in a new hand
+                 if(checkAces(currentPlayer)){
+                     //check if resplitting aces is allowed
+                     if(!rules.getResplitAces()){
+                         result=noResplitAces(currentPlayer);
+                     }
+                     else
+                     //if it is split the aces
+                         result=splitAces(currentPlayer);
+                 }
+                 //if not two aces split the hands
+                 else
+                    result= splitHand(currentPlayer);
 
 
              }
+
+               //player stands check if we need to move to next split
+               if(result==1){
+                   //if the current hand is not equal to the max number of total hands
+                   if(!(currentPlayer.getCurrentHand() ==currentPlayer.getTotalHands())){
+                       //set the current hand for the player to the next hand they have
+                       currentPlayer.setCurrentHand(currentPlayer.getCurrentHand()+1);
+                       // reset result so the loop continues
+                       result=0;
+                   }
+               }
 
            }
 
@@ -109,10 +122,58 @@ public class Table {
 
     }
 
+    private int noResplitAces(Player currentPlayer) {
+        //split the aces into two hands
+        //give each one a card
+        return 1;
+    }
+
+    private boolean checkAces(Player currentPlayer) {
+        Hand workingHand = currentPlayer.getHand()[currentPlayer.getCurrentHand()];
+
+        if(workingHand.getCards()[0].getValue()==11){
+        return true;
+        }
+        return false;
+    }
+
+    private int splitHand(Player currentPlayer) {
+        return 0;
+    }
+
+    private int splitAces(Player currentPlayer) {
+        //check
+        currentPlayer.setTotalHands(currentPlayer.getTotalHands() + 1);
+        //take second card from current hand and put it in a new hand
+        //since the player hasn't stood return 0
+        return 0;
+    }
+
+    private int hit(Player currentPlayer) {
+        currentPlayer.dealCard(shoe.get(index));
+        index--;
+       //If the player bust return 1 since they can no longer hit
+        if(currentPlayer.getHand()[currentPlayer.getCurrentHand()].getScore()>21){
+            dealer.clearBust(currentPlayer,discard);
+            return 1;
+        }
+        // otherwise return 0 so the loop continues
+        return 0;
+    }
+
+    private int doubleDown(Player currentPlayer) {
+        // give the player the next card
+        currentPlayer.dealCard(shoe.get(index));
+        //decrement index so we point to the next part of the shoe
+        index--;
+        //return that the player can no longer hit on this hand
+        return 1;
+    }
+
     public void dealerActions() {
         boolean dealerStop = false;
         while (!dealerStop) {
-            continue;
+
         }
         //This feels like a very bad idea passing a table that includes the dealer itself to the dealer
         this.dealer.checkTableState(this);
@@ -127,37 +188,35 @@ public class Table {
 
     public void shuffleShoe() {
         //Shuffle the shoe of cards
-        Collections.shuffle(Arrays.asList(this.shoe));
+        Collections.shuffle(this.shoe);
 
     }
 
     public void cutShoe(int cutPosition) {
         //Create new shoe array to hold cut shoe
-        Card[] newShoe = new Card[this.shoe.length];
+        ArrayList<Card> newShoe = new ArrayList<>();
         //Copy the end of the shoe from cutPosition to end into new shoe
-        newShoe = Arrays.copyOfRange(this.shoe, cutPosition, this.shoe.length);
+        newShoe.addAll(this.shoe.subList(cutPosition,this.shoe.size()));
         //Append the start of the shoe to the end of the new shoe
-        newShoe = Arrays.copyOfRange(this.shoe, 0, cutPosition);
-        //Place the cut card aprox 1 deck into the back of the shoe
+        newShoe.addAll(this.shoe.subList(0,cutPosition));
+        //Place the cut card approximately 1 deck into the back of the shoe
         this.cutCard = java.util.concurrent.ThreadLocalRandom.current().nextInt(40, 60);
-        //Return the now cut shoe
-        this.shoe = newShoe;
+        //clear the old shoe
+        this.shoe.clear();
+        //copy temporary shoe to working shoe
+        this.shoe.addAll(newShoe);
         //Set the first card to be dealt to one after the last card in the shoe to simulate burning the first card
-        this.index = shoe.length - 2;
+        dealer.burnCard(this.shoe,this.discard);
 
     }
 
-    // Set the shoe size to number of decks* cards in a deck
-    public void initializeShoeSize() {
-        this.shoe = new Card[rules.getDeckNumber() * 52];
-    }
 
     //method to read a JSON file that contains all the cards in a standard deck
 
     public void loadDeck() {
         //location of cards config file make this selectable later
         String src = "src/main/resources/Cards.json";
-        Card[] cards = null;
+        Card[] cards;
         try {
             File cardsFile = new File(src);
             ObjectMapper objectMapper = new ObjectMapper();
@@ -166,7 +225,7 @@ public class Table {
 
         } catch (DatabindException d) {
             d.printStackTrace();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -176,12 +235,8 @@ public class Table {
 
     // load up the shoe based on max number of decks and cards in the "deck"
     public void loadShoe() {
-        int shoeIndex = 0;
         for (int i = 0; i < this.rules.getDeckNumber(); i++) {
-            for (int k = 0; k < 52; k++) {
-                this.shoe[shoeIndex] = deck[k];
-                shoeIndex++;
-            }
+            this.shoe.addAll(List.of(deck));
 
 
         }
@@ -196,7 +251,7 @@ public class Table {
         playerCount++;
     }
 
-    public Card[] getShoe() {
+    public ArrayList<Card> getShoe() {
         return this.shoe;
     }
 
