@@ -1,5 +1,7 @@
 package com.amaris.blackjack_simulation_project;
 
+import java.util.ArrayList;
+
 public class Hand {
     //Create array with max hand size of 11 cards (theoretical max in blackjack) this could be an arraylist but for simplicity using array
     private Card[] cards = new Card[11];
@@ -11,24 +13,37 @@ public class Hand {
     private boolean isPair = false;
     //integer to track current hand size
     private int handSize;
+    //arraylist to keep track of where soft aces are in hand so we don't have to search
+    private ArrayList<Integer> softAceLocations;
 
 
     public Hand() {
         this.score = 0;
         this.handSize = 0;
+
+        softAceLocations = new ArrayList<>();
     }
 
     //Method to add card to hand
     public void addCard(Card card) {
-
         this.cards[handSize] = card;
+
+        //if the added card is an ace
+        if(card.getValue() == 11){
+
+            //add that there is a soft ace at this spot
+            softAceLocations.add(handSize);
+            //set is soft to true
+            isSoft = true;
+        }
+        //increment the hand size
         handSize++;
         //Update score
         updateScore();
     }
 
     //Method to update score of hand
-    private void updateScore() {
+    public void updateScore() {
         //reset the score
         this.score = 0;
         // count all the cards again and update the score
@@ -39,10 +54,10 @@ public class Hand {
     }
 
 
-    //check for soft hand
+    //check for soft hand M
     public boolean checkSoft(Card[] hand) {
-        /*  Placeholder implementation the logic works, but it relies on Aces being able to be changed
-        between 1 and 11 and that could be wasteful to reset after each hand */
+        /*  This may now be obsolete since we are checking for soft aces at the time of adding card
+        * */
         for (Card card : hand) {
             //check if any card is an Ace acting as 11
             if (card.getValue() == 11) {
@@ -114,6 +129,10 @@ public class Hand {
             this.score += card.getValue();
 
         }
+    }
+    //getter for the locations of soft aces
+    public ArrayList<Integer> getSoftAceLocations() {
+        return this.softAceLocations;
     }
 
     @Override
