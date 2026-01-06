@@ -5,7 +5,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Objects;
 
 @SpringBootTest
@@ -19,11 +19,9 @@ public class TableTest {
     public void setUp(){
         // load the card data from the Cards.Json file
         testTable.loadDeck();
-        // Initialize how big the shoe is
-        testTable.initializeShoeSize();
         // Load the shoe up with copies of the deck
         testTable.loadShoe();
-        int cutPosition = testTable.shoe.length-52;
+        int cutPosition = testTable.shoe.size()-52;
         testTable.cutShoe(cutPosition);
 
     }
@@ -36,15 +34,10 @@ public class TableTest {
         Assertions.assertNotNull(testTable.deck);
 
     }
-    @Test
-    void testInitalizeShoeSize(){
-        testTable.initializeShoeSize();
-        Assertions.assertEquals(52*6,testTable.shoe.length);
-    }
+
     @Test
     void testLoadShoe(){
         testTable.loadDeck();
-        testTable.initializeShoeSize();
         testTable.loadShoe();
         Assertions.assertNotNull(testTable.getShoe());
     }
@@ -57,14 +50,12 @@ public class TableTest {
         try {
             // load the card data from the Cards.Json file
             testTable.loadDeck();
-            // Initialize how big the shoe is
-            testTable.initializeShoeSize();
             // Load the shoe up with copies of the deck
             testTable.loadShoe();
             //Write current configuration of the shoe to a file for easier testing
             Files.writeString(shoeFile,testTable.toString());
             //copy the array for another way of testing
-            Card[] oldShoe = Arrays.copyOf(testTable.getShoe(), testTable.getShoe().length);
+            ArrayList<Card> oldShoe = testTable.getShoe();
             //Shuffle the shoe before we start
             testTable.shuffleShoe();
             // Write results to another file to compare to make sure shuffle worked
@@ -75,8 +66,8 @@ public class TableTest {
             //test assertion using deep equals
             Assertions.assertFalse(Objects.deepEquals(oldShoe, testTable.getShoe()));
             //test assertion using content matching on files
-            long samefile = Files.mismatch(shuffledFile,shoeFile);
-            Assertions.assertFalse(samefile==-1);
+            long sameFile = Files.mismatch(shuffledFile,shoeFile);
+            Assertions.assertNotEquals(-1, sameFile);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -88,14 +79,13 @@ public class TableTest {
     void testCutShoe(){
         // load the card data from the Cards.Json file
         testTable.loadDeck();
-        // Initialize how big the shoe is
-        testTable.initializeShoeSize();
+
         // Load the shoe up with copies of the deck
         testTable.loadShoe();
         //make a copy of the shoe to compare
-        Card[] oldShoe = Arrays.copyOf(testTable.getShoe(), testTable.getShoe().length);
+        ArrayList<Card> oldShoe = testTable.getShoe();
         //set cut position to one deck in;
-        int cutPosition = testTable.shoe.length-52;
+        int cutPosition = testTable.shoe.size()-52;
         testTable.cutShoe(cutPosition);
         Assertions.assertFalse(Objects.deepEquals(oldShoe, testTable.getShoe()));
         Assertions.assertNotEquals(0, testTable.getCutPosition());
@@ -104,7 +94,7 @@ public class TableTest {
     @Test
     void testAddPlayer(){
 
-        int cutPosition = testTable.shoe.length-52;
+        int cutPosition = testTable.shoe.size()-52;
         testTable.cutShoe(cutPosition);
         Player playerOne = new Player();
         testTable.addPlayer(playerOne);
@@ -138,7 +128,7 @@ public class TableTest {
     }
     @Test
     void testDealInitialCardsOnePlayer(){
-        int cutPosition = testTable.shoe.length-52;
+        int cutPosition = testTable.shoe.size()-52;
         testTable.cutShoe(cutPosition);
         Player playerOne = new Player();
         testTable.addPlayer(playerOne);
@@ -150,7 +140,7 @@ public class TableTest {
     }
     @Test
     void testDealInitialCardsTwoPlayers(){
-        int cutPosition = testTable.shoe.length-52;
+        int cutPosition = testTable.shoe.size()-52;
         testTable.cutShoe(cutPosition);
         Player playerOne = new Player();
         testTable.addPlayer(playerOne);
