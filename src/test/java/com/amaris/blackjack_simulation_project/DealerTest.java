@@ -7,8 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 public class DealerTest {
-    Dealer dealer;
-    Hand testHand;
+
 
     @Test
     void Test_check_bust_one_ace_no_bust() {
