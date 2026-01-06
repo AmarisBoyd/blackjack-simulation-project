@@ -16,7 +16,7 @@ public class TableRules {
     private Boolean doubleAfterSplitAllowed = true;
     //boolean to track if resplitting aces is allowed defaults to false
     private Boolean resplitAcesAllowed = false;
-    //boolean to track if hitting split aces is allowed defaults to false
+    //boolean to track if hitting split aces is allowed defaults to false Here for Spanish 21
     private Boolean hitSplitAcesAllowed = false;
 
     //Getter to get collective table settings converting booleans to integers for easier handling 0 is false 1 is true
