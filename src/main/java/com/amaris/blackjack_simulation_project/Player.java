@@ -27,6 +27,8 @@ public class Player extends Person {
     //boolean to track if player has busted
     boolean hasBust =false;
 
+    protected boolean splitAces =false;
+
     //Default constructor Uses most common blackjack rules
     public Player() {
         // Make the default table rules
@@ -240,6 +242,14 @@ public class Player extends Person {
 
     public void setHasSplit(boolean hasSplit) {
         this.hasSplit = hasSplit;
+    }
+
+    public boolean isSplitAces() {
+        return splitAces;
+    }
+
+    public void setSplitAces(boolean splitAces) {
+        this.splitAces = splitAces;
     }
 
     public boolean isHasBust() {
