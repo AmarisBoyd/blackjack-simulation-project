@@ -8,7 +8,7 @@ public class Card {
     String suitAndRank;
 
     //Integer to hold value of card
-    int value;
+    private int value;
     boolean toString;
 
     public Card() {
@@ -18,9 +18,14 @@ public class Card {
         this.suitAndRank = "";
     }
 
+
     //Constructor to initialize suitAndRank and value
     public Card(String suitAndRank, int value) {
         this.suitAndRank = suitAndRank;
+        this.value = value;
+    }
+    //Constructor that only cares about card value for testing
+    public Card(int value){
         this.value = value;
     }
 
@@ -56,6 +61,9 @@ public class Card {
 
     public void setSuit(String suit) {
         this.suit = suit;
+    }
+    public void setValue(int value) {
+        this.value = value;
     }
 
     @Override
