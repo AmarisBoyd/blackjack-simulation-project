@@ -1,11 +1,9 @@
 package com.amaris.blackjack_simulation_project;
-//import arrays for array manipulation
 
 import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -48,16 +46,14 @@ public class Table {
 
             for (int j = 0; j < this.playerCount; j++) {
 
-                players[j].dealCard(shoe.get(index));
-                //decrement the index
-                index--;
+                players[j].dealCard(shoe);
+
 
 
             }
             //give the dealer the next card
-            this.dealer.dealCard(shoe.get(index));
-            //decrement the index
-            index--;
+            this.dealer.dealCard(shoe);
+
 
         }
 
@@ -66,75 +62,90 @@ public class Table {
     public void playerActions() {
         Player currentPlayer;
         //initialize a result to keep track of what each player decides to do
-        int result=0;
+        int result = 0;
         // loop through all players
         for (int i = 0; i < this.playerCount; i++) {
             //select current player from the array for easier access
             currentPlayer = this.players[i];
-           //while this player hasn't stood on their last hand
-           while (result!=1) {
-               //check the strategy based on the hand
-              result= currentPlayer.strategy(dealer.getUpCard());
-               //if they say give them a card
-              if(result==0){
-                   result =hit(currentPlayer);
+            //while this player hasn't stood on their last hand
+            while (result != 1) {
+                //check the strategy based on the hand
+                result = currentPlayer.strategy(dealer.getUpCard());
+                //if they say give them a card
+                if (result == 0) {
+                    result = hit(currentPlayer);
 
-              }
+                }
 
-              //player doubles down on the hand  only gets one card
-             if(result==2){
-                result= doubleDown(currentPlayer);
+                //player doubles down on the hand  only gets one card
+                if (result == 2) {
+                    result = doubleDown(currentPlayer);
 
-             }
-             //player splits
-             if(result==3){
-                 //check if the pair is a pair of aces
-                 if(checkAces(currentPlayer)){
-                     //check if resplitting aces is allowed
-                     if(!rules.getResplitAces()){
-                         result=noResplitAces(currentPlayer);
-                     }
-                     else
-                     //if it is split the aces
-                         result=splitAces(currentPlayer);
-                 }
-                 //if not two aces split the hands
-                 else
-                    result= splitHand(currentPlayer);
+                }
+                //player splits
+                if (result == 3) {
+                    //check if the pair is a pair of aces
+                    if (checkAces(currentPlayer)) {
+                        //check if resplitting aces is allowed
+                        if (!rules.getResplitAces()) {
+                            result = noResplitAces(currentPlayer);
+                        } else
+                            //if it is split the aces
+                            result = splitAces(currentPlayer);
+                    }
+                    //if not two aces split the hands
+                    else
+                        result = splitHand(currentPlayer);
 
 
-             }
+                }
 
-               //player stands check if we need to move to next split
-               if(result==1){
-                   //if the current hand is not equal to the max number of total hands
-                   if(!(currentPlayer.getCurrentHand() ==currentPlayer.getTotalHands())){
-                       //set the current hand for the player to the next hand they have
-                       currentPlayer.setCurrentHand(currentPlayer.getCurrentHand()+1);
-                       // reset result so the loop continues
-                       result=0;
-                   }
-               }
+                //player stands check if we need to move to next split
+                if (result == 1) {
+                    //if the current player has split
+                    if(currentPlayer.isHasSplit()){
+                        //if the current hand is not equal to the max number of total hands
+                        if (!(currentPlayer.getCurrentHand() == currentPlayer.getTotalHands())) {
+                            //set the current hand for the player to the next hand they have
+                            currentPlayer.setCurrentHand(currentPlayer.getCurrentHand() + 1);
+                            // reset result so the loop continues
+                            result = 0;
+                    }
 
-           }
+                    }
+                }
+
+            }
 
         }
 
     }
 
     private int noResplitAces(Player currentPlayer) {
+        Hand originalhand = currentPlayer.getHand()[currentPlayer.getCurrentHand()];
+        Hand seconHand = currentPlayer.getHand()[currentPlayer.getCurrentHand()+1];
+        //set the split tag
+        currentPlayer.setHasSplit(true);
         //split the aces into two hands
-        //give each one a card
+        seconHand.addCard(originalhand.getCards()[1]);
+        /*set original hand size to one since we are counting from 0 this will make it so
+        the next time we add a card it will replace the ace we just gave out
+        * */
+        originalhand.setHandSize(1);
+
+        //give original hand a card
+        currentPlayer.dealCard(shoe);
+        //increment working hand
+        currentPlayer.setCurrentHand(1);
+        //give next hand a card
+        currentPlayer.dealCard(shoe);
         return 1;
     }
 
     private boolean checkAces(Player currentPlayer) {
         Hand workingHand = currentPlayer.getHand()[currentPlayer.getCurrentHand()];
 
-        if(workingHand.getCards()[0].getValue()==11){
-        return true;
-        }
-        return false;
+        return workingHand.getCards()[0].getValue() == 11;
     }
 
     private int splitHand(Player currentPlayer) {
@@ -150,11 +161,12 @@ public class Table {
     }
 
     private int hit(Player currentPlayer) {
-        currentPlayer.dealCard(shoe.get(index));
-        index--;
-       //If the player bust return 1 since they can no longer hit
-        if(currentPlayer.getHand()[currentPlayer.getCurrentHand()].getScore()>21){
-            dealer.clearBust(currentPlayer,discard);
+        Hand workingHand = currentPlayer.getHand()[currentPlayer.getCurrentHand()];
+        currentPlayer.dealCard(shoe);
+        //If the player bust return 1 since they can no longer hit
+
+        if ( dealer.checkBust(workingHand) ) {
+            dealer.clearBust(currentPlayer, discard);
             return 1;
         }
         // otherwise return 0 so the loop continues
@@ -163,9 +175,7 @@ public class Table {
 
     private int doubleDown(Player currentPlayer) {
         // give the player the next card
-        currentPlayer.dealCard(shoe.get(index));
-        //decrement index so we point to the next part of the shoe
-        index--;
+        currentPlayer.dealCard(shoe);
         //return that the player can no longer hit on this hand
         return 1;
     }
@@ -196,9 +206,9 @@ public class Table {
         //Create new shoe array to hold cut shoe
         ArrayList<Card> newShoe = new ArrayList<>();
         //Copy the end of the shoe from cutPosition to end into new shoe
-        newShoe.addAll(this.shoe.subList(cutPosition,this.shoe.size()));
+        newShoe.addAll(this.shoe.subList(cutPosition, this.shoe.size()));
         //Append the start of the shoe to the end of the new shoe
-        newShoe.addAll(this.shoe.subList(0,cutPosition));
+        newShoe.addAll(this.shoe.subList(0, cutPosition));
         //Place the cut card approximately 1 deck into the back of the shoe
         this.cutCard = java.util.concurrent.ThreadLocalRandom.current().nextInt(40, 60);
         //clear the old shoe
@@ -206,7 +216,7 @@ public class Table {
         //copy temporary shoe to working shoe
         this.shoe.addAll(newShoe);
         //Set the first card to be dealt to one after the last card in the shoe to simulate burning the first card
-        dealer.burnCard(this.shoe,this.discard);
+        dealer.burnCard(this.shoe, this.discard);
 
     }
 
