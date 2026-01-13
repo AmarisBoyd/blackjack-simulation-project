@@ -1,6 +1,7 @@
 package com.amaris.blackjack_simulation_project;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Dealer extends Person {
@@ -230,5 +231,13 @@ public class Dealer extends Person {
         }
 
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "Dealer{" +
+                "hand=" + Arrays.toString(hand) +
+                ", handScore=" + handScore +
+                '}';
     }
 }
