@@ -33,6 +33,8 @@ public class Table {
         this.rules = new TableRules();
         this.players = new Player[this.rules.getMaxplayers()];
         this.dealer = new Dealer();
+        shoe = new ArrayList<>();
+        discard = new ArrayList<>();
 
 
     }
