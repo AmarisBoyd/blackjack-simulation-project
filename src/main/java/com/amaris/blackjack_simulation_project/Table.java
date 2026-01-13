@@ -330,7 +330,20 @@ public class Table {
         return this.cutCard;
     }
 
+    public int getPlayerCount() {
+        return this.playerCount;
+    }
 
+    public String handResults() {
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < this.playerCount; i++) {
+            result.append(this.players[i].toString());
+            result.append("\n");
+        }
+        result.append(this.dealer.toString());
+
+        return result.toString();
+    }
     @Override
     public String toString() {
         StringBuilder shoeString = new StringBuilder("The shoe contains:\n");
@@ -341,10 +354,6 @@ public class Table {
         return shoeString.toString();
     }
 
-
-    public int getPlayerCount() {
-        return this.playerCount;
-    }
 }
 
     
