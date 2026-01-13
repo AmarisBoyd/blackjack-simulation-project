@@ -1,6 +1,8 @@
 package com.amaris.blackjack_simulation_project;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.nio.file.Files;
@@ -151,6 +153,31 @@ public class TableTest {
         }
         Assertions.assertNotNull(testTable.dealer.getDealerHand());
 
+
+    }
+
+    @Test
+    void onePlayerTest() {
+        // create the player
+        Player playerOne = new Player();
+        // add it to the table
+        Dealer dealerOne = new Dealer();
+        //add dealer to the table
+        testTable.addDealer(dealerOne);
+
+        testTable.addPlayer(playerOne);
+        //shuffle the card
+        testTable.shuffleShoe();
+        //cut the cards
+        testTable.cutShoe(52);
+        // deal the initial cards
+        testTable.dealInitialCards();
+        //do player action
+        testTable.playerActions();
+        //do dealer actions
+        testTable.dealerActions();
+        //get the results
+        System.out.println(testTable.handResults());
 
     }
 }
