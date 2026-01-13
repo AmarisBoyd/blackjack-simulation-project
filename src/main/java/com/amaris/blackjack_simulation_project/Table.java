@@ -163,6 +163,22 @@ public class Table {
     }
 
     private int splitHand(Player currentPlayer) {
+        int currentHand = currentPlayer.getCurrentHand();
+        int nextHand = currentPlayer.getCurrentHand() + 1;
+        //if the player is not trying to split more times than allowed
+        if (currentPlayer.getTotalHands() < rules.getMaxSplits()) {
+            //increment the total number of hands the player has
+            currentPlayer.setTotalHands(currentPlayer.getTotalHands() + 1);
+            //take second card from current hand and place it in new hand
+            currentPlayer.getHand()[nextHand].addCard(currentPlayer.getHand()[currentHand].getCards()[1]);
+            //decrement the current hands handsize
+            currentPlayer.getHand()[currentHand].setHandSize(currentPlayer.getHand()[currentHand].getHandSize() - 1);
+            //give them a new card
+            currentPlayer.dealCard(shoe);
+
+
+        }
+        //return zero so the dealer loop continues
         return 0;
     }
 
@@ -196,17 +212,41 @@ public class Table {
     public void dealerActions() {
         boolean dealerStop = false;
         while (!dealerStop) {
+            //if the dealers hand is greater than 17
+            if (this.dealer.getDealerHand().getScore() > 17) {
+                //do nothing
+                dealerStop = true;
+            }
+            //if the dealers hand is less than 17 hit
+            else if (this.dealer.getDealerHand().getScore() < 17) {
+                this.dealer.dealCard(shoe);
+
+            }
+            //if the dealer hand equals 17
+            else if (this.dealer.getDealerHand().getScore() == 17) {
+                //check if the dealer hits on soft 17
+                if (rules.getHitSoft17()) {
+                    // if they do check if the hand is soft
+                    if (this.dealer.getDealerHand().getIsSoft())
+                        //if it is hit
+                        this.dealer.dealCard(shoe);
+
+                }
+                //if dealer doesn't hit on soft 17
+                else {
+                    // stop
+                    dealerStop = true;
+                }
+            }
 
         }
         //This feels like a very bad idea passing a table that includes the dealer itself to the dealer
-        this.dealer.checkTableState(this);
-        this.dealer.cleanTable(this);
+        this.dealer.checkTableState(this.players);
+        //clean up the table after a hand
+        this.dealer.cleanTable(this.players, this.discard);
 
-        //Have dealer play out their hand according to standard blackjack rules
-        // Placeholder implementation while loop until dealer's hand value is 17 or higher or busts
 
     }
-    //clean up the table after a hand
 
 
     public void shuffleShoe() {
