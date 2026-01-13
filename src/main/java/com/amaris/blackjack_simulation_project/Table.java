@@ -354,6 +354,9 @@ public class Table {
         return shoeString.toString();
     }
 
+    public void addDealer(Dealer dealerOne) {
+        this.dealer = dealerOne;
+    }
 }
 
     
