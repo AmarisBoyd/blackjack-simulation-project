@@ -13,6 +13,7 @@ public class Hand {
     private boolean isPair = false;
     //integer to track current hand size
     private int handSize;
+    private boolean hasBust = false;
     //arraylist to keep track of where soft aces are in hand so we don't have to search
     private ArrayList<Integer> softAceLocations;
 
@@ -140,6 +141,14 @@ public class Hand {
         return this.softAceLocations;
     }
 
+    //mutators for has bust
+    public boolean isHasBust() {
+        return this.hasBust;
+    }
+
+    public void setHasBust(boolean hasBust) {
+        this.hasBust = hasBust;
+    }
     @Override
     public String toString() {
         StringBuilder handString = new StringBuilder("Hand: ");
