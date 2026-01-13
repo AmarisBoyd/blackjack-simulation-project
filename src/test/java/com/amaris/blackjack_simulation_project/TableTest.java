@@ -12,17 +12,14 @@ import java.util.Objects;
 public class TableTest {
     Table testTable;
 
-    TableTest(){
-        testTable = new Table();
-    }
     @BeforeEach
     public void setUp(){
+        testTable = new Table();
         // load the card data from the Cards.Json file
         testTable.loadDeck();
         // Load the shoe up with copies of the deck
         testTable.loadShoe();
-        int cutPosition = testTable.shoe.size()-52;
-        testTable.cutShoe(cutPosition);
+
 
     }
 
@@ -30,15 +27,12 @@ public class TableTest {
     @Test
     void testLoadDeck() {
 
-        testTable.loadDeck();
         Assertions.assertNotNull(testTable.deck);
 
     }
 
     @Test
     void testLoadShoe(){
-        testTable.loadDeck();
-        testTable.loadShoe();
         Assertions.assertNotNull(testTable.getShoe());
     }
     @Test
@@ -48,14 +42,11 @@ public class TableTest {
         Path shoeFile = Path.of(shoePath);
         Path shuffledFile = Path.of(shuffledPath);
         try {
-            // load the card data from the Cards.Json file
-            testTable.loadDeck();
-            // Load the shoe up with copies of the deck
-            testTable.loadShoe();
             //Write current configuration of the shoe to a file for easier testing
             Files.writeString(shoeFile,testTable.toString());
             //copy the array for another way of testing
-            ArrayList<Card> oldShoe = testTable.getShoe();
+            ArrayList<Card> oldShoe = new ArrayList<>(testTable.getShoe());
+
             //Shuffle the shoe before we start
             testTable.shuffleShoe();
             // Write results to another file to compare to make sure shuffle worked
@@ -77,13 +68,8 @@ public class TableTest {
     }
     @Test
     void testCutShoe(){
-        // load the card data from the Cards.Json file
-        testTable.loadDeck();
-
-        // Load the shoe up with copies of the deck
-        testTable.loadShoe();
         //make a copy of the shoe to compare
-        ArrayList<Card> oldShoe = testTable.getShoe();
+        ArrayList<Card> oldShoe = new ArrayList<>(testTable.getShoe());
         //set cut position to one deck in;
         int cutPosition = testTable.shoe.size()-52;
         testTable.cutShoe(cutPosition);
@@ -93,9 +79,6 @@ public class TableTest {
     }
     @Test
     void testAddPlayer(){
-
-        int cutPosition = testTable.shoe.size()-52;
-        testTable.cutShoe(cutPosition);
         Player playerOne = new Player();
         testTable.addPlayer(playerOne);
         Assertions.assertNotNull(testTable.players[0]);
