@@ -14,18 +14,20 @@ public class Player extends Person {
 
     //Arrays to hold cards in hand multiple hands for splits for our each player will otherwise have only one hand
     protected Hand[] hands;
+
+
     //Record of wins losses and pushes for player
     protected int wins = 0;
     protected int losses = 0;
     protected int pushes = 0;
     //Array to hold current hand's cards for easier reading
-    Card[] handCards;
+    protected Card[] handCards;
     //Copy of table rules so the players can make some choices 
-    TableRules rules;
+    protected TableRules rules;
     // Boolean to track if the player has split defaulting to false
-    boolean hasSplit =false;
+    protected boolean hasSplit = false;
     //boolean to track if player has busted
-    boolean hasBust =false;
+    protected boolean hasBust = false;
 
     protected boolean splitAces =false;
 
@@ -67,7 +69,7 @@ public class Player extends Person {
         //Get current hand score
         this.handScore = this.hands[currentHand].getScore();
 
-        //Check to see if pair 
+        //Check to see if pair only on the first two cards
         if (handCards.length == 2) {
             hands[currentHand].setIsPair(hands[currentHand].checkPair(handCards));
 
@@ -77,9 +79,9 @@ public class Player extends Person {
         //Check for soft hand
         hands[currentHand].setIsSoft(hands[currentHand].checkSoft(handCards));
 
-
+        //check to see if hand is a pair and total hands is under max splits
         if (hands[currentHand].getIsPair()&&totalHands<rules.getMaxSplits()) {
-            //check to see if splitting is allowed
+
 
                 //check against pair strategy table
                 decision = checkPairStrategy(dealerCard, handCards);
@@ -254,6 +256,18 @@ public class Player extends Person {
 
     public boolean isHasBust() {
         return hasBust;
+    }
+
+    public void incrementWins() {
+        this.wins++;
+    }
+
+    public void incrementDraws() {
+        this.pushes++;
+    }
+
+    public void incrementLosses() {
+        this.losses++;
     }
 
     public void setHasBust(boolean hasBust) {
