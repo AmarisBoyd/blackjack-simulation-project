@@ -90,13 +90,60 @@ public class Dealer extends Person {
 
     public void cleanTable(Player[] players, ArrayList<Card> discard) {
         //For each player in reverse order
-        //while they have a hand put it into the discard pile
-        //add cards to discard
-        // remove from hand
-        // decrement hand size
-        //if ace set value back to 11
-        //for dealer put hand on top of discard
+        for (int i = players.length - 1; i >= 0; i--) {
 
+            //current player again for readability
+            Player currentPlayer = players[i];
+            //while they have a hand put it into the discard pile
+            for (int j = currentPlayer.getTotalHands() - 1; j >= 0; --j) {
+                clearHand(currentPlayer.getHand()[j], discard);
+
+            }
+
+            // decrement hand size
+            currentPlayer.setTotalHands(0);
+            //set current hand to 0
+            currentPlayer.setCurrentHand(0);
+            //set has split to false
+            currentPlayer.setHasSplit(false);
+            //set has bust to false
+            currentPlayer.setHasBust(false);
+            //set has split aces to false
+            currentPlayer.setSplitAces(false);
+
+        }
+        //for dealer put hand on top of discard
+        clearHand(this.dealerHand, discard);
+        this.dealerHand = new Hand();
+        this.handScore = 0;
+
+
+    }
+
+    private void clearHand(Hand hand, ArrayList<Card> discard) {
+        //check if hand has aces
+        for (Card card : hand.getCards()) {
+            // if the ace value is one
+            if (card.getValue() == 1) {
+                //set the value to 11
+                card.setValue(11);
+
+            }
+        }
+        //if the hand has bust
+
+        if (hand.isHasBust()) {
+            //clear the hands flag but don't add the cards to the discard
+            hand = new Hand();
+        }
+        //if hand didn't bust
+        else {
+            //add all the cards to the discard
+            discard.addAll(List.of(hand.getCards()));
+            // make the hand a new hand so the flags are reset
+            hand = new Hand();
+
+        }
     }
 
     public Hand getDealerHand() {
@@ -123,15 +170,33 @@ public class Dealer extends Person {
     public void clearBust(Player currentPlayer, ArrayList<Card> discard) {
         // get the current hand for readability
         int currentHand = currentPlayer.getCurrentHand();
+
         //add the hand that bust to the discard
         discard.addAll(List.of(currentPlayer.getHand()[currentHand].getCards()));
-        //clear the players hand
-        currentPlayer.getHand()[currentHand] = new Hand();
+        //set it so the now empty hand has bust
+        currentPlayer.getHand()[currentHand].setHasBust(true);
         //check if the player has split
         if (!currentPlayer.isHasSplit()) {
             //if they haven't then they only had this hand so they have bust and are out of the game
             currentPlayer.setHasBust(true);
         }
+        //if they have
+        if (currentPlayer.isHasSplit()) {
+            //check if there is a next hand
+            if (!(currentPlayer.getCurrentHand() < currentPlayer.getTotalHands())) {
+                //if there isn't check if each hand has bust
+                for (int i = 0; i < currentPlayer.getTotalHands(); i++) {
+                    //if one hand hasn't the player is still in the game
+                    if (!currentPlayer.getHand()[i].isHasBust()) {
+                        currentPlayer.setHasBust(false);
+                    }
+
+                }
+            }
+
+
+        }
+
 
     }
 
