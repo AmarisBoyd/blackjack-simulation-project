@@ -1,24 +1,28 @@
 
-# Blackjack Simulator
+# Blackjack Strategy Simulator
+A high-performance Java simulation engine designed to analyze statistical win-rate variances between different Blackjack strategies. 
 
-A project to simulate Blackjack games and store the results. With a long term goal of using the generated data in analysis.
+## Technical Stack
+* **Language:** Java 25+
+* **Framework:** Spring Boot (API & Web Interface - In Progress)
+* **Build Tool:** Maven
+* **Testing:** JUnit , Mockito
+* **Database:** MySQL (In Progress)
 
+##  Features
+* **Rule Customization:** Supports various casino rule sets (Dealer hits on Soft 17, Double After Split, etc.).
+* **Test-Driven:** Extensive unit testing with Mockito to ensure game logic accuracy and deck integrity.
 
-Currently, an unfunctional skeleton (much like this readme)
+##  Roadmap
+- [ ] **Phase 1:** Core Game Logic
+- [x] **Phase 1:**  Multi-strategy Support
+- [x] **Phase 1:** JUnit/Mockito Testing Suite
+- [ ] **Phase 2:** Implement JDBC/JPA persistence layer for MySQL data logging.
+- [ ] **Phase 3:** Develop Spring Boot REST API for remote simulation control.
+- [ ] **Phase 4:** Frontend visualization dashboard for strategy analytics.
 
-
-## Roadmap
-
-- Finish basic strategy for most common form of casino blackjack 
-
-- Implement database to store results
-
-- Document how to build/run program via CLI
-
-- Graphical user interface for settings and running program
-
-- Use restful API to get data from database
-
+##  Installation & Usage
+**In progress**
 
 
 
