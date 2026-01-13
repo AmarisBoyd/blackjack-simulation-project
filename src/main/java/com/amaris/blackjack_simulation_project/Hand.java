@@ -24,6 +24,11 @@ public class Hand {
         softAceLocations = new ArrayList<>();
     }
 
+    public Hand(Card card, Card card1) {
+        this.cards[0] = card;
+        this.cards[1] = card1;
+    }
+
     //Method to add card to hand
     public void addCard(Card card) {
         this.cards[handSize] = card;
