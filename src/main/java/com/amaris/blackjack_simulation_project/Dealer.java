@@ -5,35 +5,90 @@ import java.util.List;
 
 public class Dealer extends Person {
     private Hand dealerHand;
+
     public Dealer() {
         this.dealerHand = new Hand();
 
     }
 
     @Override
-    public void dealCard(ArrayList<Card> Shoe) {
+    public void dealCard(ArrayList<Card> shoe) {
         //add the card to the hand
-        this.dealerHand.addCard(Shoe.getLast());
+        this.dealerHand.addCard(shoe.getLast());
+        shoe.removeLast();
         //update the current score
-        this.handScore=this.dealerHand.getScore();
+        this.handScore = this.dealerHand.getScore();
     }
 
-    public int strategy(){
+    public int strategy() {
 
-        if(this.handScore>16&&!this.dealerHand.getIsSoft(
+        if (this.handScore > 16 && !this.dealerHand.getIsSoft(
 
-        )){
+        )) {
             return 1;
         }
 
         return 0;
     }
-    public void checkTableState(Table table){
 
-        // at the end of the hand check who won and lost
+    public void checkTableState(Player[] players) {
+        // if the dealer has bust
+        if (this.handScore > 21) {
+            //do dealer bust actions
+            dealerBust(players);
+        } else {
+            //loop through all the players
+            for (Player currentPlayer : players) {
+                //if the player has bust
+                if (currentPlayer.isHasBust()) {
+                    //increment losses
+                    currentPlayer.incrementLosses();
+                }
+                //if they haven't
+                else {
+                    //loop through all of their hands
+                    for (int j = 0; j < currentPlayer.getTotalHands(); j++) {
+                        //if the player has a higher score
+                        if (currentPlayer.getHand()[j].getScore() > this.handScore) {
+                            //increase their win record
+                            currentPlayer.incrementWins();
+                        }
+                        //if the current hand is lower than dealers cards
+                        if (currentPlayer.getHand()[j].getScore() < this.handScore) {
+                            // increment losses
+                            currentPlayer.incrementLosses();
+                        }
+                        //if current hand equals dealers score
+                        if (currentPlayer.getHand()[j].getScore() == this.handScore) {
+                            //increment pushes
+                            currentPlayer.incrementDraws();
+                        }
+                    }
+                }
+            }
+        }
+
 
     }
-    public void cleanTable(Table table) {
+
+    private void dealerBust(Player[] players) {
+        //loop through all players
+        for (Player player : players) {
+            //if they haven't bust
+            if (!player.isHasBust()) {
+                //loop through each hand
+                for (int i = 0; i < player.getTotalHands(); i++) {
+                    //increment win counter for each hand that still exist
+                    if (!player.getHand()[i].isHasBust()) {
+                        player.incrementWins();
+                    }
+                }
+            }
+        }
+
+    }
+
+    public void cleanTable(Player[] players, ArrayList<Card> discard) {
         //For each player in reverse order
         //while they have a hand put it into the discard pile
         //add cards to discard
@@ -43,6 +98,7 @@ public class Dealer extends Person {
         //for dealer put hand on top of discard
 
     }
+
     public Hand getDealerHand() {
         return dealerHand;
     }
@@ -52,7 +108,7 @@ public class Dealer extends Person {
     }
 
 
-    public Card getUpCard(){
+    public Card getUpCard() {
         return dealerHand.getCards()[0];
     }
 
@@ -62,6 +118,7 @@ public class Dealer extends Person {
         //remove last card of the shoe from
         shoe.remove(shoe.getLast());
     }
+
     //Clear up cards from player and check if they are still in the round
     public void clearBust(Player currentPlayer, ArrayList<Card> discard) {
         // get the current hand for readability
@@ -69,9 +126,9 @@ public class Dealer extends Person {
         //add the hand that bust to the discard
         discard.addAll(List.of(currentPlayer.getHand()[currentHand].getCards()));
         //clear the players hand
-        currentPlayer.getHand()[currentHand]=new Hand();
+        currentPlayer.getHand()[currentHand] = new Hand();
         //check if the player has split
-        if(!currentPlayer.isHasSplit()){
+        if (!currentPlayer.isHasSplit()) {
             //if they haven't then they only had this hand so they have bust and are out of the game
             currentPlayer.setHasBust(true);
         }
@@ -84,25 +141,24 @@ public class Dealer extends Person {
         Card[] handCards = hand.getCards();
 
         //if the score of the current hand isn't higher than 21
-        if (hand.getScore()<21)
+        if (hand.getScore() < 21)
             //return false so we don't bother with other logic
             return false;
         //if the hand is not soft
-        if(!hand.checkSoft(hand.getCards())){
+        if (!hand.checkSoft(hand.getCards())) {
             //and hand score is over 21 return true
 
-            return hand.getScore()>21;
+            return hand.getScore() > 21;
         }
-        for(Integer i : softAces){
-            if (hand.getScore()>21){
+        for (Integer i : softAces) {
+            if (hand.getScore() > 21) {
                 //set the value of the ace to 1
                 handCards[softAces.get(i)].setValue(1);
                 //decrement the hand score by 10
                 hand.setScore(hand.getScore() - 10);
 
 
-            }
-            else {
+            } else {
                 //if the hand score is no longer  above 21 leave the loop
                 return false;
             }
