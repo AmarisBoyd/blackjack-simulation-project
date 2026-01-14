@@ -21,13 +21,14 @@ public class Player extends Person {
     protected int losses = 0;
     protected int pushes = 0;
     //Array to hold current hand's cards for easier reading
-    protected Card[] handCards;
+    protected ArrayList<Card> handCards;
     //Copy of table rules so the players can make some choices 
     protected TableRules rules;
     // Boolean to track if the player has split defaulting to false
     protected boolean hasSplit = false;
     //boolean to track if player has busted
     protected boolean hasBust = false;
+
 
     protected boolean splitAces =false;
 
@@ -70,7 +71,7 @@ public class Player extends Person {
         this.handScore = this.hands[currentHand].getScore();
 
         //Check to see if pair only on the first two cards
-        if (handCards.length == 2) {
+        if (handCards.size() == 2) {
             hands[currentHand].setIsPair(hands[currentHand].checkPair(handCards));
 
         }
@@ -100,7 +101,7 @@ public class Player extends Person {
     }
 
 
-    protected int checkPairStrategy(Card dealerCard, Card[] hand) {
+    protected int checkPairStrategy(Card dealerCard, ArrayList<Card> hand) {
         // Pair strategy table  rows represent player's pair (2-10,A) columns represent dealer's upcard (2-10,A)
         // Reminder 0=hit 1=stand 2=double 3=split 
 
@@ -131,16 +132,16 @@ public class Player extends Person {
                 /*A*/ {3, 3, 3, 3, 3, 3, 3, 3, 3, 3}
         };
         if (this.rules.getDoubleAfterSplit()) {
-            return pairStrategyTableDoubleAfterSplit[hand[0].getValue() - 2][dealerCard.getValue() - 2];
+            return pairStrategyTableDoubleAfterSplit[hand.getFirst().getValue() - 2][dealerCard.getValue() - 2];
         } else {
             // Return the action from the pair strategy table
-            return pairStrategyTableNoDouble[hand[0].getValue() - 2][dealerCard.getValue() - 2];
+            return pairStrategyTableNoDouble[hand.getFirst().getValue() - 2][dealerCard.getValue() - 2];
         }
     }
 
 
     // Method to check soft hand strategy
-    protected int checkSoftStrategy(Card dealerCard, Card[] hand) {
+    protected int checkSoftStrategy(Card dealerCard, ArrayList<Card> hand) {
         // Table for soft hand strategy 
         // reminder 0=hit 1=stand 2=double 3=split(should not occur in soft strategy)
 
@@ -163,7 +164,7 @@ public class Player extends Person {
     }
 
     // Method to check hard hand strategy
-    protected int checkHardStrategy(Card dealerCard, Card[] hand) {
+    protected int checkHardStrategy(Card dealerCard, ArrayList<Card> hand) {
         // Table for hard hand strategy Starts at 8 because the table only covers 8-20
 
         if (handScore < 8) {
@@ -192,7 +193,7 @@ public class Player extends Person {
     }
 
     //Debug helper  method to add cards to hand and see other functions work properly
-    public void debugSetHand(Card[] hand) {
+    public void debugSetHand(ArrayList<Card> hand) {
         //add cards to first hand only for testing
         this.hands[currentHand].setCards(hand);
         System.out.println(this.hands[currentHand].toString());
@@ -278,15 +279,22 @@ public class Player extends Person {
     public String toString() {
         return "Player{" +
                 "currentHand=" + currentHand +
-                ", handCards=" + Arrays.toString(handCards) +
                 ", hands=" + Arrays.toString(hands) +
                 ", wins=" + wins +
                 ", losses=" + losses +
                 ", pushes=" + pushes +
                 ", handScore=" + handScore +
-                ", rules=" + rules +
                 '}';
     }
 
-
+    // method to reset the hands for testing
+    public void resetHand() {
+        int maxHands = rules.getMaxSplits() + 1;
+        //create array to hold max 4 hands
+        hands = new Hand[maxHands];
+        //remember to initialize each hand in the array
+        for (int i = 0; i < maxHands; i++) {
+            hands[i] = new Hand();
+        }
+    }
 }

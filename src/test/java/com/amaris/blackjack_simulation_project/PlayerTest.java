@@ -5,6 +5,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -19,7 +23,7 @@ public class PlayerTest {
         dealerCard = new Card("wildcard", DealerValue);
         Card playerCard1 = new Card("wildcard", playerCards[0]);
         Card playerCard2 = new Card("wildcard", playerCards[1]);
-        player.handCards = new Card[]{playerCard1, playerCard2};
+        player.handCards = new ArrayList<>(List.of(playerCard1, playerCard2));
         player.calcHandScore();
 
     }
@@ -87,16 +91,20 @@ public class PlayerTest {
     @ParameterizedTest
     @MethodSource("pairDoubleAfterSplitValues")
     void testDoublePairs(Card dealerCard, Card[] playerCards, int expectedValue) {
+        ArrayList<Card> playerCardsList = new ArrayList<>();
+        Collections.addAll(playerCardsList, playerCards);
         Player player = new Player();
-        assertEquals(expectedValue, player.checkPairStrategy(dealerCard, playerCards));
+        assertEquals(expectedValue, player.checkPairStrategy(dealerCard, playerCardsList));
     }
 
     @ParameterizedTest
     @MethodSource("pairNoDoubleValues")
     void testNoDoublePairs(Card dealerCard, Card[] playerCards, int expectedValue) {
+        ArrayList<Card> playerCardsList = new ArrayList<>();
+        Collections.addAll(playerCardsList, playerCards);
         Player player = new Player();
         player.rules.setDoubleAfterSplitAllowed(false);
-        assertEquals(expectedValue, player.checkPairStrategy(dealerCard, playerCards));
+        assertEquals(expectedValue, player.checkPairStrategy(dealerCard, playerCardsList));
 
     }
 
@@ -148,4 +156,6 @@ public class PlayerTest {
         assertEquals(0, player.checkSoftStrategy(dealerCard, player.handCards));
 
     }
+
+
 }

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Hand {
     //Create array with max hand size of 11 cards (theoretical max in blackjack) this could be an arraylist but for simplicity using array
-    private Card[] cards = new Card[11];
+    private ArrayList<Card> cards;
     //integer to track current score of hand
     private int score;
     //boolean to track if hand is a soft hand defaults to false
@@ -21,18 +21,23 @@ public class Hand {
     public Hand() {
         this.score = 0;
         this.handSize = 0;
+        this.cards = new ArrayList<>();
 
         softAceLocations = new ArrayList<>();
     }
 
     public Hand(Card card, Card card1) {
-        this.cards[0] = card;
-        this.cards[1] = card1;
+        this.cards.add(card);
+        this.cards.add(card1);
+    }
+
+    public Hand(Hand hand) {
+        this.cards = hand.cards;
     }
 
     //Method to add card to hand
     public void addCard(Card card) {
-        this.cards[handSize] = card;
+        this.cards.add(card);
 
         //if the added card is an ace
         if(card.getValue() == 11){
@@ -54,19 +59,19 @@ public class Hand {
         this.score = 0;
         // count all the cards again and update the score
         for (int i = 0; i < handSize; i++) {
-            int toAdd = this.cards[i].getValue();
+            int toAdd = this.cards.get(i).getValue();
             this.score = this.score + toAdd;
         }
     }
 
 
     //check for soft hand M
-    public boolean checkSoft(Card[] hand) {
+    public boolean checkSoft(ArrayList<Card> hand) {
         /*  This may now be obsolete since we are checking for soft aces at the time of adding card
         * */
-        for (Card card : hand) {
+        for (int i = 0; i < handSize; i++) {
             //check if any card is an Ace acting as 11
-            if (card.getValue() == 11) {
+            if (hand.get(i).getValue() == 11) {
                 return true;
             }
         }
@@ -76,9 +81,9 @@ public class Hand {
 
 
     //check for pair
-    public boolean checkPair(Card[] hand) {
+    public boolean checkPair(ArrayList<Card> hand) {
         // Check if both cards have the same value
-        return hand[0].getValue() == hand[1].getValue();
+        return hand.getFirst().getValue() == hand.get(1).getValue();
     }
 
     //Getter method for isPair
@@ -123,14 +128,14 @@ public class Hand {
     }
 
     //Getter method for cards
-    public Card[] getCards() {
+    public ArrayList<Card> getCards() {
         return this.cards;
     }
 
     //Setter method for cards (for debugging purposes)
-    public void setCards(Card[] cards) {
+    public void setCards(ArrayList<Card> cards) {
         this.cards = cards;
-        this.handSize = cards.length;
+        this.handSize = cards.size();
         for (Card card : this.cards) {
             this.score += card.getValue();
 
@@ -153,7 +158,7 @@ public class Hand {
     public String toString() {
         StringBuilder handString = new StringBuilder("Hand: ");
         for (int i = 0; i < handSize; i++) {
-            handString.append(cards[i].toString());
+            handString.append(cards.get(i).toString());
             if (i < handSize - 1) {
                 handString.append(", ");
             }

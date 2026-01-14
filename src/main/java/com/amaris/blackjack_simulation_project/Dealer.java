@@ -2,7 +2,6 @@ package com.amaris.blackjack_simulation_project;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public class Dealer extends Person {
     private Hand dealerHand;
@@ -140,7 +139,7 @@ public class Dealer extends Person {
         //if hand didn't bust
         else {
             //add all the cards to the discard
-            discard.addAll(List.of(hand.getCards()));
+            discard.addAll(hand.getCards());
             // make the hand a new hand so the flags are reset
             hand = new Hand();
 
@@ -157,7 +156,7 @@ public class Dealer extends Person {
 
 
     public Card getUpCard() {
-        return dealerHand.getCards()[0];
+        return dealerHand.getCards().getFirst();
     }
 
     public void burnCard(ArrayList<Card> shoe, ArrayList<Card> discard) {
@@ -173,7 +172,7 @@ public class Dealer extends Person {
         int currentHand = currentPlayer.getCurrentHand();
 
         //add the hand that bust to the discard
-        discard.addAll(List.of(currentPlayer.getHand()[currentHand].getCards()));
+        discard.addAll(currentPlayer.getHand()[currentHand].getCards());
         //set it so the now empty hand has bust
         currentPlayer.getHand()[currentHand].setHasBust(true);
         //check if the player has split
@@ -204,7 +203,7 @@ public class Dealer extends Person {
     public boolean checkBust(Hand hand) {
         //local variables for readability
         ArrayList<Integer> softAces = hand.getSoftAceLocations();
-        Card[] handCards = hand.getCards();
+        ArrayList<Card> handCards = hand.getCards();
 
         //if the score of the current hand isn't higher than 21
         if (hand.getScore() < 21)
@@ -219,7 +218,7 @@ public class Dealer extends Person {
         for (Integer i : softAces) {
             if (hand.getScore() > 21) {
                 //set the value of the ace to 1
-                handCards[softAces.get(i)].setValue(1);
+                handCards.get(softAces.get(i)).setValue(1);
                 //decrement the hand score by 10
                 hand.setScore(hand.getScore() - 10);
 

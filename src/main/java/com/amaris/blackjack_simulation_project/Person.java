@@ -14,4 +14,7 @@ public abstract class Person {
     public abstract void dealCard(ArrayList<Card> Shoe);
 
 
+    public int getHandScore() {
+        return this.handScore;
+    }
 }

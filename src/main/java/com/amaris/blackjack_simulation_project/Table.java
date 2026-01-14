@@ -55,6 +55,7 @@ public class Table {
             this.dealer.dealCard(shoe);
 
 
+
         }
 
     }
@@ -132,7 +133,7 @@ public class Table {
         //set the split tag
         currentPlayer.setHasSplit(true);
         //split the aces into two hands
-        seconHand.addCard(originalhand.getCards()[1]);
+        seconHand.addCard(originalhand.getCards().get(1));
         /*set original hand size to one since we are counting from 0 this will make it so
         the next time we add a card it will replace the ace we just gave out
         * */
@@ -159,7 +160,7 @@ public class Table {
     private boolean checkAces(Player currentPlayer) {
         Hand workingHand = currentPlayer.getHand()[currentPlayer.getCurrentHand()];
 
-        return workingHand.getCards()[0].getValue() == 11;
+        return workingHand.getCards().getFirst().getValue() == 11;
     }
 
     private int splitHand(Player currentPlayer) {
@@ -170,9 +171,10 @@ public class Table {
             //increment the total number of hands the player has
             currentPlayer.setTotalHands(currentPlayer.getTotalHands() + 1);
             //take second card from current hand and place it in new hand
-            currentPlayer.getHand()[nextHand].addCard(currentPlayer.getHand()[currentHand].getCards()[1]);
-            //decrement the current hands handsize
+            currentPlayer.getHand()[nextHand].addCard(currentPlayer.getHand()[currentHand].getCards().get(1));
+            //decrement the current hands hand size
             currentPlayer.getHand()[currentHand].setHandSize(currentPlayer.getHand()[currentHand].getHandSize() - 1);
+            currentPlayer.getHand()[currentHand].updateScore();
             //give them a new card
             currentPlayer.dealCard(shoe);
 
@@ -356,6 +358,15 @@ public class Table {
 
     public void addDealer(Dealer dealerOne) {
         this.dealer = dealerOne;
+    }
+
+    public Player[] getPlayers() {
+        return this.players;
+    }
+
+    //Setter for the shoe for making deterministic shoes
+    public void setShoe(ArrayList<Card> testShoe) {
+        this.shoe = testShoe;
     }
 }
 

@@ -1,11 +1,13 @@
 package com.amaris.blackjack_simulation_project;
 
+import java.util.ArrayList;
+
 //Class for a player that follows a no-bust strategy (yes, they exist ive seen them)
 public class NoBustPlayer extends Player {
 
 
     @Override
-    protected int checkHardStrategy(Card dealerCard, Card[] hand) {
+    protected int checkHardStrategy(Card dealerCard, ArrayList<Card> hand) {
         if (this.handScore < 8) {
             return 0; //always hit under should be the only place this occurs 
         }
