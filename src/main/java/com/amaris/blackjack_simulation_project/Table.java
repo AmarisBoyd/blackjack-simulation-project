@@ -13,7 +13,7 @@ import java.util.List;
 public class Table {
     //Variables to hold game state
     //Dealer object to keep logic of table consistent
-    Dealer dealer;
+    private Dealer dealer;
     //Array to hold a single deck of cards for loading the shoe 
     Card[] deck;
     //Array to hold "shoe" of cards (multiple decks)
@@ -22,6 +22,7 @@ public class Table {
     ArrayList<Card> discard;
     //Array to hold players at the table
     Player[] players;
+
     //Object to hold specific table rules
     TableRules rules;
     //integer to keep track of where the cut card is to stop the shoe
@@ -174,9 +175,13 @@ public class Table {
             currentPlayer.getHand()[nextHand].addCard(currentPlayer.getHand()[currentHand].getCards().get(1));
             //decrement the current hands hand size
             currentPlayer.getHand()[currentHand].setHandSize(currentPlayer.getHand()[currentHand].getHandSize() - 1);
+            //remove old last card
+            currentPlayer.getHand()[currentHand].getCards().removeLast();
             currentPlayer.getHand()[currentHand].updateScore();
             //give them a new card
             currentPlayer.dealCard(shoe);
+            //unset pair so it doesn't skip checking
+            currentPlayer.getHand()[currentHand].setIsPair(false);
 
 
         }
@@ -242,10 +247,6 @@ public class Table {
             }
 
         }
-        //This feels like a very bad idea passing a table that includes the dealer itself to the dealer
-        this.dealer.checkTableState(this.players);
-        //clean up the table after a hand
-        this.dealer.cleanTable(this.players, this.discard);
 
 
     }
@@ -367,6 +368,10 @@ public class Table {
     //Setter for the shoe for making deterministic shoes
     public void setShoe(ArrayList<Card> testShoe) {
         this.shoe = testShoe;
+    }
+
+    public Dealer getDealer() {
+        return this.dealer;
     }
 }
 

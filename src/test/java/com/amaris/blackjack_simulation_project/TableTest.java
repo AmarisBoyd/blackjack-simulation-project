@@ -3,11 +3,14 @@ package com.amaris.blackjack_simulation_project;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @SpringBootTest
@@ -119,9 +122,9 @@ public class TableTest {
         testTable.addPlayer(playerOne);
 
         testTable.dealInitialCards();
-        System.out.println(testTable.players[0]);
+
         Assertions.assertNotNull(testTable.players[0].getHand());
-        Assertions.assertNotNull(testTable.dealer.getDealerHand());
+        Assertions.assertNotNull(testTable.getDealer().getDealerHand());
     }
     @Test
     void testDealInitialCardsTwoPlayers(){
@@ -135,7 +138,7 @@ public class TableTest {
         for (int i = 0; i < testTable.getPlayerCount(); i++) {
            Assertions.assertNotNull(testTable.players[i].getHand());
         }
-        Assertions.assertNotNull(testTable.dealer.getDealerHand());
+        Assertions.assertNotNull(testTable.getDealer().getDealerHand());
 
     }
     @Test
@@ -151,9 +154,156 @@ public class TableTest {
             Assertions.assertNotNull(testTable.players[i].getHand());
 
         }
-        Assertions.assertNotNull(testTable.dealer.getDealerHand());
+        Assertions.assertNotNull(testTable.getDealer().getDealerHand());
 
 
+    }
+
+    private static Object[][] playerActionValues() {
+        Object[][] actionValues = new Object[4][2];
+        /*
+         * player card
+         * dealer card
+         * player card
+         * works backwards
+         * */
+        ArrayList<Card> hardValueTest = new ArrayList<>(List.of(
+                new Card(8),
+                new Card(10),
+                new Card(2),
+                new Card(10),
+                new Card(8)
+        ));
+        ArrayList<Card> softValueTest = new ArrayList<>(List.of(
+                new Card(10),
+                new Card(3),
+                new Card(10),
+                new Card(5),
+                new Card(10),
+                new Card(11)
+        ));
+        ArrayList<Card> splitTest = new ArrayList<>(List.of(
+                new Card(10),
+                new Card(10),
+                new Card(9),
+                new Card(10),
+                new Card(8),
+                new Card(10),
+                new Card(8)
+        ));
+        ArrayList<Card> bustTest = new ArrayList<>(List.of(
+                new Card(10),
+                new Card(10),
+                new Card(3),
+                new Card(10),
+                new Card(10)
+        ));
+        actionValues[0] = new Object[]{hardValueTest, 18};
+        actionValues[1] = new Object[]{softValueTest, 19};
+        actionValues[2] = new Object[]{splitTest, 17};
+        actionValues[3] = new Object[]{bustTest, 23};
+        return actionValues;
+    }
+
+    @ParameterizedTest
+    @MethodSource("playerActionValues")
+    void onePlayerPlayerActionTest(ArrayList<Card> testShoe, int expectedValue) {
+        // create the player
+        Player playerOne = new Player();
+        //add the player
+        testTable.addPlayer(playerOne);
+        testTable.setShoe(testShoe);
+        testTable.dealInitialCards();
+        Assertions.assertNotNull(testTable.getPlayers()[0].getHand());
+        testTable.playerActions();
+        Assertions.assertEquals(expectedValue, testTable.getPlayers()[0].getHandScore());
+
+
+    }
+
+    private static Object[][] dealerActionValues() {
+        Object[][] actionValues = new Object[1][3];
+        /*
+         * player card
+         * dealer card
+         * player card
+         * works backwards
+         * */
+        ArrayList<Card> playerStandsDealerWins = new ArrayList<>(List.of(
+                new Card(8),
+                new Card(3),
+                new Card(10),
+                new Card(10),
+                new Card(8)
+        ));
+//        ArrayList<Card> playerStandsDealerLoses  = new ArrayList<>(List.of(
+//                new Card(10),
+//                new Card(3),
+//                new Card(10),
+//                new Card(5),
+//                new Card(10),
+//                new Card(11)
+//        ));
+//        ArrayList<Card> playerBustDealerWins  = new ArrayList<>(List.of(
+//                new Card(10),
+//                new Card(10),
+//                new Card(9),
+//                new Card(10),
+//                new Card(8),
+//                new Card(10),
+//                new Card(8)
+//        ));
+//        ArrayList<Card> playerBustOneHand  = new ArrayList<>(List.of(
+//                new Card(10),
+//                new Card(10),
+//                new Card(3),
+//                new Card(10),
+//                new Card(10)
+//        ));
+        actionValues[0] = new Object[]{playerStandsDealerWins, 21, 1};
+//        actionValues[1] = new Object[]{playerStandsDealerLoses, 19};
+//        actionValues[2] = new Object[]{playerBustDealerWins, 17};
+//        actionValues[3] = new Object[]{playerBustOneHand, 23};
+        return actionValues;
+    }
+
+    @ParameterizedTest
+    @MethodSource("dealerActionValues")
+    void onePlayerDealerActionTest(ArrayList<Card> testShoe, int expectedDealerHandValue, int expectedResultValue) {
+        // create the player
+        Player playerOne = new Player();
+        //add the player
+        testTable.addPlayer(playerOne);
+        //set the shoe with the test shoe
+        testTable.setShoe(testShoe);
+        // deal initial cards
+        testTable.dealInitialCards();
+        //have the players take their actions
+        testTable.playerActions();
+        //have the dealer take their actions
+        testTable.dealerActions();
+
+        Assertions.assertEquals(expectedDealerHandValue, testTable.getDealer().getHandScore());
+
+
+    }
+
+    @ParameterizedTest
+    @MethodSource("dealerActionValues")
+    void onePlayerCheckTableStateTest(ArrayList<Card> testShoe, int expectedDealerHandValue, int expectedResultValue) {
+        // create the player
+        Player playerOne = new Player();
+        //add the player
+        testTable.addPlayer(playerOne);
+        //set the shoe with the test shoe
+        testTable.setShoe(testShoe);
+        // deal initial cards
+        testTable.dealInitialCards();
+        //have the players take their actions
+        testTable.playerActions();
+        //have the dealer take their actions
+        testTable.dealerActions();
+        testTable.getDealer().checkTableState(testTable.getPlayers(), testTable.getPlayerCount());
     }
 
     @Test
@@ -161,10 +311,6 @@ public class TableTest {
         // create the player
         Player playerOne = new Player();
         // add it to the table
-        Dealer dealerOne = new Dealer();
-        //add dealer to the table
-        testTable.addDealer(dealerOne);
-
         testTable.addPlayer(playerOne);
         //shuffle the card
         testTable.shuffleShoe();

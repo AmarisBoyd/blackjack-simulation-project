@@ -1,7 +1,6 @@
 package com.amaris.blackjack_simulation_project;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Dealer extends Person {
     private Hand dealerHand;
@@ -31,14 +30,16 @@ public class Dealer extends Person {
         return 0;
     }
 
-    public void checkTableState(Player[] players) {
+    public void checkTableState(Player[] players, int playerCount) {
+
         // if the dealer has bust
         if (this.handScore > 21) {
             //do dealer bust actions
-            dealerBust(players);
+            dealerBust(players, playerCount);
         } else {
             //loop through all the players
-            for (Player currentPlayer : players) {
+            for (int i = 0; i < playerCount - 1; i++) {
+                Player currentPlayer = players[i];
                 //if the player has bust
                 if (currentPlayer.isHasBust()) {
                     //increment losses
@@ -71,13 +72,14 @@ public class Dealer extends Person {
 
     }
 
-    private void dealerBust(Player[] players) {
+    private void dealerBust(Player[] players, int playerCount) {
         //loop through all players
-        for (Player player : players) {
+        for (int i = 0; i < playerCount - 1; i++) {
+            Player player = players[i];
             //if they haven't bust
             if (!player.isHasBust()) {
                 //loop through each hand
-                for (int i = 0; i < player.getTotalHands(); i++) {
+                for (int j = 0; j < player.getTotalHands(); j++) {
                     //increment win counter for each hand that still exist
                     if (!player.getHand()[i].isHasBust()) {
                         player.incrementWins();
@@ -88,9 +90,9 @@ public class Dealer extends Person {
 
     }
 
-    public void cleanTable(Player[] players, ArrayList<Card> discard) {
+    public void cleanTable(Player[] players, int playerCount, ArrayList<Card> discard) {
         //For each player in reverse order
-        for (int i = players.length - 1; i >= 0; i--) {
+        for (int i = playerCount - 1; i >= 0; i--) {
 
             //current player again for readability
             Player currentPlayer = players[i];
@@ -146,18 +148,6 @@ public class Dealer extends Person {
         }
     }
 
-    public Hand getDealerHand() {
-        return dealerHand;
-    }
-
-    public void setDealerHand(Hand dealerHand) {
-        this.dealerHand = dealerHand;
-    }
-
-
-    public Card getUpCard() {
-        return dealerHand.getCards().getFirst();
-    }
 
     public void burnCard(ArrayList<Card> shoe, ArrayList<Card> discard) {
         //add the last card of the shoe to the discard
@@ -232,10 +222,24 @@ public class Dealer extends Person {
         return true;
     }
 
+    public Hand getDealerHand() {
+        return this.dealerHand;
+    }
+
+    public void setDealerHand(Hand dealerHand) {
+        this.dealerHand = dealerHand;
+    }
+
+
+    public Card getUpCard() {
+        return dealerHand.getCards().getFirst();
+    }
+
     @Override
     public String toString() {
+
         return "Dealer{" +
-                "hand=" + Arrays.toString(hand) +
+                "hand=" + dealerHand.toString() +
                 ", handScore=" + handScore +
                 '}';
     }

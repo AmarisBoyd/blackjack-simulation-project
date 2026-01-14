@@ -297,4 +297,8 @@ public class Player extends Person {
             hands[i] = new Hand();
         }
     }
+
+    public int getLosses() {
+        return this.losses;
+    }
 }
