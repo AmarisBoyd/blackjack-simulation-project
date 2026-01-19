@@ -50,14 +50,13 @@ public class Table {
                 players[j].dealCard(shoe);
 
 
-
             }
             //give the dealer the next card
             this.dealer.dealCard(shoe);
 
 
-
         }
+
 
     }
 
@@ -107,18 +106,17 @@ public class Table {
                 //player stands check if we need to move to next split
                 if (result == 1) {
                     //if the current player has split and they are not aces
-                    if(currentPlayer.isHasSplit()&&!currentPlayer.isSplitAces()){
+                    if (currentPlayer.isHasSplit() && !currentPlayer.isSplitAces()) {
                         //if the current hand is not equal to the max number of total hands
                         if (!(currentPlayer.getCurrentHand() == currentPlayer.getTotalHands())) {
                             //set the current hand for the player to the next hand they have
                             currentPlayer.setCurrentHand(currentPlayer.getCurrentHand() + 1);
                             // reset result so the loop continues
                             result = 0;
-                    }
+                        }
 
                     }
                 }
-
 
 
             }
@@ -130,7 +128,7 @@ public class Table {
     private int noResplitAces(Player currentPlayer) {
 
         Hand originalhand = currentPlayer.getHand()[currentPlayer.getCurrentHand()];
-        Hand seconHand = currentPlayer.getHand()[currentPlayer.getCurrentHand()+1];
+        Hand seconHand = currentPlayer.getHand()[currentPlayer.getCurrentHand() + 1];
         //set the split tag
         currentPlayer.setHasSplit(true);
         //split the aces into two hands
@@ -190,13 +188,12 @@ public class Table {
     }
 
 
-
     private int hit(Player currentPlayer) {
         Hand workingHand = currentPlayer.getHand()[currentPlayer.getCurrentHand()];
         currentPlayer.dealCard(shoe);
         //If the player bust return 1 since they can no longer hit
 
-        if ( dealer.checkBust(workingHand) ) {
+        if (dealer.checkBust(workingHand)) {
             dealer.clearBust(currentPlayer, discard);
             return 1;
         }
@@ -209,7 +206,7 @@ public class Table {
         // give the player the next card
         currentPlayer.dealCard(shoe);
         //check if they bust in case of doubling on hard number
-        if ( dealer.checkBust(workingHand) ) {
+        if (dealer.checkBust(workingHand)) {
             dealer.clearBust(currentPlayer, discard);
         }
         //return that the player can no longer hit on this hand
@@ -346,6 +343,7 @@ public class Table {
 
         return result.toString();
     }
+
     @Override
     public String toString() {
         StringBuilder shoeString = new StringBuilder("The shoe contains:\n");

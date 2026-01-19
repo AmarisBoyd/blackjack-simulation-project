@@ -30,7 +30,7 @@ public class Player extends Person {
     protected boolean hasBust = false;
 
 
-    protected boolean splitAces =false;
+    protected boolean splitAces = false;
 
     //Default constructor Uses most common blackjack rules
     public Player() {
@@ -44,7 +44,6 @@ public class Player extends Person {
         for (int i = 0; i < maxHands; i++) {
             hands[i] = new Hand();
         }
-
 
     }
 
@@ -81,11 +80,11 @@ public class Player extends Person {
         hands[currentHand].setIsSoft(hands[currentHand].checkSoft(handCards));
 
         //check to see if hand is a pair and total hands is under max splits
-        if (hands[currentHand].getIsPair()&&totalHands<rules.getMaxSplits()) {
+        if (hands[currentHand].getIsPair() && totalHands < rules.getMaxSplits()) {
 
 
-                //check against pair strategy table
-                decision = checkPairStrategy(dealerCard, handCards);
+            //check against pair strategy table
+            decision = checkPairStrategy(dealerCard, handCards);
 
 
         } else if (hands[currentHand].getIsSoft()) {
@@ -196,7 +195,6 @@ public class Player extends Person {
     public void debugSetHand(ArrayList<Card> hand) {
         //add cards to first hand only for testing
         this.hands[currentHand].setCards(hand);
-        System.out.println(this.hands[currentHand].toString());
 
 
     }
@@ -217,7 +215,18 @@ public class Player extends Person {
         // then remove it from the shoe
         shoe.remove(shoe.getLast());
         //update the hand score
-       this.handScore =hands[currentHand].getScore();
+        this.handScore = hands[currentHand].getScore();
+    }
+
+    // method to reset the hands for testing
+    public void resetHand() {
+        int maxHands = rules.getMaxSplits() + 1;
+        //create array to hold max 4 hands
+        hands = new Hand[maxHands];
+        //remember to initialize each hand in the array
+        for (int i = 0; i < maxHands; i++) {
+            hands[i] = new Hand();
+        }
     }
 
     public Hand[] getHand() {
@@ -227,6 +236,7 @@ public class Player extends Person {
     public void setTotalHands(int i) {
         this.totalHands = i;
     }
+
     public void setCurrentHand(int i) {
         this.currentHand = i;
     }
@@ -263,7 +273,7 @@ public class Player extends Person {
         this.wins++;
     }
 
-    public void incrementDraws() {
+    public void incrementPushes() {
         this.pushes++;
     }
 
@@ -273,6 +283,18 @@ public class Player extends Person {
 
     public void setHasBust(boolean hasBust) {
         this.hasBust = hasBust;
+    }
+
+    public int getLosses() {
+        return this.losses;
+    }
+
+    public int getWins() {
+        return this.wins;
+    }
+
+    public int getPushes() {
+        return this.pushes;
     }
 
     @Override
@@ -285,20 +307,5 @@ public class Player extends Person {
                 ", pushes=" + pushes +
                 ", handScore=" + handScore +
                 '}';
-    }
-
-    // method to reset the hands for testing
-    public void resetHand() {
-        int maxHands = rules.getMaxSplits() + 1;
-        //create array to hold max 4 hands
-        hands = new Hand[maxHands];
-        //remember to initialize each hand in the array
-        for (int i = 0; i < maxHands; i++) {
-            hands[i] = new Hand();
-        }
-    }
-
-    public int getLosses() {
-        return this.losses;
     }
 }
