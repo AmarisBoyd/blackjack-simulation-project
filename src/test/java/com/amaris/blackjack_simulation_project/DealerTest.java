@@ -1,12 +1,25 @@
 package com.amaris.blackjack_simulation_project;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 public class DealerTest {
+    Table testTable;
+
+
+    @BeforeEach
+    public void setup() {
+        testTable = new Table();
+
+        Player testPlayer = new Player();
+        testTable.addPlayer(testPlayer);
+    }
 
 
     @Test
@@ -59,5 +72,30 @@ public class DealerTest {
         }
         assertTrue(dealer.checkBust(testHand));
         assertEquals(18, testHand.getScore());
+    }
+
+    public static Object[] dealerActionValues() {
+        Object[] dealerActionValues = new Object[4];
+        return dealerActionValues;
+    }
+
+    @ParameterizedTest
+    @MethodSource("dealerActionValues")
+    void Test_Check_State(Hand playerHand, Hand dealerHand, int expectedWins, int expectedLosses) {
+        // get the players hand for readability
+        Hand testHand = testTable.getPlayers()[0].getHand()[0];
+        //add cards to the hand with a low value
+        testHand.addCard(new Card(10));
+        testHand.addCard(new Card(2));
+        // add cards to dealer
+        testTable.getDealer().getDealerHand().addCard(new Card(10));
+        testTable.getDealer().getDealerHand().addCard(new Card(9));
+        //check the table state
+        testTable.getDealer().getDealerHand().updateScore();
+        testTable.getDealer().checkTableState(testTable.getPlayers(), 1);
+        System.out.println(testTable.handResults());
+        assertEquals(1, testTable.getPlayers()[0].getLosses());
+
+
     }
 }
