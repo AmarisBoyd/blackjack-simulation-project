@@ -75,7 +75,7 @@ public class Dealer extends Person {
                         //if current hand equals dealers score
                         if (playerScore == dealerScore) {
                             //increment pushes
-                            currentPlayer.incrementDraws();
+                            currentPlayer.incrementPushes();
                         }
                     }
                 }
