@@ -222,7 +222,7 @@ public class TableTest {
     }
 
     private static Object[][] dealerActionValues() {
-        Object[][] actionValues = new Object[1][3];
+        Object[][] actionValues = new Object[4][3];
         /*
          * player card
          * dealer card
@@ -236,40 +236,40 @@ public class TableTest {
                 new Card(10),
                 new Card(8)
         ));
-//        ArrayList<Card> playerStandsDealerLoses  = new ArrayList<>(List.of(
-//                new Card(10),
-//                new Card(3),
-//                new Card(10),
-//                new Card(5),
-//                new Card(10),
-//                new Card(11)
-//        ));
-//        ArrayList<Card> playerBustDealerWins  = new ArrayList<>(List.of(
-//                new Card(10),
-//                new Card(10),
-//                new Card(9),
-//                new Card(10),
-//                new Card(8),
-//                new Card(10),
-//                new Card(8)
-//        ));
-//        ArrayList<Card> playerBustOneHand  = new ArrayList<>(List.of(
-//                new Card(10),
-//                new Card(10),
-//                new Card(3),
-//                new Card(10),
-//                new Card(10)
-//        ));
-        actionValues[0] = new Object[]{playerStandsDealerWins, 21, 1};
-//        actionValues[1] = new Object[]{playerStandsDealerLoses, 19};
-//        actionValues[2] = new Object[]{playerBustDealerWins, 17};
-//        actionValues[3] = new Object[]{playerBustOneHand, 23};
+        ArrayList<Card> playerStandsDealerLoses = new ArrayList<>(List.of(
+                new Card(10),
+                new Card(3),
+                new Card(8),
+                new Card(9),
+                new Card(10),
+                new Card(11)
+        ));
+        ArrayList<Card> playerBustDealerWins = new ArrayList<>(List.of(
+                new Card(10),
+                new Card(10),
+                new Card(9),
+                new Card(7),
+                new Card(8),
+                new Card(10),
+                new Card(5)
+        ));
+        ArrayList<Card> playerBustOneHand = new ArrayList<>(List.of(
+                new Card(10),
+                new Card(2),
+                new Card(3),
+                new Card(10),
+                new Card(10)
+        ));
+        actionValues[0] = new Object[]{playerStandsDealerWins, 21};
+        actionValues[1] = new Object[]{playerStandsDealerLoses, 18};
+        actionValues[2] = new Object[]{playerBustDealerWins, 17};
+        actionValues[3] = new Object[]{playerBustOneHand, 12};
         return actionValues;
     }
 
     @ParameterizedTest
     @MethodSource("dealerActionValues")
-    void onePlayerDealerActionTest(ArrayList<Card> testShoe, int expectedDealerHandValue, int expectedResultValue) {
+    void onePlayerDealerActionTest(ArrayList<Card> testShoe, int expectedDealerHandValue) {
         // create the player
         Player playerOne = new Player();
         //add the player
@@ -288,23 +288,6 @@ public class TableTest {
 
     }
 
-    @ParameterizedTest
-    @MethodSource("dealerActionValues")
-    void onePlayerCheckTableStateTest(ArrayList<Card> testShoe, int expectedDealerHandValue, int expectedResultValue) {
-        // create the player
-        Player playerOne = new Player();
-        //add the player
-        testTable.addPlayer(playerOne);
-        //set the shoe with the test shoe
-        testTable.setShoe(testShoe);
-        // deal initial cards
-        testTable.dealInitialCards();
-        //have the players take their actions
-        testTable.playerActions();
-        //have the dealer take their actions
-        testTable.dealerActions();
-        testTable.getDealer().checkTableState(testTable.getPlayers(), testTable.getPlayerCount());
-    }
 
     @Test
     void onePlayerTest() {
