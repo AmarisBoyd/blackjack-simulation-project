@@ -209,7 +209,7 @@ public class Dealer extends Person {
         ArrayList<Card> handCards = hand.getCards();
 
         //if the score of the current hand isn't higher than 21
-        if (hand.getScore() < 21)
+        if (!(hand.getScore() > 21))
             //return false so we don't bother with other logic
             return false;
         //if the hand is not soft
