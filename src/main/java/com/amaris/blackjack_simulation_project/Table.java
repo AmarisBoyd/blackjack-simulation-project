@@ -217,34 +217,33 @@ public class Table {
     }
 
     public void dealerActions() {
-        boolean dealerStop = false;
+        int result;
+        //set the dealer to stop unless there are other players at the table
+        boolean dealerStop = true;
+        //check if there are still players
+        for (int i = 0; i < this.playerCount; i++) {
+            Player currentPlayer = this.players[i];
+            //if there is at least one player who hasn't bust continue
+            if (!currentPlayer.isHasBust()) {
+                dealerStop = false;
+                break;
+            }
+
+        }
+        //while the dealer hasn't reached and endpoint
         while (!dealerStop) {
-            //if the dealers hand is greater than 17
-            if (this.dealer.getDealerHand().getScore() > 17) {
-                //do nothing
+            //check the dealers strategy
+            result = this.dealer.strategy();
+            // if it returns one
+            if (result == 1) {
+                //stop
                 dealerStop = true;
-            }
-            //if the dealers hand is less than 17 hit
-            else if (this.dealer.getDealerHand().getScore() < 17) {
+
+            } else {
+                //the dealer hits
                 this.dealer.dealCard(shoe);
-
             }
-            //if the dealer hand equals 17
-            else if (this.dealer.getDealerHand().getScore() == 17) {
-                //check if the dealer hits on soft 17
-                if (rules.getHitSoft17()) {
-                    // if they do check if the hand is soft
-                    if (this.dealer.getDealerHand().getIsSoft())
-                        //if it is hit
-                        this.dealer.dealCard(shoe);
 
-                }
-                //if dealer doesn't hit on soft 17
-                else {
-                    // stop
-                    dealerStop = true;
-                }
-            }
 
         }
 
