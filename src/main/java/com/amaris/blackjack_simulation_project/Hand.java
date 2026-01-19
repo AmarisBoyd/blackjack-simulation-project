@@ -15,7 +15,7 @@ public class Hand {
     private int handSize;
     private boolean hasBust = false;
     //arraylist to keep track of where soft aces are in hand so we don't have to search
-    private ArrayList<Integer> softAceLocations;
+    private final ArrayList<Integer> softAceLocations;
 
 
     public Hand() {
@@ -26,13 +26,18 @@ public class Hand {
         softAceLocations = new ArrayList<>();
     }
 
-    public Hand(Card card, Card card1) {
-        this.cards.add(card);
-        this.cards.add(card1);
-    }
+
 
     public Hand(Hand hand) {
         this.cards = hand.cards;
+        this.score = hand.score;
+        this.isSoft = hand.isSoft;
+        this.isPair = hand.isPair;
+        this.handSize = hand.handSize;
+        this.hasBust = hand.hasBust;
+        this.softAceLocations = hand.softAceLocations;
+
+
     }
 
     //Method to add card to hand
