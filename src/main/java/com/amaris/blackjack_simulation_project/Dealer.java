@@ -2,13 +2,13 @@ package com.amaris.blackjack_simulation_project;
 
 import java.util.ArrayList;
 
-//TODO merge "handScore" and "score" having two variables for one value is causing logic mistakes
+
 public class Dealer extends Person {
     private Hand dealerHand;
 
     public Dealer() {
         this.dealerHand = new Hand();
-
+        this.rules = new TableRules();
     }
 
     @Override
@@ -22,17 +22,17 @@ public class Dealer extends Person {
 
     public int strategy() {
         if (this.rules.getHitSoft17()) {
-            if (this.handScore > 16 && !this.dealerHand.getIsSoft(
+            if (this.handScore > 17) {
+                if (this.dealerHand.getIsSoft()) {
+                    return 0;
+                } else return 1;
+            } else return 0;
 
-            )) {
-                return 1;
-            }
 
-            return 0;
+
+
         } else {
-            if (this.handScore > 16 && !this.dealerHand.getIsSoft(
-
-            )) {
+            if (this.handScore > 16) {
                 return 1;
             }
 
@@ -45,7 +45,7 @@ public class Dealer extends Person {
         int dealerScore = this.getDealerHand().getScore();
         int playerScore;
         // if the dealer has bust
-        if (this.handScore > 21) {
+        if (dealerScore > 21) {
             //do dealer bust actions
             dealerBust(players, playerCount);
         } else {
@@ -60,7 +60,7 @@ public class Dealer extends Person {
                 //if they haven't
                 else {
                     //loop through all of their hands
-                    for (int j = 0; j < currentPlayer.getTotalHands(); j++) {
+                    for (int j = 0; j <= currentPlayer.getTotalHands(); j++) {
                         playerScore = currentPlayer.getHand()[j].getScore();
                         //if the player has a higher score
                         if (playerScore > dealerScore) {
@@ -87,12 +87,12 @@ public class Dealer extends Person {
 
     private void dealerBust(Player[] players, int playerCount) {
         //loop through all players
-        for (int i = 0; i < playerCount - 1; i++) {
+        for (int i = 0; i < playerCount; i++) {
             Player player = players[i];
             //if they haven't bust
             if (!player.isHasBust()) {
                 //loop through each hand
-                for (int j = 0; j < player.getTotalHands(); j++) {
+                for (int j = 0; j <= player.getTotalHands(); j++) {
                     //increment win counter for each hand that still exist
                     if (!player.getHand()[i].isHasBust()) {
                         player.incrementWins();
