@@ -2,6 +2,7 @@ package com.amaris.blackjack_simulation_project;
 
 import java.util.ArrayList;
 
+//TODO merge "handScore" and "score" having two variables for one value is causing logic mistakes
 public class Dealer extends Person {
     private Hand dealerHand;
 
@@ -20,25 +21,36 @@ public class Dealer extends Person {
     }
 
     public int strategy() {
+        if (this.rules.getHitSoft17()) {
+            if (this.handScore > 16 && !this.dealerHand.getIsSoft(
 
-        if (this.handScore > 16 && !this.dealerHand.getIsSoft(
+            )) {
+                return 1;
+            }
 
-        )) {
-            return 1;
+            return 0;
+        } else {
+            if (this.handScore > 16 && !this.dealerHand.getIsSoft(
+
+            )) {
+                return 1;
+            }
+
+            return 0;
         }
 
-        return 0;
     }
 
     public void checkTableState(Player[] players, int playerCount) {
-
+        int dealerScore = this.getDealerHand().getScore();
+        int playerScore;
         // if the dealer has bust
         if (this.handScore > 21) {
             //do dealer bust actions
             dealerBust(players, playerCount);
         } else {
             //loop through all the players
-            for (int i = 0; i < playerCount - 1; i++) {
+            for (int i = 0; i < playerCount; i++) {
                 Player currentPlayer = players[i];
                 //if the player has bust
                 if (currentPlayer.isHasBust()) {
@@ -49,18 +61,19 @@ public class Dealer extends Person {
                 else {
                     //loop through all of their hands
                     for (int j = 0; j < currentPlayer.getTotalHands(); j++) {
+                        playerScore = currentPlayer.getHand()[j].getScore();
                         //if the player has a higher score
-                        if (currentPlayer.getHand()[j].getScore() > this.handScore) {
+                        if (playerScore > dealerScore) {
                             //increase their win record
                             currentPlayer.incrementWins();
                         }
                         //if the current hand is lower than dealers cards
-                        if (currentPlayer.getHand()[j].getScore() < this.handScore) {
+                        if (playerScore < dealerScore) {
                             // increment losses
                             currentPlayer.incrementLosses();
                         }
                         //if current hand equals dealers score
-                        if (currentPlayer.getHand()[j].getScore() == this.handScore) {
+                        if (playerScore == dealerScore) {
                             //increment pushes
                             currentPlayer.incrementDraws();
                         }
