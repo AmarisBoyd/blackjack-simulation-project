@@ -3,6 +3,7 @@ package com.amaris.blackjack_simulation_project;
 import java.util.ArrayList;
 
 //Abstract class that both dealer and player will extend
+//TODO merge "handScore" and "score" having two variables for one value is causing logic mistakes
 public abstract class Person {
     Card [] hand;
     protected int handScore;
