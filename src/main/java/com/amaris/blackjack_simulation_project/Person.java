@@ -18,4 +18,6 @@ public abstract class Person {
     public int getHandScore() {
         return this.handScore;
     }
+
+    public abstract TableRules getTableRules();
 }
