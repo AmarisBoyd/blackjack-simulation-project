@@ -143,7 +143,14 @@ public class Player extends Person {
     protected int checkSoftStrategy(Card dealerCard, ArrayList<Card> hand) {
         // Table for soft hand strategy 
         // reminder 0=hit 1=stand 2=double 3=split(should not occur in soft strategy)
-
+        //sanity check if the hand score somehow gets to less than and ace and a two
+        if (handScore < 12) {
+            //hit
+            return 0;
+        }
+        if (handScore == 21) {
+            return 1;
+        }
         int[][] softStrategyTable = {
                 // Dealer's upcard:
                 //      2 3 4 5 6 7 8 9 10 A
@@ -166,8 +173,13 @@ public class Player extends Person {
     protected int checkHardStrategy(Card dealerCard, ArrayList<Card> hand) {
         // Table for hard hand strategy Starts at 8 because the table only covers 8-20
 
-        if (handScore < 8) {
+        if (handScore <= 8) {
             return 0; //always hit under should be the only place this occurs 
+        }
+        //if the player has a hard 21
+        if (handScore == 21) {
+            //stay
+            return 1;
         }
         int[][] hardStrategyTable = {
                 // Dealer's upcard:
@@ -216,6 +228,11 @@ public class Player extends Person {
         shoe.remove(shoe.getLast());
         //update the hand score
         this.handScore = hands[currentHand].getScore();
+    }
+
+    @Override
+    public TableRules getTableRules() {
+        return this.rules;
     }
 
     // method to reset the hands for testing
