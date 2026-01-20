@@ -19,7 +19,7 @@ public class PlayerTest {
     Card dealerCard;
     Card[] playerCards;
 
-    void test_helper(int[] playerCards, int DealerValue, Player player) {
+    void testHelper(int[] playerCards, int DealerValue, Player player) {
         dealerCard = new Card("wildcard", DealerValue);
         Card playerCard1 = new Card("wildcard", playerCards[0]);
         Card playerCard2 = new Card("wildcard", playerCards[1]);
@@ -90,7 +90,7 @@ public class PlayerTest {
 
     @ParameterizedTest
     @MethodSource("pairDoubleAfterSplitValues")
-    void testDoublePairs(Card dealerCard, Card[] playerCards, int expectedValue) {
+    void checkPairStrategy_Double_After_Split_Test(Card dealerCard, Card[] playerCards, int expectedValue) {
         ArrayList<Card> playerCardsList = new ArrayList<>();
         Collections.addAll(playerCardsList, playerCards);
         Player player = new Player();
@@ -99,7 +99,7 @@ public class PlayerTest {
 
     @ParameterizedTest
     @MethodSource("pairNoDoubleValues")
-    void testNoDoublePairs(Card dealerCard, Card[] playerCards, int expectedValue) {
+    void checkPAirStrategy_No_Double_After_Split_Test(Card dealerCard, Card[] playerCards, int expectedValue) {
         ArrayList<Card> playerCardsList = new ArrayList<>();
         Collections.addAll(playerCardsList, playerCards);
         Player player = new Player();
@@ -110,9 +110,9 @@ public class PlayerTest {
 
 
     @Test
-    void test_Hard_Strategy_18_on_8() {
+    void Hard_Strategy_18_On_8_Test() {
         Player player = new Player();
-        test_helper(new int[]{10, 8}, 8, player);
+        testHelper(new int[]{10, 8}, 8, player);
         assertNotEquals(0, player.handScore);
         assertNotNull(player.handCards);
         assertNotEquals(0, player.handScore);
@@ -122,9 +122,9 @@ public class PlayerTest {
     }
 
     @Test
-    void test_Hard_Strategy_Under_8() {
+    void hard_Strategy_Under_8_Test() {
         Player player = new Player();
-        test_helper(new int[]{4, 3}, 9, player);
+        testHelper(new int[]{4, 3}, 9, player);
         assertEquals(0, player.checkHardStrategy(dealerCard, player.handCards));
     }
 
@@ -134,9 +134,9 @@ public class PlayerTest {
 	 */
 
     @Test
-    void test_Soft_strategy_18_on_10() {
+    void soft_Strategy_18_On_10_Test() {
         Player player = new Player();
-        test_helper(new int[]{7, 11}, 10, player);
+        testHelper(new int[]{7, 11}, 10, player);
         assertNotEquals(0, player.handScore);
         assertNotEquals(0, player.handScore);
 
@@ -146,9 +146,9 @@ public class PlayerTest {
     }
 
     @Test
-    void test_Soft_17_strategy() {
+    void soft_17_Strategy_Test() {
         Player player = new Player();
-        test_helper(new int[]{6, 11}, 10, player);
+        testHelper(new int[]{6, 11}, 10, player);
         assertNotEquals(0, player.handScore);
         assertNotEquals(0, player.handScore);
 
