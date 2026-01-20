@@ -180,6 +180,8 @@ public class Table {
             currentPlayer.dealCard(shoe);
             //unset pair so it doesn't skip checking
             currentPlayer.getHand()[currentHand].setIsPair(false);
+            //set it so the table knows the player has split at least once
+            currentPlayer.setHasSplit(true);
 
 
         }
@@ -369,6 +371,23 @@ public class Table {
 
     public Dealer getDealer() {
         return this.dealer;
+    }
+
+    public ArrayList<Card> getDiscard() {
+        return this.discard;
+    }
+
+    public String getDiscardToString() {
+        StringBuilder shoeString = new StringBuilder("The discard contains:\n");
+        for (Card card : this.discard) {
+            shoeString.append(card.toString()).append("\n");
+        }
+
+        return shoeString.toString();
+    }
+
+    public void setDiscard(ArrayList<Card> expectedDiscard) {
+        this.discard = expectedDiscard;
     }
 }
 
