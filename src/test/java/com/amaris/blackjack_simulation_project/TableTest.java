@@ -30,18 +30,18 @@ public class TableTest {
 
 
     @Test
-    void testLoadDeck() {
+    void loadDeck_Test() {
 
         Assertions.assertNotNull(testTable.deck);
 
     }
 
     @Test
-    void testLoadShoe(){
+    void loadShoe_Test() {
         Assertions.assertNotNull(testTable.getShoe());
     }
     @Test
-    void testShuffleShoe(){
+    void shuffleShoe_Test() {
         String shoePath ="src/main/resources/Shoe.txt";
         String shuffledPath ="src/main/resources/Shuffled.txt";
         Path shoeFile = Path.of(shoePath);
@@ -72,7 +72,7 @@ public class TableTest {
 
     }
     @Test
-    void testCutShoe(){
+    void cutShoe_Test() {
         //make a copy of the shoe to compare
         ArrayList<Card> oldShoe = new ArrayList<>(testTable.getShoe());
         //set cut position to one deck in;
@@ -83,7 +83,7 @@ public class TableTest {
 
     }
     @Test
-    void testAddPlayer(){
+    void addPlayer_Test() {
         Player playerOne = new Player();
         testTable.addPlayer(playerOne);
         Assertions.assertNotNull(testTable.players[0]);
@@ -94,7 +94,7 @@ public class TableTest {
 
     }
     @Test
-    void testAddTwoPlayers(){
+    void addTwo_Players_Test() {
         Player playerOne = new Player();
         testTable.addPlayer(playerOne);
         Player playerTwo = new Player();
@@ -104,7 +104,7 @@ public class TableTest {
 
     }
     @Test
-    void testAddXPlayers(){
+    void add_X_Players_Test() {
         Player[] players= new Player[5];
         for(int i=0;i<players.length;i++){
             players[i] = new Player();
@@ -115,7 +115,7 @@ public class TableTest {
         }
     }
     @Test
-    void testDealInitialCardsOnePlayer(){
+    void dealInitialCards_One_Player_Test() {
         int cutPosition = testTable.shoe.size()-52;
         testTable.cutShoe(cutPosition);
         Player playerOne = new Player();
@@ -127,7 +127,7 @@ public class TableTest {
         Assertions.assertNotNull(testTable.getDealer().getDealerHand());
     }
     @Test
-    void testDealInitialCardsTwoPlayers(){
+    void dealInitialCards_Two_Players_Test() {
         int cutPosition = testTable.shoe.size()-52;
         testTable.cutShoe(cutPosition);
         Player playerOne = new Player();
@@ -142,7 +142,7 @@ public class TableTest {
 
     }
     @Test
-    void testDealInitialCardsSixPlayers(){
+    void dealInitialCards_Six_Players_Test() {
         Player[] players= new Player[5];
         for(int i=0;i<players.length;i++){
             players[i] = new Player();
@@ -207,7 +207,7 @@ public class TableTest {
 
     @ParameterizedTest
     @MethodSource("playerActionValues")
-    void onePlayerPlayerActionTest(ArrayList<Card> testShoe, int expectedValue) {
+    void one_Player_Player_Action_Test(ArrayList<Card> testShoe, int expectedValue) {
         // create the player
         Player playerOne = new Player();
         //add the player
@@ -269,7 +269,7 @@ public class TableTest {
 
     @ParameterizedTest
     @MethodSource("dealerActionValues")
-    void onePlayerDealerActionTest(ArrayList<Card> testShoe, int expectedDealerHandValue) {
+    void one_Player_Dealer_ActionTest(ArrayList<Card> testShoe, int expectedDealerHandValue) {
         // create the player
         Player playerOne = new Player();
         //add the player
@@ -290,7 +290,8 @@ public class TableTest {
 
 
     @Test
-    void onePlayerTest() {
+    void one_Player_Stress_Test() {
+
         // create the player
         Player playerOne = new Player();
         // add it to the table
@@ -299,14 +300,28 @@ public class TableTest {
         testTable.shuffleShoe();
         //cut the cards
         testTable.cutShoe(52);
-        // deal the initial cards
-        testTable.dealInitialCards();
-        //do player action
-        testTable.playerActions();
-        //do dealer actions
-        testTable.dealerActions();
-        //get the results
-        System.out.println(testTable.handResults());
+
+        for (int i = 0; i < 300; i++) {// deal the initial cards
+            if (testTable.getShoe().size() < 52) {
+                testTable.loadShoe();
+                //shuffle the card
+                testTable.shuffleShoe();
+                //cut the cards
+                testTable.cutShoe(52);
+            }
+            testTable.dealInitialCards();
+            //do player action
+            testTable.playerActions();
+            //do dealer actions
+//            testTable.dealerActions();
+//            //get the results
+//            testTable.getDealer().checkTableState(testTable.getPlayers(),testTable.getPlayerCount());
+//            //clean the table
+            testTable.getDealer().cleanTable(testTable.getPlayers(), testTable.getPlayerCount(), testTable.getDiscard());
+            //  System.out.println(testTable.handResults());
+            System.out.println(i);
+
+        }
 
     }
 }
