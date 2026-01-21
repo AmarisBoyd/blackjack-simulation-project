@@ -7,9 +7,9 @@ public class Hand {
     private ArrayList<Card> cards;
     //integer to track current score of hand
     private int score;
-    //boolean to track if hand is a soft hand defaults to false
+    //boolean to track if hand is a soft hand. Defaults to false
     private boolean isSoft = false;
-    //boolean to track if hand is a pair defaults to false
+    //boolean to track if hand is or isn't a pair.  Defaults to false
     private boolean isPair = false;
     //integer to track current hand size
     private int handSize;
@@ -42,7 +42,7 @@ public class Hand {
 
     //Method to add card to hand
     public void addCard(Card card) {
-        this.cards.add(card);
+        this.cards.add(new Card(card));
 
         //if the added card is an ace
         if(card.getValue() == 11){
@@ -168,7 +168,6 @@ public class Hand {
                 handString.append(", ");
             }
         }
-        handString.append(" | Score: ").append(score);
 
         return handString.toString();
 
