@@ -1,12 +1,14 @@
 package com.amaris.blackjack_simulation_project;
 
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 /*
 Class to act as a "player"  holding the score of the hand  basic player will follow the basic strategy */
 public class Player extends Person {
+    protected int playerID;
     //Integer to track current hand for splits
     protected int currentHand = 0;
     //used to track if we have reached the end of the hands counting first hand as "hand Zero"
@@ -64,6 +66,9 @@ public class Player extends Person {
     public int strategy(Card dealerCard) {
         // Int to hold "choice" of what to do 0=hit 1=stand 2=double 3=split default to hit
         int decision;
+//        if(dealerCard.getValue()==1){
+//            dealerCard.setValue(11);
+//        }
         //Array to hold current hand's cards for easier reading
         handCards = this.hands[currentHand].getCards();
         //Get current hand score
@@ -143,11 +148,11 @@ public class Player extends Person {
     protected int checkSoftStrategy(Card dealerCard, ArrayList<Card> hand) {
         // Table for soft hand strategy 
         // reminder 0=hit 1=stand 2=double 3=split(should not occur in soft strategy)
-        //sanity check if the hand score somehow gets to less than and ace and a two
-        if (handScore < 12) {
-            //hit
-            return 0;
-        }
+//        //sanity check if the hand score somehow gets to less than and ace and a two
+//        if (handScore <13) {
+//            //hit
+//            return 0;
+//        }
         if (handScore == 21) {
             return 1;
         }
@@ -177,7 +182,7 @@ public class Player extends Person {
             return 0; //always hit under should be the only place this occurs 
         }
         //if the player has a hard 21
-        if (handScore == 21) {
+        if (handScore >= 21) {
             //stay
             return 1;
         }
@@ -196,10 +201,10 @@ public class Player extends Person {
                 /*17*/ {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
                 /*18*/ {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
                 /*19*/ {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-                /*20*/ {1, 1, 1, 1, 1, 1, 1, 1, 1}
+                /*20*/ {1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
 
         };
-        //Return based on hard hand strategy table subtract 8 from hand score to get correct row and dealer card value -2 for correct column
+
         return hardStrategyTable[handScore - 8][dealerCard.getValue() - 2];
     }
 
@@ -312,6 +317,30 @@ public class Player extends Person {
 
     public int getPushes() {
         return this.pushes;
+    }
+
+
+    public String getResults() {
+        long totalGames = this.wins + this.pushes + this.losses;
+
+        BigDecimal winPercent = BigDecimal.valueOf((wins * 100.00 / totalGames));
+        StringBuilder handsString = new StringBuilder();
+        handsString.append("[");
+        for (Hand value : this.hands) {
+            if (!value.getCards().isEmpty()) {
+                handsString.append(value);
+                handsString.append(" ");
+            }
+
+        }
+        handsString.append("]");
+        return "Player " + this.playerID + " { " +
+                "Hands: " + handsString +
+                ", wins=" + this.wins +
+                ", losses=" + this.losses +
+                ", pushes=" + this.pushes +
+                ", win%= " + winPercent.doubleValue() +
+                '}';
     }
 
     @Override
