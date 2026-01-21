@@ -1,12 +1,11 @@
 package com.amaris.blackjack_simulation_project;
 
-import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 
 // Class to represent a blackjack table
@@ -28,11 +27,13 @@ public class Table {
     //integer to keep track of where the cut card is to stop the shoe
     int cutCard = 0;
     private int playerCount = 0;
+    //boolean to track if this is the last hand of the shoe
+    private boolean lastHand;
 
     // constructor using default blackjack  house rules
     public Table() {
         this.rules = new TableRules();
-        this.players = new Player[this.rules.getMaxplayers()];
+        this.players = new Player[this.rules.getMaxPlayers()];
         this.dealer = new Dealer();
         shoe = new ArrayList<>();
         discard = new ArrayList<>();
@@ -53,7 +54,8 @@ public class Table {
             }
             //give the dealer the next card
             this.dealer.dealCard(shoe);
-
+            //check if this is the last hand
+            this.checkLastHand();
 
         }
 
@@ -71,6 +73,7 @@ public class Table {
             //while this player hasn't stood on their last hand
             while (result != 1) {
                 //check the strategy based on the hand
+                this.dealer.checkBust(currentPlayer.getHand()[currentPlayer.getCurrentHand()]);
                 result = currentPlayer.strategy(dealer.getUpCard());
                 //if they say give them a card
                 if (result == 0) {
@@ -118,11 +121,18 @@ public class Table {
                     }
                 }
 
-
+                //at the end of the player choice check for last hand
+                this.checkLastHand();
             }
 
         }
 
+    }
+
+    private void checkLastHand() {
+        if (this.shoe.size() < this.getCutPosition()) {
+            lastHand = true;
+        }
     }
 
     private int noResplitAces(Player currentPlayer) {
@@ -241,6 +251,13 @@ public class Table {
             } else {
                 //the dealer hits
                 this.dealer.dealCard(shoe);
+                //after hit check if it's the last hand
+                this.checkLastHand();
+                //after the dealer hits check if they bust
+                if (this.dealer.dealerCheckBust(this.dealer.getDealerHand())) {
+                    //if they have stop drawing cards
+                    dealerStop = true;
+                }
             }
 
 
@@ -277,7 +294,7 @@ public class Table {
 
     //method to read a JSON file that contains all the cards in a standard deck
 
-    public void loadDeck() {
+    public void loadDeck() throws IOException {
         //location of cards config file make this selectable later
         String src = "src/main/resources/Cards.json";
         Card[] cards;
@@ -287,10 +304,9 @@ public class Table {
             cards = objectMapper.readValue(cardsFile, Card[].class);
             this.setDeck(cards);
 
-        } catch (DatabindException d) {
-            d.printStackTrace();
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println(e.getMessage());
+            throw e;
         }
 
 
@@ -300,7 +316,9 @@ public class Table {
     // load up the shoe based on max number of decks and cards in the "deck"
     public void loadShoe() {
         for (int i = 0; i < this.rules.getDeckNumber(); i++) {
-            this.shoe.addAll(List.of(deck));
+            for (Card card : this.deck) {
+                shoe.add(new Card(card));
+            }
 
 
         }
@@ -338,7 +356,7 @@ public class Table {
     public String handResults() {
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < this.playerCount; i++) {
-            result.append(this.players[i].toString());
+            result.append(this.players[i].getResults());
             result.append("\n");
         }
         result.append(this.dealer.toString());
@@ -388,6 +406,14 @@ public class Table {
 
     public void setDiscard(ArrayList<Card> expectedDiscard) {
         this.discard = expectedDiscard;
+    }
+
+    public boolean getLastHand() {
+        return this.lastHand;
+    }
+
+    public void setLastHand(boolean b) {
+        this.lastHand = b;
     }
 }
 
