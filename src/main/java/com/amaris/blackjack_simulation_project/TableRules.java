@@ -62,14 +62,8 @@ public class TableRules {
 
     }
 
-    //Collection of setter methods for table settings
-    public void setMaxPlayers(int maxPlayers) {
-        //Set max players at the table usually between 1 and 7
-        this.maxPlayers = maxPlayers;
-    }
-
     public void setNumDecks(int numDecks) {
-        //set number of decks in shoe usually between 1 and 8 does change odds 
+        //set number of decks in shoe usually between 1 and 8 does change odds
         this.numDecks = numDecks;
     }
 
@@ -97,6 +91,12 @@ public class TableRules {
     //getter for max players
     public int getMaxPlayers() {
         return this.maxPlayers;
+    }
+
+    //Collection of setter methods for table settings
+    public void setMaxPlayers(int maxPlayers) {
+        //Set max players at the table usually between 1 and 7
+        this.maxPlayers = maxPlayers;
     }
 
     //getter for number of decks

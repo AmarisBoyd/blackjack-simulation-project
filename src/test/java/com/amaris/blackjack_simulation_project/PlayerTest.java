@@ -19,15 +19,7 @@ public class PlayerTest {
     Card dealerCard;
     Card[] playerCards;
 
-    void testHelper(int[] playerCards, int DealerValue, Player player) {
-        dealerCard = new Card("wildcard", DealerValue);
-        Card playerCard1 = new Card("wildcard", playerCards[0]);
-        Card playerCard2 = new Card("wildcard", playerCards[1]);
-        player.handCards = new ArrayList<>(List.of(playerCard1, playerCard2));
-        player.calcHandScore();
-
-    }
-    private static Object[][] arrayFill(int[] col1, int[]col10,int[] row1){
+    private static Object[][] arrayFill(int[] col1, int[] col10, int[] row1) {
 
         Object[][] values = new Object[40][3];
 
@@ -76,7 +68,7 @@ public class PlayerTest {
         int[] expectedValuesRow1 = {0, 0, 3, 3, 3, 3, 0, 0, 0, 0};
 
 
-        return arrayFill(expectedValuesCol1,expectedValuesCol10,expectedValuesRow1);
+        return arrayFill(expectedValuesCol1, expectedValuesCol10, expectedValuesRow1);
     }
 
     private static Object[][] pairDoubleAfterSplitValues() {
@@ -84,9 +76,17 @@ public class PlayerTest {
         int[] expectedValuesCol1 = {3, 3, 0, 2, 3, 3, 3, 3, 1, 3};
         int[] expectedValuesCol10 = {0, 0, 0, 0, 0, 1, 3, 1, 1, 3};
         int[] expectedValuesRow1 = {3, 3, 3, 3, 3, 3, 0, 0, 0, 0};
-        return arrayFill(expectedValuesCol1,expectedValuesCol10,expectedValuesRow1);
+        return arrayFill(expectedValuesCol1, expectedValuesCol10, expectedValuesRow1);
     }
 
+    void testHelper(int[] playerCards, int DealerValue, Player player) {
+        dealerCard = new Card("wildcard", DealerValue);
+        Card playerCard1 = new Card("wildcard", playerCards[0]);
+        Card playerCard2 = new Card("wildcard", playerCards[1]);
+        player.handCards = new ArrayList<>(List.of(playerCard1, playerCard2));
+        player.calcHandScore();
+
+    }
 
     @ParameterizedTest
     @MethodSource("pairDoubleAfterSplitValues")

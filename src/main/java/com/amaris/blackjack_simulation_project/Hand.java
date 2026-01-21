@@ -3,6 +3,8 @@ package com.amaris.blackjack_simulation_project;
 import java.util.ArrayList;
 
 public class Hand {
+    //arraylist to keep track of where soft aces are in hand so we don't have to search
+    private final ArrayList<Integer> softAceLocations;
     //Create array with max hand size of 11 cards (theoretical max in blackjack) this could be an arraylist but for simplicity using array
     private ArrayList<Card> cards;
     //integer to track current score of hand
@@ -14,8 +16,6 @@ public class Hand {
     //integer to track current hand size
     private int handSize;
     private boolean hasBust = false;
-    //arraylist to keep track of where soft aces are in hand so we don't have to search
-    private final ArrayList<Integer> softAceLocations;
 
 
     public Hand() {
@@ -25,7 +25,6 @@ public class Hand {
 
         softAceLocations = new ArrayList<>();
     }
-
 
 
     public Hand(Hand hand) {
@@ -45,7 +44,7 @@ public class Hand {
         this.cards.add(new Card(card));
 
         //if the added card is an ace
-        if(card.getValue() == 11){
+        if (card.getValue() == 11) {
 
             //add that there is a soft ace at this spot
             softAceLocations.add(handSize);
@@ -73,7 +72,7 @@ public class Hand {
     //check for soft hand M
     public boolean checkSoft(ArrayList<Card> hand) {
         /*  This may now be obsolete since we are checking for soft aces at the time of adding card
-        * */
+         * */
         for (int i = 0; i < handSize; i++) {
             //check if any card is an Ace acting as 11
             if (hand.get(i).getValue() == 11) {
@@ -146,6 +145,7 @@ public class Hand {
 
         }
     }
+
     //getter for the locations of soft aces
     public ArrayList<Integer> getSoftAceLocations() {
         return this.softAceLocations;
@@ -159,6 +159,7 @@ public class Hand {
     public void setHasBust(boolean hasBust) {
         this.hasBust = hasBust;
     }
+
     @Override
     public String toString() {
         StringBuilder handString = new StringBuilder("Hand: ");

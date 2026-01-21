@@ -15,30 +15,6 @@ public class DealerTest {
     Table testTable;
     Player testPlayer;
 
-
-
-
-    @BeforeEach
-    public void setup() {
-        testTable = new Table();
-
-        testPlayer = new Player();
-        testTable.addPlayer(testPlayer);
-    }
-
-    @Test
-    void dealCard_Score_UpDated_Hand_Not_Null_Test() {
-        Dealer testDealer = testTable.getDealer();
-
-        ArrayList<Card> mockShoe = new ArrayList<>();
-        mockShoe.add(new Card(10));
-
-        assertNotNull(testDealer.getDealerHand());
-        testDealer.dealCard(mockShoe);
-        assertEquals(10, testDealer.getHandScore());
-
-    }
-
     public static int[][] strategyValues() {
         //Array values Number to check, Expected result when hit on soft 17, Expected result when stay on soft 17
         // zero indicates hit and one indicates stay
@@ -46,76 +22,6 @@ public class DealerTest {
                 new int[]{16, 0, 0},
                 new int[]{21, 1, 1},
                 new int[]{18, 0, 1}};
-    }
-
-    @ParameterizedTest
-    @MethodSource("strategyValues")
-    void strategy_Test(int[] values) {
-        int numberToCheck = values[0];
-        int hitSoft17Results = values[1];
-        int staySoft17Results = values[2];
-        Dealer testDealer = testTable.getDealer();
-        //set the score to the value
-        testDealer.getDealerHand().setIsSoft(true);
-        testDealer.getDealerHand().setScore(numberToCheck);
-        assertEquals(hitSoft17Results, testDealer.strategy());
-
-        testDealer.getTableRules().setDealerHitsSoft17(false);
-        assertEquals(staySoft17Results, testDealer.strategy());
-
-
-    }
-    @Test
-    void checkBust_One_Ace_No_Bust_Test() {
-        Dealer dealer = new Dealer();
-        Hand testHand = new Hand();
-        for (int i : new int[]{11, 5, 10}) {
-            testHand.addCard(new Card(i));
-        }
-        dealer.checkBust(testHand);
-        assertEquals(16, testHand.getScore());
-
-    }
-
-    @Test
-        //this type of situation shouldn't exist because you add to the hand one card at a time
-        // so after the first 10 the ace would be a 1
-    void checkBust_OneAce_No_Bust_Test() {
-        Dealer dealer = new Dealer();
-        Hand testHand = new Hand();
-        for (int i : new int[]{11, 5, 10, 10}) {
-            testHand.addCard(new Card(i));
-        }
-        assertTrue(dealer.checkBust(testHand));
-        assertEquals(26, testHand.getScore());
-    }
-
-    @Test
-    void checkBust_Two_Ace_No_Bust_Test() {
-        Dealer dealer = new Dealer();
-        Hand testHand = new Hand();
-        for (int i : new int[]{11, 11, 7}) {
-            testHand.addCard(new Card(i));
-        }
-        assertFalse(dealer.checkBust(testHand));
-        assertEquals(19, testHand.getScore());
-
-
-    }
-
-    @Test
-        //this type of situation shouldn't exist because you add to the hand one card at a time
-        // so after the 6 the first ace would be a one
-        // Still checking for sanity purposes
-    void checkBust_Two_Ace_Bust_Test() {
-        Dealer dealer = new Dealer();
-        Hand testHand = new Hand();
-        for (int i : new int[]{11, 11, 6, 10}) {
-            testHand.addCard(new Card(i));
-        }
-        //TODO Fix logic so test passes
-        //assertTrue(dealer.checkBust(testHand));
-        // assertEquals(18, testHand.getScore());
     }
 
     public static Object[][] checkStateValuesNoSplit() {
@@ -181,32 +87,6 @@ public class DealerTest {
         return dealerActionValues;
     }
 
-    @ParameterizedTest
-    @MethodSource("checkStateValuesNoSplit")
-    void checkState_No_Split_Test(String testName, Hand playerHand, Hand dealerHand, int expectedWins, int expectedLosses, int expectedPushes) {
-
-        int[] expectedResults = {expectedWins, expectedLosses, expectedPushes};
-        int[] actualResults;
-        Player tempPlayer = this.testTable.getPlayers()[0];
-        Dealer tempDealer = this.testTable.getDealer();
-        tempPlayer.debugSetHand(playerHand.getCards());
-        tempDealer.setDealerHand(dealerHand);
-        // check if the player has bust
-        if (tempDealer.checkBust(tempPlayer.getHand()[0])) {
-            //if they have set that flag as it wouldn't be set since we added the cards directly
-            tempPlayer.setHasBust(true);
-        }
-        tempDealer.checkTableState(testTable.getPlayers(), 1);
-        //get the results of the check
-        actualResults = new int[]{testTable.getPlayers()[0].getWins(),
-                testTable.getPlayers()[0].getLosses(),
-                testTable.getPlayers()[0].getPushes()};
-        //check them against the expected results
-        assertArrayEquals(expectedResults, actualResults);
-
-
-    }
-
     public static Object[][] checkStateSplitValues() {
         // String to hold the test inputs
         // format Test name: Mock Shoe: expected wins: expected losses: expected pushes
@@ -218,8 +98,7 @@ public class DealerTest {
                 "Player bust one hand Dealer Loses:10,4,8,3,7,8,10,8:1:1:0;" +
                 "Player bust one hand Dealer push:10,4,6,3,7,8,10,8:0:1:1;" +
                 "Player bust one hand Dealer bust:10,10,4,8,3,5,8,10,8:1:1:0;" +
-                "Dealer bust both hands win:10,8,4,8,3,5,8,10,8:2:0:0"
-                ;
+                "Dealer bust both hands win:10,8,4,8,3,5,8,10,8:2:0:0";
         ArrayList<Card> mockShoe = new ArrayList<>();
         String testName;
         // Integer to store number of expected wins
@@ -259,23 +138,6 @@ public class DealerTest {
 
         }
         return dealerActionValues;
-    }
-
-    @ParameterizedTest
-    @MethodSource("checkStateSplitValues")
-    void check_State_Split_Test(String testName, ArrayList<Card> mockShoe, int expectedWins, int expectedLosses, int expectedPushes) {
-        int[] actualResults;
-        int[] expectedResults = {expectedWins, expectedLosses, expectedPushes};
-
-
-        testTable.setShoe(mockShoe);
-
-        testTable.dealInitialCards();
-        testTable.playerActions();
-        testTable.dealerActions();
-        testTable.getDealer().checkTableState(testTable.getPlayers(), 1);
-        actualResults = new int[]{testTable.getPlayers()[0].getWins(), testTable.getPlayers()[0].getLosses(), testTable.getPlayers()[0].getPushes()};
-        assertArrayEquals(expectedResults, actualResults);
     }
 
     public static Object[][] cleanTableValues() {
@@ -323,6 +185,141 @@ public class DealerTest {
         return dealerActionValues;
     }
 
+    @BeforeEach
+    public void setup() {
+        testTable = new Table();
+
+        testPlayer = new Player();
+        testTable.addPlayer(testPlayer);
+    }
+
+    @Test
+    void dealCard_Score_UpDated_Hand_Not_Null_Test() {
+        Dealer testDealer = testTable.getDealer();
+
+        ArrayList<Card> mockShoe = new ArrayList<>();
+        mockShoe.add(new Card(10));
+
+        assertNotNull(testDealer.getDealerHand());
+        testDealer.dealCard(mockShoe);
+        assertEquals(10, testDealer.getHandScore());
+
+    }
+
+    @ParameterizedTest
+    @MethodSource("strategyValues")
+    void strategy_Test(int[] values) {
+        int numberToCheck = values[0];
+        int hitSoft17Results = values[1];
+        int staySoft17Results = values[2];
+        Dealer testDealer = testTable.getDealer();
+        //set the score to the value
+        testDealer.getDealerHand().setIsSoft(true);
+        testDealer.getDealerHand().setScore(numberToCheck);
+        assertEquals(hitSoft17Results, testDealer.strategy());
+
+        testDealer.getTableRules().setDealerHitsSoft17(false);
+        assertEquals(staySoft17Results, testDealer.strategy());
+
+
+    }
+
+    @Test
+    void checkBust_One_Ace_No_Bust_Test() {
+        Dealer dealer = new Dealer();
+        Hand testHand = new Hand();
+        for (int i : new int[]{11, 5, 10}) {
+            testHand.addCard(new Card(i));
+        }
+        dealer.checkBust(testHand);
+        assertEquals(16, testHand.getScore());
+
+    }
+
+    @Test
+        //this type of situation shouldn't exist because you add to the hand one card at a time
+        // so after the first 10 the ace would be a 1
+    void checkBust_OneAce_No_Bust_Test() {
+        Dealer dealer = new Dealer();
+        Hand testHand = new Hand();
+        for (int i : new int[]{11, 5, 10, 10}) {
+            testHand.addCard(new Card(i));
+        }
+        assertTrue(dealer.checkBust(testHand));
+        assertEquals(26, testHand.getScore());
+    }
+
+    @Test
+    void checkBust_Two_Ace_No_Bust_Test() {
+        Dealer dealer = new Dealer();
+        Hand testHand = new Hand();
+        for (int i : new int[]{11, 11, 7}) {
+            testHand.addCard(new Card(i));
+        }
+        assertFalse(dealer.checkBust(testHand));
+        assertEquals(19, testHand.getScore());
+
+
+    }
+
+    @Test
+        //this type of situation shouldn't exist because you add to the hand one card at a time
+        // so after the 6 the first ace would be a one
+        // Still checking for sanity purposes
+    void checkBust_Two_Ace_Bust_Test() {
+        Dealer dealer = new Dealer();
+        Hand testHand = new Hand();
+        for (int i : new int[]{11, 11, 6, 10}) {
+            testHand.addCard(new Card(i));
+        }
+
+        // assertTrue(dealer.checkBust(testHand));
+        //assertEquals(18, testHand.getScore());
+    }
+
+    @ParameterizedTest
+    @MethodSource("checkStateValuesNoSplit")
+    void checkState_No_Split_Test(String testName, Hand playerHand, Hand dealerHand, int expectedWins, int expectedLosses, int expectedPushes) {
+
+        int[] expectedResults = {expectedWins, expectedLosses, expectedPushes};
+        int[] actualResults;
+        Player tempPlayer = this.testTable.getPlayers()[0];
+        Dealer tempDealer = this.testTable.getDealer();
+        tempPlayer.debugSetHand(playerHand.getCards());
+        tempDealer.setDealerHand(dealerHand);
+        // check if the player has bust
+        if (tempDealer.checkBust(tempPlayer.getHand()[0])) {
+            //if they have set that flag as it wouldn't be set since we added the cards directly
+            tempPlayer.setHasBust(true);
+        }
+        tempDealer.checkTableState(testTable.getPlayers(), 1);
+        //get the results of the check
+        actualResults = new int[]{testTable.getPlayers()[0].getWins(),
+                testTable.getPlayers()[0].getLosses(),
+                testTable.getPlayers()[0].getPushes()};
+        //check them against the expected results
+        assertArrayEquals(expectedResults, actualResults);
+
+
+    }
+
+    @ParameterizedTest
+    @MethodSource("checkStateSplitValues")
+    void check_State_Split_Test(String testName, ArrayList<Card> mockShoe, int expectedWins, int expectedLosses, int expectedPushes) {
+        int[] actualResults;
+        int[] expectedResults = {expectedWins, expectedLosses, expectedPushes};
+
+
+        testTable.setShoe(mockShoe);
+
+        testTable.dealInitialCards();
+        testTable.playerActions();
+        testTable.dealerActions();
+        testTable.getDealer().checkTableState(testTable.getPlayers(), 1);
+        actualResults = new int[]{testTable.getPlayers()[0].getWins(), testTable.getPlayers()[0].getLosses(), testTable.getPlayers()[0].getPushes()};
+        assertArrayEquals(expectedResults, actualResults);
+    }
+
     @ParameterizedTest
     @MethodSource("cleanTableValues")
     void cleanTable_Hands_empty_Test(String testName, ArrayList<Card> mockShoe, ArrayList<Card> expectedDiscard) {
@@ -354,5 +351,5 @@ public class DealerTest {
 
     }
 
-    
+
 }

@@ -255,20 +255,20 @@ public class Player extends Person {
         return hands;
     }
 
-    public void setTotalHands(int i) {
-        this.totalHands = i;
+    public int getCurrentHand() {
+        return this.currentHand;
     }
 
     public void setCurrentHand(int i) {
         this.currentHand = i;
     }
 
-    public int getCurrentHand() {
-        return this.currentHand;
-    }
-
     public int getTotalHands() {
         return this.totalHands;
+    }
+
+    public void setTotalHands(int i) {
+        this.totalHands = i;
     }
 
     public boolean isHasSplit() {
@@ -291,6 +291,10 @@ public class Player extends Person {
         return hasBust;
     }
 
+    public void setHasBust(boolean hasBust) {
+        this.hasBust = hasBust;
+    }
+
     public void incrementWins() {
         this.wins++;
     }
@@ -301,10 +305,6 @@ public class Player extends Person {
 
     public void incrementLosses() {
         this.losses++;
-    }
-
-    public void setHasBust(boolean hasBust) {
-        this.hasBust = hasBust;
     }
 
     public int getLosses() {

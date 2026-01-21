@@ -6,10 +6,9 @@ public class Card {
     String suit = "";
     String rank = "";
     String suitAndRank;
-
+    boolean toString;
     //Integer to hold value of card
     private int value;
-    boolean toString;
 
     public Card() {
         this.suit = "";
@@ -24,8 +23,9 @@ public class Card {
         this.suitAndRank = suitAndRank;
         this.value = value;
     }
+
     //Constructor that only cares about card value for testing
-    public Card(int value){
+    public Card(int value) {
         this.value = value;
     }
 
@@ -48,6 +48,10 @@ public class Card {
         return this.value;
     }
 
+    public void setValue(int value) {
+        this.value = value;
+    }
+
     //Getter method for value
     public String getSuitAndRank() {
         return this.suitAndRank;
@@ -56,11 +60,11 @@ public class Card {
     public String getRank() {
         return rank;
     }
+    //toString method for easy printing
 
     public void setRank(String rank) {
         this.rank = rank;
     }
-    //toString method for easy printing
 
     public String getSuit() {
         return suit;
@@ -68,9 +72,6 @@ public class Card {
 
     public void setSuit(String suit) {
         this.suit = suit;
-    }
-    public void setValue(int value) {
-        this.value = value;
     }
 
     @Override

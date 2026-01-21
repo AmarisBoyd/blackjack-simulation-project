@@ -7,10 +7,12 @@ import java.util.ArrayList;
 public abstract class Person {
     protected int handScore;
     TableRules rules;
-    Person(){
+
+    Person() {
         this.handScore = 0;
 
     }
+
     public abstract void dealCard(ArrayList<Card> Shoe);
 
 

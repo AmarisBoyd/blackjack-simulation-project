@@ -10,10 +10,7 @@ import java.util.Collections;
 
 // Class to represent a blackjack table
 public class Table {
-    //Variables to hold game state
-    //Dealer object to keep logic of table consistent
-    private Dealer dealer;
-    //Array to hold a single deck of cards for loading the shoe 
+    //Array to hold a single deck of cards for loading the shoe
     Card[] deck;
     //Array to hold "shoe" of cards (multiple decks)
     ArrayList<Card> shoe;
@@ -21,11 +18,13 @@ public class Table {
     ArrayList<Card> discard;
     //Array to hold players at the table
     Player[] players;
-
     //Object to hold specific table rules
     TableRules rules;
     //integer to keep track of where the cut card is to stop the shoe
     int cutCard = 0;
+    //Variables to hold game state
+    //Dealer object to keep logic of table consistent
+    private Dealer dealer;
     private int playerCount = 0;
     //boolean to track if this is the last hand of the shoe
     private boolean lastHand;
@@ -337,6 +336,11 @@ public class Table {
         return this.shoe;
     }
 
+    //Setter for the shoe for making deterministic shoes
+    public void setShoe(ArrayList<Card> testShoe) {
+        this.shoe = testShoe;
+    }
+
     public Card[] getDeck() {
         return deck;
     }
@@ -382,17 +386,16 @@ public class Table {
         return this.players;
     }
 
-    //Setter for the shoe for making deterministic shoes
-    public void setShoe(ArrayList<Card> testShoe) {
-        this.shoe = testShoe;
-    }
-
     public Dealer getDealer() {
         return this.dealer;
     }
 
     public ArrayList<Card> getDiscard() {
         return this.discard;
+    }
+
+    public void setDiscard(ArrayList<Card> expectedDiscard) {
+        this.discard = expectedDiscard;
     }
 
     public String getDiscardToString() {
@@ -402,10 +405,6 @@ public class Table {
         }
 
         return shoeString.toString();
-    }
-
-    public void setDiscard(ArrayList<Card> expectedDiscard) {
-        this.discard = expectedDiscard;
     }
 
     public boolean getLastHand() {
