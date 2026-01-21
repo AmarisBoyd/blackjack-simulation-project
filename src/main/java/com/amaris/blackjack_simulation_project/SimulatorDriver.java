@@ -9,13 +9,15 @@ import java.nio.file.StandardOpenOption;
 
 //TODO Implement command line version of selecting options
 public class SimulatorDriver {
-    static void driver(String[] args) throws Exception {
+    public static void driver(String[] args) throws Exception {
         String outputFile;
 
         //if the arguments are too much or too little show usage
         if (args.length == 0 || args.length > 3) {
+
             System.err.println("Usage: java SimulatorDriver <number of players> <number of hands> [output_file]");
-            System.exit(1);
+            throw new IllegalArgumentException("Usage: java SimulatorDriver <number of players> <number of hands> [output_file]]");
+
         }
         //Create a Default table
         Table defaultTable = new Table();
@@ -46,6 +48,7 @@ public class SimulatorDriver {
             for (int i = 0; i < numPlayers; i++) {
 
                 defaultTable.addPlayer(new Player());
+                defaultTable.getPlayers()[i].setPlayerID(i + 1);
             }
             //try and load the deck
             defaultTable.loadDeck();
