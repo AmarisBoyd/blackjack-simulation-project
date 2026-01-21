@@ -37,8 +37,6 @@ public class Dealer extends Person {
             } else return 0;
 
 
-
-
         } else {
             if (this.handScore > 16) {
                 return 1;
@@ -184,9 +182,6 @@ public class Dealer extends Person {
         // get the current hand for readability
         int currentHand = currentPlayer.getCurrentHand();
 
-        //add the hand that bust to the discard
-        discard.addAll(currentPlayer.getHand()[currentHand].getCards());
-
         //check if the player has split
         if (!currentPlayer.isHasSplit()) {
             //if they haven't then they only had this hand so they have bust and are out of the game
@@ -206,17 +201,113 @@ public class Dealer extends Person {
 
 
         }
+
+        //add the hand that bust to the discard
+        discard.addAll(currentPlayer.getHand()[currentHand].getCards());
         //clear the current hand so the score is 0
         currentPlayer.getHand()[currentHand].setScore(0);
         //set it so the now empty hand has bust
         currentPlayer.getHand()[currentHand].setHasBust(true);
 
 
-
-
     }
 
+    //Check if the player has bust by iterating over every card in the hand functional
+    //but does potentially unnecessary checks
     public boolean checkBust(Hand hand) {
+        //on the initial hand
+        if (hand.getCards().size() == 2) {
+            //check if its two aces
+            if (hand.getCards().get(0).getValue() == 11 && hand.getCards().get(1).getValue() == 11) {
+                //if it is return that it hasn't busted but don't alter the cards
+                return false;
+            }
+        }
+
+        //if the score of the current hand isn't higher than 21
+        if (!(hand.getScore() > 21))
+            //return false so we don't bother with other logic
+            return false;
+        //if the hand is not soft
+        if (!hand.checkSoft(hand.getCards())) {
+            //and hand score is over 21 return true
+
+            return hand.getScore() > 21;
+        }
+        for (int i = 0; i < hand.getHandSize(); i++) {
+            //check if the card has a value of 11
+            if (hand.getCards().get(i).getValue() == 11) {
+                //check if the score is over 21
+                if (hand.getScore() > 21) {
+                    //if the score is set the cards value to 1 for
+                    // some reason java is treating
+                    // all aces of the same suit and rank as the same object so create a new card
+                    hand.getCards().set(i, new Card(hand.getCards().get(i).getSuit(), hand.getCards().get(i).getRank(), 1));
+                    //update the score
+                    hand.updateScore();
+                    //set it so the hand is no longer soft
+                    hand.setIsSoft(false);
+                }
+                //if the hand is less than 21 but there is an 11 value
+                if (hand.getScore() < 21) {
+                    //set it back to being soft
+                    hand.setIsSoft(true);
+                }
+
+
+            }
+
+
+        }
+        //if at the end of the check hand is not soft and is still over 21
+        //return that the player bust
+        return !hand.getIsSoft() && hand.getScore() > 21;
+    }
+
+    //Separate dealer check for potential differences later on
+    public boolean dealerCheckBust(Hand hand) {
+
+        //if the score of the current hand isn't higher than 21
+        if (!(hand.getScore() > 21))
+            //return false so we don't bother with other logic
+            return false;
+        //if the hand is not soft
+        if (!hand.checkSoft(hand.getCards())) {
+            //and hand score is over 21 return true
+
+            return hand.getScore() > 21;
+        }
+        for (int i = 0; i < hand.getHandSize(); i++) {
+            //check if the card has a value of 11
+            if (hand.getCards().get(i).getValue() == 11) {
+                //check if the score is over 21
+                if (hand.getScore() > 21) {
+                    //if the score is set the cards value to 1 for
+                    // some reason java is treating
+                    // all aces of the same suit and rank as the same object so create a new card
+                    hand.getCards().set(i, new Card(hand.getCards().get(i).getSuit(), hand.getCards().get(i).getRank(), 1));
+                    //update the score
+                    hand.updateScore();
+                    //set it so the hand is no longer soft
+                    hand.setIsSoft(false);
+                }
+                //if the hand is less than 21 but there is an 11 value
+                if (hand.getScore() < 21) {
+                    //set it back to being soft
+                    hand.setIsSoft(true);
+                }
+
+
+            }
+        }
+        //if at the end of the check hand is not soft and is still over 21
+        //return that the player bust
+        return !hand.getIsSoft() && hand.getScore() > 21;
+    }
+
+    //Potential optimized method of checking bust using the location of soft aces
+    //Non-functional
+    public boolean checkBustSoftAce(Hand hand) {
         //local variables for readability
         ArrayList<Integer> softAces = hand.getSoftAceLocations();
         ArrayList<Card> handCards = hand.getCards();
@@ -267,6 +358,7 @@ public class Dealer extends Person {
     public TableRules getTableRules() {
         return this.rules;
     }
+
     @Override
     public String toString() {
 
