@@ -1,10 +1,11 @@
 package com.amaris.blackjack_simulation_project;
 
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class SimulatorDriverTest {
-    Table testTable;
+
 
     @BeforeEach
     public void setUp() {
@@ -14,7 +15,26 @@ public class SimulatorDriverTest {
 
     //TODO
     @Test
-    void one_Player_Stress_Test() {
+    void one_Player_Stress_Test() throws Exception {
+        String[] driverArgs = {"1", "300", "src/main/Test_Results.txt"};
+        try {
+            SimulatorDriver.driver(driverArgs);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
+    }
+
+    @Test
+    void driverTestThrowsIllegalArgumentException() throws Exception {
+        String[] driverArgs = {"1", "300", "src/main/Test_Results.txt", "2"};
+        try {
+            Assertions.assertThrows(IllegalArgumentException.class, () -> {
+                SimulatorDriver.driver(driverArgs);
+            });
+
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
     }
 }
 
