@@ -354,4 +354,8 @@ public class Player extends Person {
                 ", handScore=" + handScore +
                 '}';
     }
+
+    public void setPlayerID(int i) {
+        this.playerID = i;
+    }
 }
