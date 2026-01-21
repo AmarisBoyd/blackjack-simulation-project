@@ -1,6 +1,5 @@
 package com.amaris.blackjack_simulation_project;
 
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 
@@ -8,12 +7,23 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class BlackjackSimulationProjectApplication {
 
     static void main(String[] args) {
-        SpringApplication.run(BlackjackSimulationProjectApplication.class, args);
-        //TODO Clean up the table/Dealer relationship
-        //TODO Implement playerActions
-        //TODO Implement dealerActions
-        //TODO Implement checkTableState
-        //TODO Implement cleanTable
+        String[] arguments;
+        if (args.length == 0) {
+            arguments = new String[2];
+            arguments[0] = String.valueOf(1);
+            arguments[1] = String.valueOf(30);
+        } else {
+            arguments = args;
+        }
+//        SpringApplication.run(BlackjackSimulationProjectApplication.class, args);
+
+        try {
+            SimulatorDriver.driver(arguments);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            System.exit(1);
+        }
+        System.exit(0);
 
 
     }
