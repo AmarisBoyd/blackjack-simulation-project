@@ -95,7 +95,7 @@ public class TableRules {
 
     //Individual getters for the variables
     //getter for max players
-    public int getMaxplayers() {
+    public int getMaxPlayers() {
         return this.maxPlayers;
     }
 
@@ -133,7 +133,7 @@ public class TableRules {
         return this.doubleAfterSplitAllowed;
     }
 
-    //getter for if resplitting aces is alowed
+    //getter for if resplitting aces is allowed
     public boolean getResplitAces() {
         return this.resplitAcesAllowed;
     }
