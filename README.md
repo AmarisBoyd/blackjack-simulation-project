@@ -24,7 +24,15 @@ A high-performance Java simulation engine designed to analyze statistical win-ra
 ##  Installation & Usage
 **In progress**
 
-
+##Installation
+1. Clone the repo 
+```
+git clone https://github.com/AmarisBoyd/blackjack-simulation-project.git
+```
+2. Building with maven
+```
+mvnw package
+```
 
 
 ## Authors
