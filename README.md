@@ -14,7 +14,7 @@ A high-performance Java simulation engine designed to analyze statistical win-ra
 * **Test-Driven:** Extensive unit testing with Mockito to ensure game logic accuracy and deck integrity.
 
 ##  Roadmap
-- [ ] **Phase 1:** Core Game Logic
+- [x] **Phase 1:** Core Game Logic
 - [x] **Phase 1:**  Multi-strategy Support
 - [x] **Phase 1:** JUnit/Mockito Testing Suite
 - [ ] **Phase 2:** Implement JDBC/JPA persistence layer for MySQL data logging.
