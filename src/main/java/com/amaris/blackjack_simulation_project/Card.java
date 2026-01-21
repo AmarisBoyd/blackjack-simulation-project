@@ -36,6 +36,13 @@ public class Card {
         this.suitAndRank = suit + " " + rank;
     }
 
+    public Card(Card card) {
+        this.suit = card.getSuit();
+        this.rank = card.getRank();
+        this.value = card.getValue();
+        this.suitAndRank = card.getSuitAndRank();
+    }
+
     //Getter method for Rank and suit
     public int getValue() {
         return this.value;
