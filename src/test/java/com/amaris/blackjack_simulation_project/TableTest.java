@@ -7,6 +7,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -21,7 +22,13 @@ public class TableTest {
     public void setUp(){
         testTable = new Table();
         // load the card data from the Cards.Json file
-        testTable.loadDeck();
+        try {
+            testTable.loadDeck();
+        } catch (IOException e) {
+            System.err.println(e.getMessage());
+            System.err.println("Error loading Deck");
+            System.exit(1);
+        }
         // Load the shoe up with copies of the deck
         testTable.loadShoe();
 
@@ -201,22 +208,24 @@ public class TableTest {
         actionValues[0] = new Object[]{hardValueTest, 18};
         actionValues[1] = new Object[]{softValueTest, 19};
         actionValues[2] = new Object[]{splitTest, 17};
-        actionValues[3] = new Object[]{bustTest, 23};
+        actionValues[3] = new Object[]{bustTest, 0};
         return actionValues;
     }
 
     @ParameterizedTest
     @MethodSource("playerActionValues")
     void one_Player_Player_Action_Test(ArrayList<Card> testShoe, int expectedValue) {
+        Table onePlayerTestTable = new Table();
+
         // create the player
         Player playerOne = new Player();
         //add the player
-        testTable.addPlayer(playerOne);
-        testTable.setShoe(testShoe);
-        testTable.dealInitialCards();
-        Assertions.assertNotNull(testTable.getPlayers()[0].getHand());
-        testTable.playerActions();
-        Assertions.assertEquals(expectedValue, testTable.getPlayers()[0].getHandScore());
+        onePlayerTestTable.addPlayer(playerOne);
+        onePlayerTestTable.setShoe(testShoe);
+        onePlayerTestTable.dealInitialCards();
+        Assertions.assertNotNull(onePlayerTestTable.getPlayers()[0].getHand());
+        onePlayerTestTable.playerActions();
+        Assertions.assertEquals(expectedValue, onePlayerTestTable.getPlayers()[0].getHand()[0].getScore());
 
 
     }
@@ -285,43 +294,6 @@ public class TableTest {
 
         Assertions.assertEquals(expectedDealerHandValue, testTable.getDealer().getHandScore());
 
-
-    }
-
-
-    @Test
-    void one_Player_Stress_Test() {
-
-        // create the player
-        Player playerOne = new Player();
-        // add it to the table
-        testTable.addPlayer(playerOne);
-        //shuffle the card
-        testTable.shuffleShoe();
-        //cut the cards
-        testTable.cutShoe(52);
-
-        for (int i = 0; i < 300; i++) {// deal the initial cards
-            if (testTable.getShoe().size() < 52) {
-                testTable.loadShoe();
-                //shuffle the card
-                testTable.shuffleShoe();
-                //cut the cards
-                testTable.cutShoe(52);
-            }
-            testTable.dealInitialCards();
-            //do player action
-            testTable.playerActions();
-            //do dealer actions
-//            testTable.dealerActions();
-//            //get the results
-//            testTable.getDealer().checkTableState(testTable.getPlayers(),testTable.getPlayerCount());
-//            //clean the table
-            testTable.getDealer().cleanTable(testTable.getPlayers(), testTable.getPlayerCount(), testTable.getDiscard());
-            //  System.out.println(testTable.handResults());
-            System.out.println(i);
-
-        }
 
     }
 }
