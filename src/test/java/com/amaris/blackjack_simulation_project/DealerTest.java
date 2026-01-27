@@ -202,7 +202,7 @@ public class DealerTest {
 
         assertNotNull(testDealer.getDealerHand());
         testDealer.dealCard(mockShoe);
-        assertEquals(10, testDealer.getHandScore());
+        assertEquals(10, testDealer.getDealerHand().getScore());
 
     }
 
@@ -313,7 +313,7 @@ public class DealerTest {
         testTable.setShoe(mockShoe);
 
         testTable.dealInitialCards();
-        testTable.playerActions();
+        testTable.playerTurn();
         testTable.dealerActions();
         testTable.getDealer().checkTableState(testTable.getPlayers(), 1);
         actualResults = new int[]{testTable.getPlayers()[0].getWins(), testTable.getPlayers()[0].getLosses(), testTable.getPlayers()[0].getPushes()};
@@ -332,7 +332,7 @@ public class DealerTest {
         //deal the first cards
         testTable.dealInitialCards();
         //do player action
-        testTable.playerActions();
+        testTable.playerTurn();
         //do dealer actions
         testTable.dealerActions();
         //check the player state so wins and losses are updated
