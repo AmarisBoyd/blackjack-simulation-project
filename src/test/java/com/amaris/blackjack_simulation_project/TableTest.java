@@ -295,7 +295,7 @@ public class TableTest {
         //have the dealer take their actions
         testTable.dealerActions();
 
-        Assertions.assertEquals(expectedDealerHandValue, testTable.getDealer().getHandScore());
+        Assertions.assertEquals(expectedDealerHandValue, testTable.getDealer().getDealerHand().getScore());
 
 
     }
