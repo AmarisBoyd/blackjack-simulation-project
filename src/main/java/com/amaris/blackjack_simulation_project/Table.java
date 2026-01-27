@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import static com.amaris.blackjack_simulation_project.BlackjackAction.*;
 
 // Class to represent a blackjack table
 public class Table {
@@ -61,30 +62,32 @@ public class Table {
 
     }
 
-    public void playerActions() {
+    public void playerTurn() {
         Player currentPlayer;
         //initialize a result to keep track of what each player decides to do
-        int result = 0;
+        BlackjackAction result = null;
         // loop through all players
         for (int i = 0; i < this.playerCount; i++) {
             //select current player from the array for easier access
             currentPlayer = this.players[i];
             //while this player hasn't stood on their last hand
-            while (result != 1) {
+            while (result != BlackjackAction.STAND) {
                 //check the strategy based on the hand
                 this.dealer.checkBust(currentPlayer.getHand()[currentPlayer.getCurrentHand()]);
                 result = currentPlayer.strategy(dealer.getUpCard());
                 //if they say give them a card
-                if (result == 0) {
+                if (result == HIT) {
                     result = hit(currentPlayer);
 
                 }
 
-                //player doubles down on the hand  only gets one card
-                if (result == 2) {
-                    result = doubleDown(currentPlayer);
+                //If the player is trying to double
+                if (result == DOUBLE_OR_HIT || result == DOUBLE_OR_STAND) {
+                    //call double down that will check if they are allowed to
+                    result = doubleDown(currentPlayer, result);
 
                 }
+
                 //player splits
                 if (result == 3) {
                     //check if the pair is a pair of aces
@@ -199,29 +202,46 @@ public class Table {
     }
 
 
-    private int hit(Player currentPlayer) {
+    private BlackjackAction hit(Player currentPlayer) {
         Hand workingHand = currentPlayer.getHand()[currentPlayer.getCurrentHand()];
         currentPlayer.dealCard(shoe);
         //If the player bust return 1 since they can no longer hit
 
         if (dealer.checkBust(workingHand)) {
             dealer.clearBust(currentPlayer, discard);
-            return 1;
+            return STAND;
         }
-        // otherwise return 0 so the loop continues
-        return 0;
+        // otherwise return Hit so the loop continues
+        return HIT;
     }
 
-    private int doubleDown(Player currentPlayer) {
+    private BlackjackAction doubleDown(Player currentPlayer, BlackjackAction currentAction) {
         Hand workingHand = currentPlayer.getHand()[currentPlayer.getCurrentHand()];
-        // give the player the next card
-        currentPlayer.dealCard(shoe);
-        //check if they bust in case of doubling on hard number
-        if (dealer.checkBust(workingHand)) {
-            dealer.clearBust(currentPlayer, discard);
+        //if the player hasn't split hands
+        if (currentPlayer.getTotalHands() == 0) {
+            //they are allowed to double so give them the next card
+            currentPlayer.dealCard(shoe);
+            //Then return stand so the loop ends
+            return STAND;
         }
-        //return that the player can no longer hit on this hand
-        return 1;
+
+        //if the player has split
+        // And is trying to double or hit
+        //check if they can double
+        // if they can
+        //give them a card
+        // then return stand so they can no longer hit
+        //if they cant
+        //return hit but don't give them the card so there isn't a double hit
+
+        //else if the player is trying to double or stand,
+        // and they are allowed to double
+        //give them a card
+        // then return stand so they can no longer hit
+        //if they cant
+        //return Stand to end the loop
+        //returning current action until logic is finished
+        return currentAction;
     }
 
     public void dealerActions() {
