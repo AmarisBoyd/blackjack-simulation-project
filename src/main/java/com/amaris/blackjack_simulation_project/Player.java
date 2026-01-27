@@ -16,8 +16,8 @@ public class Player extends Person {
 
     //Arrays to hold cards in hand multiple hands for splits for our each player will otherwise have only one hand
     protected Hand[] hands;
-
-
+    //Strategy to hold player behavior
+    Strategy strategy;
     //Record of wins losses and pushes for player
     protected int wins = 0;
     protected int losses = 0;
@@ -46,6 +46,7 @@ public class Player extends Person {
         for (int i = 0; i < maxHands; i++) {
             hands[i] = new Hand();
         }
+        this.strategy = new BasicStrategy();
 
     }
 
@@ -63,151 +64,39 @@ public class Player extends Person {
     }
 
     //Method to decide what action to take based on dealer's card and player's hand
-    public int strategy(Card dealerCard) {
-        // Int to hold "choice" of what to do 0=hit 1=stand 2=double 3=split default to hit
-        int decision;
-//        if(dealerCard.getValue()==1){
-//            dealerCard.setValue(11);
-//        }
-        //Array to hold current hand's cards for easier reading
-        handCards = this.hands[currentHand].getCards();
-        //Get current hand score
-        this.handScore = this.hands[currentHand].getScore();
+    public BlackjackAction strategy(Card dealerCard) {
+
+        // Int to hold "choice" of what to do as an enum
+        BlackjackAction decision;
+
+        //Get the current hand and store it for easier reading
+        Hand curHand = this.hands[currentHand];
 
         //Check to see if pair only on the first two cards
-        if (handCards.size() == 2) {
-            hands[currentHand].setIsPair(hands[currentHand].checkPair(handCards));
+        if (curHand.getHandSize() == 2) {
+            //if the current hand is a pair. Set isPair to true
+            curHand.setIsPair(curHand.checkPair(curHand.getCards()));
 
         }
-
-
-        //Check for soft hand
-        hands[currentHand].setIsSoft(hands[currentHand].checkSoft(handCards));
+        //Check if current hand is  soft and if it is set isSoft to true
+        curHand.setIsSoft(curHand.checkSoft(curHand.getCards()));
 
         //check to see if hand is a pair and total hands is under max splits
-        if (hands[currentHand].getIsPair() && totalHands < rules.getMaxSplits()) {
-
-
+        if (curHand.getIsPair() && totalHands < rules.getMaxSplits()) {
             //check against pair strategy table
-            decision = checkPairStrategy(dealerCard, handCards);
-
-
-        } else if (hands[currentHand].getIsSoft()) {
+            decision = strategy.checkPairStrategy(dealerCard, curHand);
+        }//if the current hand is not a pair and is soft
+        else if (curHand.getIsSoft()) {
             //check against soft hand strategy table
-            decision = checkSoftStrategy(dealerCard, handCards);
-        } else {
+            decision = strategy.checkSoftStrategy(dealerCard, curHand);
+        } //if the current hand is neither soft nor a pair
+        else {
             //check against hard hand strategy table
-            decision = checkHardStrategy(dealerCard, handCards);
+            decision = strategy.checkHardStrategy(dealerCard, curHand);
         }
         // Return the decision
-
         return decision;
     }
-
-
-    protected int checkPairStrategy(Card dealerCard, ArrayList<Card> hand) {
-        // Pair strategy table  rows represent player's pair (2-10,A) columns represent dealer's upcard (2-10,A)
-        // Reminder 0=hit 1=stand 2=double 3=split 
-
-        int[][] pairStrategyTableNoDouble = {
-                // Dealer's upcard: 2 3 4 5 6 7 8 9 10 A
-                /*2*/ {0, 0, 3, 3, 3, 3, 0, 0, 0, 0},
-                /*3*/ {0, 0, 3, 3, 3, 3, 0, 0, 0, 0},
-                /*4*/ {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                /*5*/ {2, 2, 2, 2, 2, 2, 2, 2, 0, 0},
-                /*6*/ {0, 3, 3, 3, 3, 0, 0, 0, 0, 0},
-                /*7*/ {3, 3, 3, 3, 3, 3, 0, 0, 0, 0},
-                /*8*/ {3, 3, 3, 3, 3, 3, 3, 3, 3, 3},
-                /*9*/ {3, 3, 3, 3, 3, 1, 3, 3, 1, 1},
-                /*10*/{1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-                /*A*/ {3, 3, 3, 3, 3, 3, 3, 3, 3, 3}
-        };
-        int[][] pairStrategyTableDoubleAfterSplit = {
-                // Dealer's upcard: 2 3 4 5 6 7 8 9 10 A
-                /*2*/ {3, 3, 3, 3, 3, 3, 0, 0, 0, 0},
-                /*3*/ {3, 3, 3, 3, 3, 3, 0, 0, 0, 0},
-                /*4*/ {0, 0, 0, 3, 3, 0, 0, 0, 0, 0},
-                /*5*/ {2, 2, 2, 2, 2, 2, 2, 2, 0, 0},
-                /*6*/ {3, 3, 3, 3, 3, 0, 0, 0, 0, 0},
-                /*7*/ {3, 3, 3, 3, 3, 3, 0, 0, 1, 1},
-                /*8*/ {3, 3, 3, 3, 3, 3, 3, 3, 3, 3},
-                /*9*/ {3, 3, 3, 3, 3, 1, 3, 3, 1, 1},
-                /*10*/{1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-                /*A*/ {3, 3, 3, 3, 3, 3, 3, 3, 3, 3}
-        };
-        if (this.rules.getDoubleAfterSplit()) {
-            return pairStrategyTableDoubleAfterSplit[hand.getFirst().getValue() - 2][dealerCard.getValue() - 2];
-        } else {
-            // Return the action from the pair strategy table
-            return pairStrategyTableNoDouble[hand.getFirst().getValue() - 2][dealerCard.getValue() - 2];
-        }
-    }
-
-
-    // Method to check soft hand strategy
-    protected int checkSoftStrategy(Card dealerCard, ArrayList<Card> hand) {
-        // Table for soft hand strategy 
-        // reminder 0=hit 1=stand 2=double 3=split(should not occur in soft strategy)
-//        //sanity check if the hand score somehow gets to less than and ace and a two
-//        if (handScore <13) {
-//            //hit
-//            return 0;
-//        }
-        if (handScore == 21) {
-            return 1;
-        }
-        int[][] softStrategyTable = {
-                // Dealer's upcard:
-                //      2 3 4 5 6 7 8 9 10 A
-                /*13*/ {0, 0, 0, 2, 2, 0, 0, 0, 0, 0},
-                /*14*/ {0, 0, 0, 2, 2, 0, 0, 0, 0, 0},
-                /*15*/ {0, 0, 2, 2, 2, 0, 0, 0, 0, 0},
-                /*16*/ {0, 0, 2, 2, 2, 0, 0, 0, 0, 0},
-                /*17*/ {1, 2, 2, 2, 2, 1, 1, 0, 0, 0},
-                /*18*/ {1, 1, 1, 1, 1, 1, 1, 1, 0, 0},
-                /*19*/ {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-                /*20*/ {1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
-        };
-        /*Return based on soft hand strategy table 
-        Subtract 13 from hand score to get correct row and dealer card value -2 for correct column
-        */
-        return softStrategyTable[handScore - 13][dealerCard.getValue() - 2];
-    }
-
-    // Method to check hard hand strategy
-    protected int checkHardStrategy(Card dealerCard, ArrayList<Card> hand) {
-        // Table for hard hand strategy Starts at 8 because the table only covers 8-20
-
-        if (handScore <= 8) {
-            return 0; //always hit under should be the only place this occurs 
-        }
-        //if the player has a hard 21
-        if (handScore >= 21) {
-            //stay
-            return 1;
-        }
-        int[][] hardStrategyTable = {
-                // Dealer's upcard:
-                /*      2 3 4 5 6 7 8 9 10 A*/
-                /*8*/  {0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-                /*9*/  {0, 2, 2, 2, 2, 0, 0, 0, 0, 0},
-                /*10*/ {2, 2, 2, 2, 2, 2, 2, 2, 0, 0},
-                /*11*/ {2, 2, 2, 2, 2, 2, 2, 2, 2, 2},
-                /*12*/ {0, 0, 1, 1, 1, 0, 0, 0, 0, 0},
-                /*13*/ {1, 1, 1, 1, 1, 0, 0, 0, 0, 0},
-                /*14*/ {1, 1, 1, 1, 1, 0, 0, 0, 0, 0},
-                /*15*/ {1, 1, 1, 1, 1, 0, 0, 0, 0, 0},
-                /*16*/ {1, 1, 1, 1, 1, 0, 0, 0, 0, 0},
-                /*17*/ {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-                /*18*/ {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-                /*19*/ {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-                /*20*/ {1, 1, 1, 1, 1, 1, 1, 1, 1, 1}
-
-        };
-
-        return hardStrategyTable[handScore - 8][dealerCard.getValue() - 2];
-    }
-
     //Debug helper  method to add cards to hand and see other functions work properly
     public void debugSetHand(ArrayList<Card> hand) {
         //add cards to first hand only for testing
@@ -216,14 +105,7 @@ public class Player extends Person {
 
     }
 
-    public void calcHandScore() {
-        //set to 0 to avoid multiple calls to this function adding more than needed
-        this.handScore = 0;
-        for (Card card : handCards) {
-            this.handScore += card.getValue();
-        }
 
-    }
 
 
     public void dealCard(ArrayList<Card> shoe) {
@@ -231,8 +113,6 @@ public class Player extends Person {
         this.hands[currentHand].addCard(shoe.getLast());
         // then remove it from the shoe
         shoe.remove(shoe.getLast());
-        //update the hand score
-        this.handScore = hands[currentHand].getScore();
     }
 
     @Override
@@ -351,7 +231,6 @@ public class Player extends Person {
                 ", wins=" + wins +
                 ", losses=" + losses +
                 ", pushes=" + pushes +
-                ", handScore=" + handScore +
                 '}';
     }
 
