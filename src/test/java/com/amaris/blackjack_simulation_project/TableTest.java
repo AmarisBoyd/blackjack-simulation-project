@@ -273,7 +273,7 @@ public class TableTest {
         onePlayerTestTable.setShoe(testShoe);
         onePlayerTestTable.dealInitialCards();
         Assertions.assertNotNull(onePlayerTestTable.getPlayers()[0].getHand());
-        onePlayerTestTable.playerActions();
+        onePlayerTestTable.playerTurn();
         Assertions.assertEquals(expectedValue, onePlayerTestTable.getPlayers()[0].getHand()[0].getScore());
 
 

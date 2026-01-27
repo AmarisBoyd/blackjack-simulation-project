@@ -64,7 +64,7 @@ public class SimulatorDriver {
                 //deal initial cards
                 defaultTable.dealInitialCards();
                 //Have the players do their actions
-                defaultTable.playerActions();
+                defaultTable.playerTurn();
                 // have the dealer do their actions
                 defaultTable.dealerActions();
                 //check the results of the game
