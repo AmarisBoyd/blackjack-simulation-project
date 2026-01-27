@@ -291,7 +291,7 @@ public class TableTest {
         // deal initial cards
         testTable.dealInitialCards();
         //have the players take their actions
-        testTable.playerActions();
+        testTable.playerTurn();
         //have the dealer take their actions
         testTable.dealerActions();
 
