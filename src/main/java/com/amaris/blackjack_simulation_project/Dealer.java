@@ -14,23 +14,20 @@ public class Dealer extends Person {
     @Override
     public void dealCard(ArrayList<Card> shoe) {
         //add the card to the hand
-        this.dealerHand.addCard(shoe.getLast());
-        shoe.removeLast();
-        //update the current score
-        this.handScore = this.dealerHand.getScore();
+        this.dealerHand.addCard(shoe.removeLast());
+
     }
 
     public int strategy() {
-        if (this.handScore > 21 && !(this.dealerHand.getIsSoft())) {
+        if (this.dealerHand.getScore() > 21 && !(this.dealerHand.getIsSoft())) {
             return 1;
         }
-        this.handScore = this.dealerHand.getScore();
         // if the dealer has 21
-        if (this.handScore == 21)
+        if (this.dealerHand.getScore() == 21)
             //stay
             return 1;
         if (this.rules.getHitSoft17()) {
-            if (this.handScore >= 17) {
+            if (this.dealerHand.getScore() >= 17) {
                 if (this.dealerHand.getIsSoft()) {
                     return 0;
                 } else return 1;
@@ -38,7 +35,7 @@ public class Dealer extends Person {
 
 
         } else {
-            if (this.handScore > 16) {
+            if (this.dealerHand.getScore() > 16) {
                 return 1;
             }
 
@@ -143,7 +140,6 @@ public class Dealer extends Person {
         //for dealer put hand on top of discard
         clearHand(this.dealerHand, discard);
         this.dealerHand = new Hand();
-        this.handScore = 0;
 
 
     }
@@ -364,7 +360,6 @@ public class Dealer extends Person {
 
         return "Dealer{" +
                 "hand=" + dealerHand.toString() +
-                ", handScore=" + handScore +
                 '}';
     }
 }

@@ -9,7 +9,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 @SpringBootTest
 
@@ -84,7 +85,7 @@ public class PlayerTest {
         Card playerCard1 = new Card("wildcard", playerCards[0]);
         Card playerCard2 = new Card("wildcard", playerCards[1]);
         player.handCards = new ArrayList<>(List.of(playerCard1, playerCard2));
-        player.calcHandScore();
+
 
     }
 
@@ -113,10 +114,10 @@ public class PlayerTest {
     void Hard_Strategy_18_On_8_Test() {
         Player player = new Player();
         testHelper(new int[]{10, 8}, 8, player);
-        assertNotEquals(0, player.handScore);
-        assertNotNull(player.handCards);
-        assertNotEquals(0, player.handScore);
-        assertEquals(18, player.handScore);
+        assertNotEquals(0, player.getHand()[player.getCurrentHand()].getScore());
+        int score = player.getHand()[player.getCurrentHand()].getScore();
+        assertNotEquals(0, score);
+        assertEquals(18, score);
         assertEquals(1, player.checkHardStrategy(dealerCard, player.handCards));
 
     }
@@ -137,10 +138,11 @@ public class PlayerTest {
     void soft_Strategy_18_On_10_Test() {
         Player player = new Player();
         testHelper(new int[]{7, 11}, 10, player);
-        assertNotEquals(0, player.handScore);
-        assertNotEquals(0, player.handScore);
+        int score = player.getHand()[player.getCurrentHand()].getScore();
+        assertNotEquals(0, score);
+        assertNotEquals(0, score);
 
-        assertEquals(18, player.handScore);
+        assertEquals(18, score);
         assertEquals(0, player.checkSoftStrategy(dealerCard, player.handCards));
 
     }
@@ -149,10 +151,11 @@ public class PlayerTest {
     void soft_17_Strategy_Test() {
         Player player = new Player();
         testHelper(new int[]{6, 11}, 10, player);
-        assertNotEquals(0, player.handScore);
-        assertNotEquals(0, player.handScore);
+        int score = player.getHand()[player.getCurrentHand()].getScore();
+        assertNotEquals(0, score);
+        assertNotEquals(0, score);
 
-        assertEquals(17, player.handScore);
+        assertEquals(17, score);
         assertEquals(0, player.checkSoftStrategy(dealerCard, player.handCards));
 
     }
