@@ -28,11 +28,15 @@ public class Player extends Person {
     protected TableRules rules;
     // Boolean to track if the player has split defaulting to false
     protected boolean hasSplit = false;
+    //Boolean to track if the player has split aces
+    protected boolean splitAces = false;
     //boolean to track if player has busted
     protected boolean hasBust = false;
+    // boolean to track if the player can split
+    protected boolean ableToSplit = true;
+    // boolean to track if player can double
+    protected boolean canDouble = true;
 
-
-    protected boolean splitAces = false;
 
     //Default constructor Uses most common blackjack rules
     public Player() {
@@ -65,13 +69,10 @@ public class Player extends Person {
 
     //Method to decide what action to take based on dealer's card and player's hand
     public BlackjackAction strategy(Card dealerCard) {
-
         // Int to hold "choice" of what to do as an enum
         BlackjackAction decision;
-
         //Get the current hand and store it for easier reading
         Hand curHand = this.hands[currentHand];
-
         //Check to see if pair only on the first two cards
         if (curHand.getHandSize() == 2) {
             //if the current hand is a pair. Set isPair to true
@@ -80,12 +81,11 @@ public class Player extends Person {
         }
         //Check if current hand is  soft and if it is set isSoft to true
         curHand.setIsSoft(curHand.checkSoft(curHand.getCards()));
-
-        //check to see if hand is a pair and total hands is under max splits
-        if (curHand.getIsPair() && totalHands < rules.getMaxSplits()) {
+        //check to see if hand is a pair and player is allowed to split
+        if (curHand.getIsPair() && isAbleToSplit()) {
             //check against pair strategy table
             decision = strategy.checkPairStrategy(dealerCard, curHand);
-        }//if the current hand is not a pair and is soft
+        }//if the player cant split and the hand is soft
         else if (curHand.getIsSoft()) {
             //check against soft hand strategy table
             decision = strategy.checkSoftStrategy(dealerCard, curHand);
@@ -97,6 +97,7 @@ public class Player extends Person {
         // Return the decision
         return decision;
     }
+
     //Debug helper  method to add cards to hand and see other functions work properly
     public void debugSetHand(ArrayList<Card> hand) {
         //add cards to first hand only for testing
@@ -104,8 +105,6 @@ public class Player extends Person {
 
 
     }
-
-
 
 
     public void dealCard(ArrayList<Card> shoe) {
@@ -236,5 +235,22 @@ public class Player extends Person {
 
     public void setPlayerID(int i) {
         this.playerID = i;
+    }
+
+    public boolean isCanDouble() {
+        return this.canDouble;
+    }
+
+    public void setCanDouble(boolean b) {
+        this.canDouble = b;
+    }
+
+
+    public void setAbleToSplit(boolean b) {
+        this.ableToSplit = b;
+    }
+
+    public boolean isAbleToSplit() {
+        return this.ableToSplit;
     }
 }
