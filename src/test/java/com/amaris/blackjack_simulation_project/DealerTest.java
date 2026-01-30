@@ -314,7 +314,7 @@ public class DealerTest {
 
         testTable.dealInitialCards();
         testTable.playerTurn();
-        testTable.dealerActions();
+        testTable.dealerTurn();
         testTable.getDealer().checkTableState(testTable.getPlayers(), 1);
         actualResults = new int[]{testTable.getPlayers()[0].getWins(), testTable.getPlayers()[0].getLosses(), testTable.getPlayers()[0].getPushes()};
         assertArrayEquals(expectedResults, actualResults);
@@ -334,7 +334,7 @@ public class DealerTest {
         //do player action
         testTable.playerTurn();
         //do dealer actions
-        testTable.dealerActions();
+        testTable.dealerTurn();
         //check the player state so wins and losses are updated
         testDealer.checkTableState(testTable.getPlayers(), 1);
         //try to clean the table
