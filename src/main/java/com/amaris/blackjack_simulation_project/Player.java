@@ -159,8 +159,8 @@ public class Player extends Person {
         this.hasSplit = hasSplit;
     }
 
-    public boolean isSplitAces() {
-        return splitAces;
+    public boolean hasSplitAces() {
+        return this.splitAces;
     }
 
     public void setSplitAces(boolean splitAces) {

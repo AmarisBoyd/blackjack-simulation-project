@@ -341,7 +341,7 @@ public class DealerTest {
         testDealer.cleanTable(testTable.getPlayers(), testTable.getPlayerCount(), testTable.getDiscard());
 
         assertFalse(testPlayer.isHasBust());
-        assertFalse(testPlayer.isSplitAces());
+        assertFalse(testPlayer.hasSplitAces());
         assertFalse(testPlayer.isHasSplit());
         //assert that discard looks how we want it to
         String testDiscard = testTable.getDiscardToString();
