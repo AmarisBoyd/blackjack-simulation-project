@@ -66,7 +66,7 @@ public class SimulatorDriver {
                 //Have the players do their actions
                 defaultTable.playerTurn();
                 // have the dealer do their actions
-                defaultTable.dealerActions();
+                defaultTable.dealerTurn();
                 //check the results of the game
                 defaultTable.getDealer().checkTableState(defaultTable.getPlayers(), numPlayers);
                 //Write the results to the output file
