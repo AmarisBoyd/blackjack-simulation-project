@@ -1,23 +1,23 @@
 package com.amaris.blackjack_simulation_project;
 
 public enum BlackjackAction {
-    HIT("HIT"),
-    STAND("STA"),
-    DOUBLE_OR_HIT("DOH"),
-    DOUBLE_OR_STAND("DOS"),
-    SPLIT("SPL"),
-    SPLIT_IF_DAS_IS_OFFERED_STAND("SDS"),
-    SPLIT_IF_DAS_IS_OFFERED_HIT("SDH"),
-    SURRENDER("SUR");
+    HIT("Hit"),
+    STA("Stand"),
+    DOH("Double or hit"),
+    DOS("Double or stand"),
+    SPL("Split"),
+    SDS("Split if double after split  is offered otherwise stand"),
+    SDH("Split if double after split is offered otherwise hit"),
+    SUR("Surrender");
 
-    private final String abbreviation;
+    private final String expansion;
 
-    // Optional: Add a constructor to store a string label for easy printing
+
     BlackjackAction(String abbreviation) {
-        this.abbreviation = abbreviation;
+        this.expansion = abbreviation;
     }
 
-    public String getAbbreviation() {
-        return abbreviation;
+    public String getExpansion() {
+        return expansion;
     }
 }
