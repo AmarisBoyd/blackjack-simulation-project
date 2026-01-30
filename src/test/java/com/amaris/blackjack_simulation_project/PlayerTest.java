@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static com.amaris.blackjack_simulation_project.BlackjackAction.HIT;
+import static com.amaris.blackjack_simulation_project.BlackjackAction.STA;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
@@ -95,7 +97,7 @@ public class PlayerTest {
         ArrayList<Card> playerCardsList = new ArrayList<>();
         Collections.addAll(playerCardsList, playerCards);
         Player player = new Player();
-        assertEquals(expectedValue, player.checkPairStrategy(dealerCard, playerCardsList));
+        assertEquals(expectedValue, player.strategy.checkPairStrategy(dealerCard, playerCardsList));
     }
 
     @ParameterizedTest
@@ -105,7 +107,7 @@ public class PlayerTest {
         Collections.addAll(playerCardsList, playerCards);
         Player player = new Player();
         player.rules.setDoubleAfterSplitAllowed(false);
-        assertEquals(expectedValue, player.checkPairStrategy(dealerCard, playerCardsList));
+        assertEquals(expectedValue, player.strategy.checkPairStrategy(dealerCard, playerCardsList));
 
     }
 
@@ -118,7 +120,7 @@ public class PlayerTest {
         int score = player.getHand()[player.getCurrentHand()].getScore();
         assertNotEquals(0, score);
         assertEquals(18, score);
-        assertEquals(1, player.checkHardStrategy(dealerCard, player.handCards));
+        assertEquals(STA, player.strategy.checkHardStrategy(dealerCard, player.getHand()[player.getCurrentHand()]));
 
     }
 
@@ -126,7 +128,7 @@ public class PlayerTest {
     void hard_Strategy_Under_8_Test() {
         Player player = new Player();
         testHelper(new int[]{4, 3}, 9, player);
-        assertEquals(0, player.checkHardStrategy(dealerCard, player.handCards));
+        assertEquals(HIT, player.strategy.checkHardStrategy(dealerCard, player.getHand()[player.getCurrentHand()]));
     }
 
 
@@ -136,6 +138,7 @@ public class PlayerTest {
 
     @Test
     void soft_Strategy_18_On_10_Test() {
+
         Player player = new Player();
         testHelper(new int[]{7, 11}, 10, player);
         int score = player.getHand()[player.getCurrentHand()].getScore();
@@ -143,7 +146,7 @@ public class PlayerTest {
         assertNotEquals(0, score);
 
         assertEquals(18, score);
-        assertEquals(0, player.checkSoftStrategy(dealerCard, player.handCards));
+        assertEquals(HIT, player.strategy.checkSoftStrategy(dealerCard, player.getHand()[player.getCurrentHand()]));
 
     }
 
@@ -156,7 +159,7 @@ public class PlayerTest {
         assertNotEquals(0, score);
 
         assertEquals(17, score);
-        assertEquals(0, player.checkSoftStrategy(dealerCard, player.handCards));
+        assertEquals(HIT, player.strategy.checkSoftStrategy(dealerCard, player.getHand()[player.getCurrentHand()]));
 
     }
 
