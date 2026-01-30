@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 @SpringBootTest
-
+//TODO Refactor all of this to make it more in line with how TableTest works and make it easier to test
 
 public class PlayerTest {
 
@@ -94,10 +94,15 @@ public class PlayerTest {
     @ParameterizedTest
     @MethodSource("pairDoubleAfterSplitValues")
     void checkPairStrategy_Double_After_Split_Test(Card dealerCard, Card[] playerCards, int expectedValue) {
-        ArrayList<Card> playerCardsList = new ArrayList<>();
-        Collections.addAll(playerCardsList, playerCards);
+
+        ArrayList<Card> cardsToDeal = new ArrayList<>();
+        Collections.addAll(cardsToDeal, playerCards);
         Player player = new Player();
-        assertEquals(expectedValue, player.strategy.checkPairStrategy(dealerCard, playerCardsList));
+        for (int i = 0; i < playerCards.length; i++) {
+            player.dealCard(cardsToDeal);
+        }
+
+        assertEquals(expectedValue, player.strategy.checkPairStrategy(dealerCard, player.getHand()[player.getHand().length - 1]));
     }
 
     @ParameterizedTest
@@ -106,8 +111,13 @@ public class PlayerTest {
         ArrayList<Card> playerCardsList = new ArrayList<>();
         Collections.addAll(playerCardsList, playerCards);
         Player player = new Player();
+        for (int i = 0; i < playerCardsList.size(); i++) {
+            player.dealCard(playerCardsList);
+
+        }
         player.rules.setDoubleAfterSplitAllowed(false);
-        assertEquals(expectedValue, player.strategy.checkPairStrategy(dealerCard, playerCardsList));
+        Hand currentHand = player.getHand()[player.getCurrentHand()];
+        assertEquals(expectedValue, player.strategy.checkPairStrategy(dealerCard, currentHand));
 
     }
 
