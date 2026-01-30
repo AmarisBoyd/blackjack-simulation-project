@@ -65,70 +65,89 @@ public class Table {
     public void playerTurn() {
         Player currentPlayer;
         //initialize a result to keep track of what each player decides to do
-        BlackjackAction result = null;
+        BlackjackAction action = null;
         // loop through all players
         for (int i = 0; i < this.playerCount; i++) {
             //select current player from the array for easier access
             currentPlayer = this.players[i];
             //while this player hasn't stood on their last hand
-            while (result != BlackjackAction.STAND) {
-                //check the strategy based on the hand
+            while (action != BlackjackAction.STA) {
+                //check if previous action caused the player to bust
                 this.dealer.checkBust(currentPlayer.getHand()[currentPlayer.getCurrentHand()]);
-                result = currentPlayer.strategy(dealer.getUpCard());
-                //if they say give them a card
-                if (result == HIT) {
-                    result = hit(currentPlayer);
-
-                }
-
-                //If the player is trying to double
-                if (result == DOUBLE_OR_HIT || result == DOUBLE_OR_STAND) {
-                    //call double down that will check if they are allowed to
-                    result = doubleDown(currentPlayer, result);
-
-                }
-
-                //player splits
-                if (result == 3) {
-                    //check if the pair is a pair of aces
-                    if (checkAces(currentPlayer)) {
-                        //set split aces to true
-                        currentPlayer.setSplitAces(true);
-                        //check if resplitting aces is allowed
-                        if (!rules.getResplitAces()) {
-                            result = noResplitAces(currentPlayer);
-                        } else
-                            //if it is split the aces
-                            result = splitAces(currentPlayer);
-                    }
-                    //if not two aces split the hands
-                    else
-                        result = splitHand(currentPlayer);
-
-
-                }
-
-                //player stands check if we need to move to next split
-                if (result == 1) {
-                    //if the current player has split and they are not aces
-                    if (currentPlayer.isHasSplit() && !currentPlayer.isSplitAces()) {
-                        //if the current hand is not equal to the max number of total hands
-                        if (!(currentPlayer.getCurrentHand() == currentPlayer.getTotalHands())) {
-                            //set the current hand for the player to the next hand they have
-                            currentPlayer.setCurrentHand(currentPlayer.getCurrentHand() + 1);
-                            // reset result so the loop continues
-                            result = 0;
+                checkRules(currentPlayer);
+                //check the strategy based on the hand
+                action = currentPlayer.strategy(dealer.getUpCard());
+                switch (action) {
+                    case HIT:
+                        //if they say give them a card
+                        action = hit(currentPlayer);
+                        break;
+                    case DOS, DOH:
+                        //call double down that will check if they are allowed to
+                        action = doubleDown(currentPlayer, action);
+                        break;
+                    case SDH, SPL, SDS:
+                        //player splits
+                        //check if the pair is a pair of aces
+                        if (checkAces(currentPlayer)) {
+                            action = splitAces(currentPlayer, action);
                         }
+                        //if not two aces split the hands
+                        else
+                            action = splitHand(currentPlayer, action);
+                        break;
+                    case STA:
+                        //player stands check if we need to move to next split
+                        //if the current player has split and they are not aces
+                        if (currentPlayer.isHasSplit() && !currentPlayer.hasSplitAces()) {
+                            //if the current hand is not equal to the max number of total hands
+                            if (!(currentPlayer.getCurrentHand() == currentPlayer.getTotalHands())) {
+                                //set the current hand for the player to the next hand they have
+                                currentPlayer.setCurrentHand(currentPlayer.getCurrentHand() + 1);
+                                //if the current hand still only has one card
+                                if (currentPlayer.getHand()[currentPlayer.getCurrentHand()].getHandSize() == 1) {
+                                    //give them another card
+                                    action = hit(currentPlayer);
+                                } else {
+                                    // not sure how we got here but set the action to hit
+                                    action = HIT;
+                                }
+                                // reset result so the loop continues
 
-                    }
+                            }
+                        }
+                        break;
+                    case SUR:
+                        //logic for surrender to be done later
+                        break;
+
+
                 }
-
                 //at the end of the player choice check for last hand
                 this.checkLastHand();
+
+
             }
 
         }
 
+    }
+
+    private void checkRules(Player currentPlayer) {
+        //check for rules regarding splits
+        if (currentPlayer.isHasSplit()) {
+            //if the player can double after split set can double to true otherwise set it to false
+            currentPlayer.setCanDouble(rules.getDoubleAfterSplit());
+            //if the player has split aces
+            if (currentPlayer.hasSplitAces()) {
+                currentPlayer.setAbleToSplit(rules.getResplitAces());
+            }
+            //if the players hands equal max splits -1 (indexing from 0) set it so they cant split
+            if (currentPlayer.getTotalHands() == rules.getMaxSplits() - 1) {
+                currentPlayer.setAbleToSplit(false);
+            }
+        }
+        //check for other rules
     }
 
     private void checkLastHand() {
@@ -137,114 +156,123 @@ public class Table {
         }
     }
 
-    private int noResplitAces(Player currentPlayer) {
-
-        Hand originalhand = currentPlayer.getHand()[currentPlayer.getCurrentHand()];
-        Hand seconHand = currentPlayer.getHand()[currentPlayer.getCurrentHand() + 1];
-        //set the split tag
-        currentPlayer.setHasSplit(true);
-        //split the aces into two hands
-        seconHand.addCard(originalhand.getCards().get(1));
-        /*set original hand size to one since we are counting from 0 this will make it so
-        the next time we add a card it will replace the ace we just gave out
-        * */
-        originalhand.setHandSize(1);
-
-        //give original hand a card
-        currentPlayer.dealCard(shoe);
-        //increment working hand
-        currentPlayer.setCurrentHand(1);
-        //give next hand a card
-        currentPlayer.dealCard(shoe);
-        return 1;
-    }
-
-    private int splitAces(Player currentPlayer) {
-
-        //check
-        currentPlayer.setTotalHands(currentPlayer.getTotalHands() + 1);
-        //take second card from current hand and put it in a new hand
-        //since the player hasn't stood return 0
-        return 0;
+    private BlackjackAction splitAces(Player currentPlayer, BlackjackAction currentAction) {
+        //if the player can split
+        if (currentPlayer.isAbleToSplit()) {
+            //increment total hands for player
+            currentPlayer.setTotalHands(currentPlayer.getTotalHands() + 1);
+            //reference to original hand
+            Hand originalhand = currentPlayer.getHand()[currentPlayer.getCurrentHand()];
+            //reference to the new hand that is being created
+            Hand secondHand = currentPlayer.getHand()[currentPlayer.getCurrentHand() + 1];
+            //set the split tag
+            currentPlayer.setHasSplit(true);
+            //take the second  ace from original hand and put it on the second hand
+            secondHand.addCard(originalhand.getCards().remove(1));
+            //set original hand size to one
+            originalhand.setHandSize(1);
+            //give original hand a card
+            currentPlayer.dealCard(shoe);
+            //increment working hand
+            currentPlayer.setCurrentHand(1);
+            //give next hand a card
+            currentPlayer.dealCard(shoe);
+        }
+        //if the player cannot split again then return stand
+        else {
+            return STA;
+        }
+        //Return hit so the loop continues
+        return HIT;
     }
 
     private boolean checkAces(Player currentPlayer) {
         Hand workingHand = currentPlayer.getHand()[currentPlayer.getCurrentHand()];
 
-        return workingHand.getCards().getFirst().getValue() == 11;
+        return workingHand.getCards().getFirst().getRank().equalsIgnoreCase("Ace");
     }
 
-    private int splitHand(Player currentPlayer) {
+    private BlackjackAction splitHand(Player currentPlayer, BlackjackAction currentAction) {
         int currentHand = currentPlayer.getCurrentHand();
         int nextHand = currentPlayer.getCurrentHand() + 1;
         //if the player is not trying to split more times than allowed
-        if (currentPlayer.getTotalHands() < rules.getMaxSplits()) {
+        if (currentPlayer.isAbleToSplit()) {
             //increment the total number of hands the player has
             currentPlayer.setTotalHands(currentPlayer.getTotalHands() + 1);
             //take second card from current hand and place it in new hand
-            currentPlayer.getHand()[nextHand].addCard(currentPlayer.getHand()[currentHand].getCards().get(1));
+            currentPlayer.getHand()[nextHand].addCard(currentPlayer.getHand()[currentHand].getCards().remove(1));
             //decrement the current hands hand size
             currentPlayer.getHand()[currentHand].setHandSize(currentPlayer.getHand()[currentHand].getHandSize() - 1);
-            //remove old last card
-            currentPlayer.getHand()[currentHand].getCards().removeLast();
-            currentPlayer.getHand()[currentHand].updateScore();
-            //give them a new card
+            //give them a new card to the current hand
             currentPlayer.dealCard(shoe);
             //unset pair so it doesn't skip checking
             currentPlayer.getHand()[currentHand].setIsPair(false);
             //set it so the table knows the player has split at least once
             currentPlayer.setHasSplit(true);
 
-
+        } else {
+            if (currentAction == SPL) {
+                //if the player only sent split return hit so the loop continues and we can try to get another answer
+                return HIT;
+            } else if (currentAction == SDS) {
+                //if the player sent Split or Stand return stand
+                return STA;
+            } else if (currentAction == SDH) {
+                //if the player returned split or hit then hit
+                hit(currentPlayer);
+            }
         }
         //return zero so the dealer loop continues
-        return 0;
+        return HIT;
     }
 
 
     private BlackjackAction hit(Player currentPlayer) {
         Hand workingHand = currentPlayer.getHand()[currentPlayer.getCurrentHand()];
         currentPlayer.dealCard(shoe);
-        //If the player bust return 1 since they can no longer hit
-
+        //If the player bust return STA since they can no longer hit
         if (dealer.checkBust(workingHand)) {
             dealer.clearBust(currentPlayer, discard);
-            return STAND;
+            return STA;
         }
         // otherwise return Hit so the loop continues
         return HIT;
     }
 
     private BlackjackAction doubleDown(Player currentPlayer, BlackjackAction currentAction) {
-        Hand workingHand = currentPlayer.getHand()[currentPlayer.getCurrentHand()];
-        //if the player hasn't split hands
-        if (currentPlayer.getTotalHands() == 0) {
-            //they are allowed to double so give them the next card
-            currentPlayer.dealCard(shoe);
-            //Then return stand so the loop ends
-            return STAND;
-        }
-
         //if the player has split
-        // And is trying to double or hit
-        //check if they can double
-        // if they can
-        //give them a card
-        // then return stand so they can no longer hit
-        //if they cant
-        //return hit but don't give them the card so there isn't a double hit
-
-        //else if the player is trying to double or stand,
-        // and they are allowed to double
-        //give them a card
-        // then return stand so they can no longer hit
-        //if they cant
-        //return Stand to end the loop
-        //returning current action until logic is finished
-        return currentAction;
+        if (currentPlayer.isHasSplit()) {
+            //check if they can double
+            if (currentPlayer.canDouble) {
+                // if they can give them a card use hit in case later strategy doubles a busting hand
+                hit(currentPlayer);
+                // then return stand so they can no longer hit
+                return STA;
+                // if the player can't double
+            } else {
+                //if the player sent double or hit
+                if (currentAction == DOH) {
+                    //return the result of hitting in case of bust
+                    return hit(currentPlayer);
+                }
+                //if the player sent "double or stand"
+                else if (currentAction == DOS) {
+                    //return stand
+                    return STA;
+                }
+            }
+        } else {
+            //if the player hasn't split hands they are allowed to double so give them the next card
+            //use hit in case a later strategy doubles a busting card
+            hit(currentPlayer);
+            //Then return stand so the loop ends
+            return STA;
+        }
+        // This should be un reachable
+        return STA;
     }
 
-    public void dealerActions() {
+    public void dealerTurn() {
         int result;
         //set the dealer to stop unless there are other players at the table
         boolean dealerStop = true;
@@ -256,7 +284,6 @@ public class Table {
                 dealerStop = false;
                 break;
             }
-
         }
         //while the dealer hasn't reached and endpoint
         while (!dealerStop) {
@@ -270,16 +297,14 @@ public class Table {
             } else {
                 //the dealer hits
                 this.dealer.dealCard(shoe);
-                //after hit check if it's the last hand
-                this.checkLastHand();
                 //after the dealer hits check if they bust
                 if (this.dealer.dealerCheckBust(this.dealer.getDealerHand())) {
                     //if they have stop drawing cards
                     dealerStop = true;
                 }
+                //after hit check if it's the last hand
+                this.checkLastHand();
             }
-
-
         }
 
 
