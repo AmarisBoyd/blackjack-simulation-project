@@ -1,15 +1,10 @@
 package com.amaris.blackjack_simulation_project;
 
+import static com.amaris.blackjack_simulation_project.BlackjackAction.*;
+
+
 public class BasicStrategy implements Strategy {
 
-    private static final BlackjackAction HIT = BlackjackAction.HIT;
-    private static final BlackjackAction STA = BlackjackAction.STAND;
-    private static final BlackjackAction DOH = BlackjackAction.DOUBLE_OR_HIT;
-    private static final BlackjackAction DOS = BlackjackAction.DOUBLE_OR_STAND;
-    private static final BlackjackAction SPL = BlackjackAction.SPLIT;
-    private static final BlackjackAction SDH = BlackjackAction.SPLIT_IF_DAS_IS_OFFERED_HIT;
-    private static final BlackjackAction SDS = BlackjackAction.SPLIT_IF_DAS_IS_OFFERED_STAND;
-    private static final BlackjackAction SUR = BlackjackAction.SURRENDER;
 
     private static final BlackjackAction[][] HARD_TOTALS = {
             // Dealer's upcard:
