@@ -293,7 +293,7 @@ public class TableTest {
         //have the players take their actions
         testTable.playerTurn();
         //have the dealer take their actions
-        testTable.dealerActions();
+        testTable.dealerTurn();
 
         Assertions.assertEquals(expectedDealerHandValue, testTable.getDealer().getDealerHand().getScore());
 
