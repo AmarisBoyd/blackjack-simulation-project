@@ -128,7 +128,7 @@ public class Table {
                         //logic for surrender to be done later
                         break;
                     case DEA:
-                        System.err.println(currentPlayer.getHand()[currentPlayer.getCurrentHand()]);
+                        System.err.println(dealer.getUpCard());
                         action = STA;
                         break;
 
