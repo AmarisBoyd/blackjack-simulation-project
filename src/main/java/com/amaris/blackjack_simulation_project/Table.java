@@ -64,19 +64,26 @@ public class Table {
 
     public void playerTurn() {
         Player currentPlayer;
+
         //initialize a result to keep track of what each player decides to do
-        BlackjackAction action = null;
+        BlackjackAction action = HIT;
         // loop through all players
         for (int i = 0; i < this.playerCount; i++) {
             //select current player from the array for easier access
             currentPlayer = this.players[i];
+
             //while this player hasn't stood on their last hand
             while (action != BlackjackAction.STA) {
+                if (currentPlayer.getHand()[currentPlayer.getCurrentHand()].getScore() == 21) {
+                    action = STA;
+                    break;
+                }
                 //check if previous action caused the player to bust
                 this.dealer.checkBust(currentPlayer.getHand()[currentPlayer.getCurrentHand()]);
                 checkRules(currentPlayer);
                 //check the strategy based on the hand
                 action = currentPlayer.strategy(dealer.getUpCard());
+
                 switch (action) {
                     case HIT:
                         //if they say give them a card
@@ -120,6 +127,11 @@ public class Table {
                     case SUR:
                         //logic for surrender to be done later
                         break;
+                    case DEA:
+                        System.err.println(currentPlayer.getHand()[currentPlayer.getCurrentHand()]);
+                        action = STA;
+                        break;
+
 
 
                 }
