@@ -87,15 +87,17 @@ public class Player extends Person {
             try {
                 decision = strategy.checkPairStrategy(dealerCard, curHand);
             } catch (Exception e) {
+                System.err.println(e.getMessage());
                 decision = BlackjackAction.DEA;
 
             }
         }//if the player cant split and the hand is soft
-        else if (curHand.getIsSoft()) {
+        else if (curHand.getIsSoft() && !(curHand.getIsPair())) {
             //check against soft hand strategy table
             try {
                 decision = strategy.checkSoftStrategy(dealerCard, curHand);
             } catch (Exception e) {
+                System.err.println(e.getMessage());
                 decision = BlackjackAction.DEA;
 
             }
@@ -105,6 +107,7 @@ public class Player extends Person {
             try {
                 decision = strategy.checkHardStrategy(dealerCard, curHand);
             } catch (Exception e) {
+                System.err.println(e.getMessage());
                 decision = BlackjackAction.DEA;
             }
         }
