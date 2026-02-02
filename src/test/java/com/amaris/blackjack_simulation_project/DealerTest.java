@@ -27,11 +27,12 @@ public class DealerTest {
     public static Object[][] checkStateValuesNoSplit() {
         // String to hold the test inputs
         // format [Test name]:[player hand cards]:[dealer hand cards]:[expected wins]:[expected losses]:[expected pushes]
-        String testInputs = "Player stays Dealer wins:10,7:10,9:0:1:0;"
-                + "Player stays Player wins:10,11:10,10:1:0:0;"
-                + "Push:10,10:10,10:0:0:1;" +
-                "Player bust:10,5,8:10,10:0:1:0;" +
-                "Dealer bust:10,7,:10,5,8:1:0:0";
+        String testInputs = """
+                Player stays Dealer wins:10,7:10,9:0:1:0;\
+                Player stays Player wins:10,11:10,10:1:0:0;\
+                Push:10,10:10,10:0:0:1;\
+                Player bust:10,5,8:10,10:0:1:0;\
+                Dealer bust:10,7,:10,5,8:1:0:0""";
         // Hand to hold the players cards
         Hand playerHand = new Hand();
         // hand to hold the dealers cards
@@ -90,15 +91,16 @@ public class DealerTest {
     public static Object[][] checkStateSplitValues() {
         // String to hold the test inputs
         // format Test name: Mock Shoe: expected wins: expected losses: expected pushes
-        String testInputs = "Player has win and a loss:11,9,8,8,10,8:1:1:0;"
-                + "Both hands loose:11,9,10,8,10,8:0:2:0;"
-                + "Both hands push :10,10,10,8,8,8:0:0:2;" +
-                "Player bust both hands :10,4,10,4,10,8,10,8:0:2:0;" +
-                "Player bust one hand Dealer wins:10,4,8,3,10,8,10,8:0:2:0;" +
-                "Player bust one hand Dealer Loses:10,4,8,3,7,8,10,8:1:1:0;" +
-                "Player bust one hand Dealer push:10,4,6,3,7,8,10,8:0:1:1;" +
-                "Player bust one hand Dealer bust:10,10,4,8,3,5,8,10,8:1:1:0;" +
-                "Dealer bust both hands win:10,8,4,8,3,5,8,10,8:2:0:0";
+        String testInputs = """
+                Player has win and a loss:11,9,8,8,10,8:1:1:0;\
+                Both hands loose:11,9,10,8,10,8:0:2:0;\
+                Both hands push :10,10,10,8,8,8:0:0:2;\
+                Player bust both hands :10,4,10,4,10,8,10,8:0:2:0;\
+                Player bust one hand Dealer wins:10,4,8,3,10,8,10,8:0:2:0;\
+                Player bust one hand Dealer Loses:10,4,8,3,7,8,10,8:1:1:0;\
+                Player bust one hand Dealer push:10,4,6,3,7,8,10,8:0:1:1;\
+                Player bust one hand Dealer bust:10,10,4,8,3,5,8,10,8:1:1:0;\
+                Dealer bust both hands win:10,8,4,8,3,5,8,10,8:2:0:0""";
         ArrayList<Card> mockShoe = new ArrayList<>();
         String testName;
         // Integer to store number of expected wins
@@ -142,42 +144,48 @@ public class DealerTest {
 
     public static Object[][] cleanTableValues() {
         // String to hold the test inputs
-        // format Test name: Mock Shoe: expected wins: expected losses: expected pushes
-        String testInputs = "Player has win and a loss:11,9,8,8,10,8:8,10,8,8,9,11;"
-//                + "Both hands loose:11,9,10,8,10;"
-//                + "Both hands push :10,10,10,8,8,8;" +
-//                "Player bust both hands :10,4,10,4,10,8,10,8;" +
-//                "Player bust one hand Dealer wins:10,4,8,3,10,8,10;" +
-//                "Player bust one hand Dealer Loses:10,4,8,3,7,8,10,8;" +
-//                "Player bust one hand Dealer push:10,4,6,3,7,8,10,8;"+
-//                "Player bust one hand Dealer bust:10,10,4,8,3,5,8,10,8;" +
-//                "Dealer bust both hands win:10,8,4,8,3,5,8,10,8"
+        // format Test name: Mock Shoe
+        String testInputs =
+                """
+                         Player Bust :10,10,5,10,10;\
+                         No Bust:10,10,10,10,10:[Joker,10];\
+                        """
                 ;
+        ArrayList<String> expectedDiscards = new ArrayList<>();
+        expectedDiscards.add("""
+                The discard contains:
+                 Joker: 10
+                 Joker: 5
+                 Joker: 10
+                 Joker: 10
+                 Joker: 10""");
+        expectedDiscards.add("""
+                The discard contains:
+                 Joker: 10
+                 Joker: 10
+                 Joker: 10
+                 Joker: 10""");
+
         ArrayList<Card> mockShoe = new ArrayList<>();
         String testName;
-        ArrayList<Card> mockDiscard = new ArrayList<>();
         //create an array of strings with the first parse of the test inputs
-        String[] firstParseInputs = testInputs.split(";");
-
+        String[] individualLine = testInputs.split(";");
         // set the number of rows in the object array equal to the size of the first parse array
-        Object[][] dealerActionValues = new Object[firstParseInputs.length][4];
-        for (int k = 0; k < firstParseInputs.length; k++) {
+        Object[][] dealerActionValues = new Object[individualLine.length][4];
+        for (int k = 0; k < individualLine.length; k++) {
             //Parse each string in the new array a second time to get individual values
-            String[] secondParseInputs = firstParseInputs[k].split(":");
-            testName = secondParseInputs[0];
-            String[] thirdParseInputs = secondParseInputs[1].split(",");
-            for (String thirdParseInput : thirdParseInputs) {
+            String[] lineSplitToArray = individualLine[k].split(":");
+
+            testName = lineSplitToArray[0];
+            String[] listOfValuesToMakeCards = lineSplitToArray[1].split(",");
+            for (String thirdParseInput : listOfValuesToMakeCards) {
                 mockShoe.add(new Card(Integer.parseInt(thirdParseInput)));
             }
-            String[] fourthParseInputs = secondParseInputs[2].split(",");
-            for (String fourthParseInput : fourthParseInputs) {
-                mockDiscard.add(new Card(Integer.parseInt(fourthParseInput)));
-            }
+            String expectedDiscard = expectedDiscards.get(k);
 
 
             //Add the now parsed values to a new object and store it in row "k" of the object array
-            dealerActionValues[k] = new Object[]{testName, mockShoe.clone(), mockDiscard.clone()};
-            mockDiscard.clear();
+            dealerActionValues[k] = new Object[]{testName, mockShoe.clone(), expectedDiscard};
             mockShoe.clear();
 
 
@@ -239,7 +247,7 @@ public class DealerTest {
     @Test
         //this type of situation shouldn't exist because you add to the hand one card at a time
         // so after the first 10 the ace would be a 1
-    void checkBust_OneAce_No_Bust_Test() {
+    void checkBust_OneAce_Bust_Test() {
         Dealer dealer = new Dealer();
         Hand testHand = new Hand();
         for (int i : new int[]{11, 5, 10, 10}) {
@@ -322,7 +330,7 @@ public class DealerTest {
 
     @ParameterizedTest
     @MethodSource("cleanTableValues")
-    void cleanTable_Hands_empty_Test(String testName, ArrayList<Card> mockShoe, ArrayList<Card> expectedDiscard) {
+    void cleanTable_Hands_Test(String testName, ArrayList<Card> mockShoe, String expectedDiscard) {
         //create test dealer for readability of debug
         Dealer testDealer = this.testTable.getDealer();
         //create test player to make reading debug easier
@@ -345,9 +353,8 @@ public class DealerTest {
         assertFalse(testPlayer.isHasSplit());
         //assert that discard looks how we want it to
         String testDiscard = testTable.getDiscardToString();
-        testTable.setDiscard(expectedDiscard);
-        String expectedDiscardToString = testTable.getDiscardToString();
-        // assertEquals(expectedDiscardToString, testDiscard);
+
+        assertEquals(expectedDiscard.trim(), testDiscard.trim());
 
     }
 
