@@ -6,7 +6,6 @@ public class Card {
     String suit = "";
     String rank = "";
     String suitAndRank;
-    boolean toString;
     //Integer to hold value of card
     private int value;
 
@@ -24,8 +23,10 @@ public class Card {
         this.value = value;
     }
 
-    //Constructor that only cares about card value for testing
+    //Constructor for tests when cards are created for just their value
     public Card(int value) {
+        //Joker is often seen as wildcard, and it looks better when printing than having a null rank
+        this.rank = "Joker";
         this.value = value;
     }
 
@@ -60,7 +61,7 @@ public class Card {
     public String getRank() {
         return rank;
     }
-    //toString method for easy printing
+
 
     public void setRank(String rank) {
         this.rank = rank;
@@ -74,6 +75,7 @@ public class Card {
         this.suit = suit;
     }
 
+    //toString method for easy printing
     @Override
     public String toString() {
         this.suitAndRank = this.suit + " " + this.rank;
