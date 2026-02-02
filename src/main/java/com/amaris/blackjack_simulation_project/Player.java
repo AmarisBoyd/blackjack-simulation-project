@@ -84,17 +84,33 @@ public class Player extends Person {
         //check to see if hand is a pair and player is allowed to split
         if (curHand.getIsPair() && isAbleToSplit()) {
             //check against pair strategy table
-            decision = strategy.checkPairStrategy(dealerCard, curHand);
+            try {
+                decision = strategy.checkPairStrategy(dealerCard, curHand);
+            } catch (Exception e) {
+                decision = BlackjackAction.DEA;
+
+            }
         }//if the player cant split and the hand is soft
         else if (curHand.getIsSoft()) {
             //check against soft hand strategy table
-            decision = strategy.checkSoftStrategy(dealerCard, curHand);
+            try {
+                decision = strategy.checkSoftStrategy(dealerCard, curHand);
+            } catch (Exception e) {
+                decision = BlackjackAction.DEA;
+
+            }
         } //if the current hand is neither soft nor a pair
         else {
             //check against hard hand strategy table
-            decision = strategy.checkHardStrategy(dealerCard, curHand);
+            try {
+                decision = strategy.checkHardStrategy(dealerCard, curHand);
+            } catch (Exception e) {
+                decision = BlackjackAction.DEA;
+            }
         }
+
         // Return the decision
+
         return decision;
     }
 
