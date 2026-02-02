@@ -75,10 +75,11 @@ public class SimulatorDriver {
                 //clean up the table
                 defaultTable.getDealer().cleanTable(defaultTable.getPlayers(), numPlayers, defaultTable.getDiscard());
                 if (defaultTable.getLastHand()) {
+
                     //add the rest of the shoe to the discard
                     defaultTable.getDiscard().addAll(defaultTable.getShoe().reversed());
                     //write the final state of discard to output file
-                    Files.writeString(filePath, defaultTable.getDiscard().toString(), StandardOpenOption.APPEND);
+                    Files.writeString(filePath, "Discard:" + defaultTable.getDiscard().toString() + "\n\n", StandardOpenOption.APPEND);
                     //empty the shoe
                     defaultTable.getShoe().clear();
                     //refill the shoe with the discard
