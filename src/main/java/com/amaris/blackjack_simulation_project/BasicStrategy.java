@@ -60,14 +60,20 @@ public class BasicStrategy implements Strategy {
 
 
     // Method to check soft hand strategy
-    public BlackjackAction checkSoftStrategy(Card dealerCard, Hand hand) {
+    public BlackjackAction checkSoftStrategy(Card dealerCard, Hand hand) throws Exception {
 
-        return SOFT_TOTALS[hand.getScore() - 13][dealerCard.getValue() - 2];
+        try {
+            return SOFT_TOTALS[hand.getScore() - 13][dealerCard.getValue() - 2];
+        } catch (IndexOutOfBoundsException e) {
+            String message = "Failed to get result with cards: " + hand.getCards().toString();
+
+            throw new Exception("Soft Basic Strategy: " + message, e);
+        }
     }
 
     @Override
     // Method to check hard hand strategy
-    public BlackjackAction checkHardStrategy(Card dealerCard, Hand hand) {
+    public BlackjackAction checkHardStrategy(Card dealerCard, Hand hand) throws Exception {
         // Table for hard hand strategy Starts at 8 because the table only covers 8-20
         int score = hand.getScore();
         if (score <= 8) {
@@ -80,17 +86,31 @@ public class BasicStrategy implements Strategy {
         }
 
 
-        return HARD_TOTALS[score - 8][dealerCard.getValue() - 2];
+        try {
+            return HARD_TOTALS[hand.getScore() - 8][dealerCard.getValue() - 2];
+        } catch (IndexOutOfBoundsException e) {
+            String message = "Failed to get result with cards: " + hand.getCards().toString();
+
+            throw new Exception("Hard Strategy: " + message, e);
+        }
     }
 
     @Override
-    public BlackjackAction checkPairStrategy(Card dealerCard, Hand hand) {
-        return null;
+    public BlackjackAction checkPairStrategy(Card dealerCard, Hand hand) throws Exception {
+        int value = hand.getCards().getFirst().getValue();
+        try {
+            return PAIR_TOTALS[value - 2][dealerCard.getValue() - 2];
+        } catch (IndexOutOfBoundsException e) {
+            String message = "Failed to get result with cards: " + hand.getCards().toString();
+
+            throw new Exception("Pair Strategy: " + message, e);
+
+        }
     }
 
     @Override
     public BlackjackAction checkSurrenderStrategy(Card dealerCard, Hand hand) {
-        return null;
+        return STA;
     }
 
 
