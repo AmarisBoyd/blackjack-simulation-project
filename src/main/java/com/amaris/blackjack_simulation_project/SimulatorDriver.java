@@ -58,7 +58,7 @@ public class SimulatorDriver {
             defaultTable.cutShoe(52);
             Files.writeString(filePath, "Initial shoe\n" + defaultTable.getShoe().toString() + "\n\n", StandardOpenOption.APPEND);
 
-
+            System.out.println("Running " + numHands + " hands for " + numPlayers + " players");
             for (int i = 0; i < numHands; i++) {
 
                 //deal initial cards
