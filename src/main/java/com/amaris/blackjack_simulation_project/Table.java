@@ -221,10 +221,12 @@ public class Table {
             currentPlayer.getHand()[currentHand].setIsPair(false);
             //set it so the table knows the player has split at least once
             currentPlayer.setHasSplit(true);
+            //set the current hand to no longer a pair so they don't try to split
+            currentPlayer.getHand()[currentPlayer.getCurrentHand()].setIsPair(false);
 
         } else {
             if (currentAction == SPL) {
-                //if the player only sent split return hit so the loop continues and we can try to get another answer
+                //if the player only sent split return hit so the loop continues, and we can try to get another answer
                 return HIT;
             } else if (currentAction == SDS) {
                 //if the player sent Split or Stand return stand
