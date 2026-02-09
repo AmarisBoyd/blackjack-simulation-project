@@ -168,6 +168,7 @@ public class Table {
         }
     }
 
+    //TODO examine if "currentAction" is necessary in logic still
     private BlackjackAction splitAces(Player currentPlayer, BlackjackAction currentAction) {
         //if the player can split
         if (currentPlayer.isAbleToSplit()) {
@@ -400,9 +401,6 @@ public class Table {
         this.shoe = testShoe;
     }
 
-    public Card[] getDeck() {
-        return deck;
-    }
 
     public void setDeck(Card[] deck) {
         this.deck = deck;
