@@ -33,9 +33,7 @@ public class SimulatorDriverTest {
     void driverTestThrowsIllegalArgumentException() throws Exception {
         String[] driverArgs = {"1", "300", "src/main/Test_Results.txt", "2"};
         try {
-            Assertions.assertThrows(IllegalArgumentException.class, () -> {
-                SimulatorDriver.driver(driverArgs);
-            });
+            Assertions.assertThrows(IllegalArgumentException.class, () -> SimulatorDriver.driver(driverArgs));
 
         } catch (Exception e) {
             System.err.println(e.getMessage());
