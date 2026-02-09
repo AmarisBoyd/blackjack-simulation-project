@@ -18,7 +18,7 @@ public class SimulatorDriverTest {
     @Test
 
     @Disabled
-    void one_Player_Stress_Test() throws Exception {
+    void one_Player_Stress_Test() {
         String[] driverArgs = {"1", "8000", "src/main/Test_Results.txt"};
         try {
             SimulatorDriver.driver(driverArgs);
@@ -30,7 +30,7 @@ public class SimulatorDriverTest {
 
     @Disabled
     @Test
-    void driverTestThrowsIllegalArgumentException() throws Exception {
+    void driverTestThrowsIllegalArgumentException() {
         String[] driverArgs = {"1", "300", "src/main/Test_Results.txt", "2"};
         try {
             Assertions.assertThrows(IllegalArgumentException.class, () -> SimulatorDriver.driver(driverArgs));
