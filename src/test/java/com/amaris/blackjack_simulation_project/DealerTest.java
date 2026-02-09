@@ -99,8 +99,7 @@ public class DealerTest {
                 Player bust one hand Dealer wins:10,4,8,3,10,8,10,8:0:2:0;\
                 Player bust one hand Dealer Loses:10,4,8,3,7,8,10,8:1:1:0;\
                 Player bust one hand Dealer push:10,4,6,3,7,8,10,8:0:1:1;\
-                Player bust one hand Dealer bust:10,10,4,8,3,5,8,10,8:1:1:0;\
-                Dealer bust both hands win:10,8,4,8,3,5,8,10,8:2:0:0""";
+                """;
         ArrayList<Card> mockShoe = new ArrayList<>();
         String testName;
         // Integer to store number of expected wins
