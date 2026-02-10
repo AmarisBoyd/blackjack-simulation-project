@@ -1,12 +1,18 @@
 package com.amaris.blackjack_simulation_project;
 
+import com.amaris.blackjack_simulation_project.model.*;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -15,14 +21,6 @@ public class DealerTest {
     Table testTable;
     Player testPlayer;
 
-    public static int[][] strategyValues() {
-        //Array values Number to check, Expected result when hit on soft 17, Expected result when stay on soft 17
-        // zero indicates hit and one indicates stay
-        return new int[][]{new int[]{17, 0, 1},
-                new int[]{16, 0, 0},
-                new int[]{21, 1, 1},
-                new int[]{18, 0, 1}};
-    }
 
     public static Object[][] checkStateValuesNoSplit() {
         // String to hold the test inputs
@@ -192,6 +190,27 @@ public class DealerTest {
         return dealerActionValues;
     }
 
+    public static Stream<Arguments> softValues() {
+        String inputs = """
+                11,8,8,8:true;
+                11,6,7:false
+                """;
+
+        return Arrays.stream(inputs.split(";")).
+                map(String::trim)
+                .filter(line -> !line.isEmpty())
+                .map(line -> {
+                    String[] lineSplitToArray = line.split(":");
+                    boolean expectedResults = Boolean.parseBoolean(lineSplitToArray[1]);
+                    List<Card> cards = Arrays.stream(lineSplitToArray[0].split(","))
+                            .map(String::trim)
+                            .map(val -> new Card(Integer.parseInt(val)))
+                            .toList();
+                    return Arguments.of(cards, expectedResults);
+                });
+
+    }
+
     @BeforeEach
     public void setup() {
         testTable = new Table();
@@ -213,23 +232,7 @@ public class DealerTest {
 
     }
 
-    @ParameterizedTest
-    @MethodSource("strategyValues")
-    void strategy_Test(int[] values) {
-        int numberToCheck = values[0];
-        int hitSoft17Results = values[1];
-        int staySoft17Results = values[2];
-        Dealer testDealer = testTable.getDealer();
-        //set the score to the value
-        testDealer.getDealerHand().setIsSoft(true);
-        testDealer.getDealerHand().setScore(numberToCheck);
-        assertEquals(hitSoft17Results, testDealer.strategy());
 
-        testDealer.getTableRules().setDealerHitsSoft17(false);
-        assertEquals(staySoft17Results, testDealer.strategy());
-
-
-    }
 
     @Test
     void checkBust_One_Ace_No_Bust_Test() {
@@ -282,6 +285,22 @@ public class DealerTest {
 
         // assertTrue(dealer.checkBust(testHand));
         //assertEquals(18, testHand.getScore());
+    }
+
+    @ParameterizedTest
+    @MethodSource("softValues")
+    void checkBustSoftHands(List<Card> cardsAsList, boolean expectedResult) {
+        ArrayList<Card> testCards = new ArrayList<>(cardsAsList);
+        Hand curHand = testPlayer.getHand()[testPlayer.getCurrentHand()];
+        System.out.println(testCards);
+        Dealer dealer = new Dealer();
+        while (!testCards.isEmpty()) {
+            testPlayer.dealCard(testCards);
+        }
+        System.out.println(curHand);
+        Assertions.assertEquals(expectedResult, dealer.checkBustSoftAce(curHand));
+        System.out.println(curHand);
+
     }
 
     @ParameterizedTest
