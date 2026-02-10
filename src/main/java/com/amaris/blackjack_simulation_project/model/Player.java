@@ -57,6 +57,10 @@ public class Player extends Person {
 
     }
 
+    public void setStrategy(Strategy strategy) {
+        this.strategy = strategy;
+    }
+
     // Create player based on given table rules
     public Player(TableRules rules) {
         //get max splits from the table rules add one to make total number of hands after splits
