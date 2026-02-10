@@ -125,7 +125,8 @@ public class Table {
                         }
                         break;
                     case SUR:
-                        //logic for surrender to be done later
+                        //logic for surrender to be done later for now just stay
+                        action = STA;
                         break;
                     case DEA:
                         System.err.println(dealer.getUpCard());
