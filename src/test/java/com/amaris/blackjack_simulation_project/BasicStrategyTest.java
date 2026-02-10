@@ -1,10 +1,14 @@
 package com.amaris.blackjack_simulation_project;
 
+import com.amaris.blackjack_simulation_project.model.*;
+import com.amaris.blackjack_simulation_project.utils.BlackjackTestUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.ArrayList;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -108,20 +112,20 @@ class BasicStrategyTest {
     void checkPAirStrategy_Test(String testName, ArrayList<Card> mockShoe, BlackjackAction expectedAction) {
         Hand currentHand = testPlayer.getHand()[testPlayer.getCurrentHand()];
         testTable.setShoe(mockShoe);
-        testTable.rules.setDoubleAfterSplitAllowed(false);
+        testTable.getRules().setDoubleAfterSplitAllowed(false);
         testTable.dealInitialCards();
 
 
         try {
             System.out.println("Running Pair Test: " + testName.trim());
-            assertEquals(expectedAction, testPlayer.strategy.checkPairStrategy(testTable.getDealer().getUpCard(), currentHand));
+            assertEquals(expectedAction, testPlayer.getStrategy().checkPairStrategy(testTable.getDealer().getUpCard(), currentHand));
         } catch (Exception e) {
             System.err.println(e.getMessage());
         }
 
     }
 
-    private static Object[][] hardValues() {
+    private static Stream<Arguments> hardValues() {
          /*String to hold the test inputs
          format Test name: Mock Shoe: Expected Return
          ***Note***
@@ -176,46 +180,23 @@ class BasicStrategyTest {
                         Nineteen on ace:10,11,9,8:STA;\
                         Twenty on ace: 10,11,10,8:STA
                         """;
-        ArrayList<Card> mockShoe = new ArrayList<>();
-        String testName;
-        //create an array of strings with the first parse of the test inputs
-        String[] individualLines = testInputs.split(";");
-
-        // set the number of rows in the object array equal to the size of the first parse array
-        Object[][] hardValues = new Object[individualLines.length][3];
-        for (int k = 0; k < individualLines.length; k++) {
-            //Parse each string in the new array a second time to get individual values
-            String[] secondParseInputs = individualLines[k].trim().split(":");
-            testName = secondParseInputs[0];
-            BlackjackAction expectedResult = BlackjackAction.valueOf(secondParseInputs[2]);
-            String[] valuesForCards = secondParseInputs[1].split(",");
-            for (String thirdParseInput : valuesForCards) {
-                mockShoe.add(new Card(Integer.parseInt(thirdParseInput.trim())));
-            }
-            //reverse the shoe so it works as expected
-            mockShoe = new ArrayList<>(mockShoe.reversed());
-
-
-            //Add the now parsed values to a new object and store it in row "k" of the object array
-            hardValues[k] = new Object[]{testName, mockShoe.clone(), expectedResult};
-            mockShoe.clear();
-        }
-        return hardValues;
+        return BlackjackTestUtils.parseTestInputs(testInputs);
 
     }
 
-    @ParameterizedTest
+
+    @ParameterizedTest(name = "[{index}] {0} | Expected: {2}")
     @MethodSource("hardValues")
     void hard_Strategy_Test(String testName, ArrayList<Card> mockShoe, BlackjackAction expectedAction) {
+
         Hand currentHand = testPlayer.getHand()[testPlayer.getCurrentHand()];
         testTable.setShoe(mockShoe);
-        testTable.rules.setDoubleAfterSplitAllowed(false);
+        testTable.getRules().setDoubleAfterSplitAllowed(false);
         testTable.dealInitialCards();
 
 
         try {
-            System.out.println("Running Hard Test: " + testName.trim());
-            assertEquals(expectedAction, testPlayer.strategy.checkHardStrategy(testTable.getDealer().getUpCard(), currentHand));
+            assertEquals(expectedAction, testPlayer.getStrategy().checkHardStrategy(testTable.getDealer().getUpCard(), currentHand));
         } catch (Exception e) {
             System.err.println(e.getMessage());
         }
@@ -223,7 +204,7 @@ class BasicStrategyTest {
     }
 
 
-    public static Object[][] softValues() {
+    public static Stream<Arguments> softValues() {
            /*String to hold the test inputs
          format Test name: Mock Shoe: Expected Return
          ***Note***
@@ -239,48 +220,18 @@ class BasicStrategyTest {
                         Soft Eighteen on Two:  11,2,7,2:DOS;
                         Soft Nineteen on Two:  11,2,8,2:STA;
                         Soft Twenty on Two:    11,2,9,2:STA""";
-        ArrayList<Card> mockShoe = new ArrayList<>();
-        String testName;
-        //create an array of strings with the first parse of the test inputs
-        String[] individualLines = testInputs.split(";");
-
-        // set the number of rows in the object array equal to the size of the first parse array
-        Object[][] hardValues = new Object[individualLines.length][3];
-        for (int k = 0; k < individualLines.length; k++) {
-            //Parse each string in the new array a second time to get individual values
-            String[] lineAsArray = individualLines[k].trim().split(":");
-            testName = lineAsArray[0];
-            BlackjackAction expectedResult = BlackjackAction.valueOf(lineAsArray[2]);
-            String[] valuesForCards = lineAsArray[1].split(",");
-            for (String thirdParseInput : valuesForCards) {
-                mockShoe.add(new Card(Integer.parseInt(thirdParseInput.trim())));
-            }
-            //reverse the shoe so it works as expected
-            mockShoe = new ArrayList<>(mockShoe.reversed());
 
 
-            //Add the now parsed values to a new object and store it in row "k" of the object array
-            hardValues[k] = new Object[]{testName, mockShoe.clone(), expectedResult};
-            mockShoe.clear();
-        }
-        return hardValues;
-
-
-
-
-
-
-
-
+        return BlackjackTestUtils.parseTestInputs(testInputs);
 
 
     }
 
-	/*
-	Test soft strategy
-	 */
+/*
+Test soft strategy
+*/
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "[{index}] {0} | {1} | Expected: {2}")
     @MethodSource("softValues")
     void soft_Strategy_Test(String testName, ArrayList<Card> mockShoe, BlackjackAction expectedAction) {
         Hand currentHand = testPlayer.getHand()[testPlayer.getCurrentHand()];
@@ -289,8 +240,7 @@ class BasicStrategyTest {
 
 
         try {
-            System.out.println("Running Soft Test: " + testName.trim());
-            assertEquals(expectedAction, testPlayer.strategy.checkSoftStrategy(testTable.getDealer().getUpCard(), currentHand));
+            assertEquals(expectedAction, testPlayer.getStrategy().checkSoftStrategy(testTable.getDealer().getUpCard(), currentHand));
         } catch (Exception e) {
             System.err.println(e.getMessage());
         }

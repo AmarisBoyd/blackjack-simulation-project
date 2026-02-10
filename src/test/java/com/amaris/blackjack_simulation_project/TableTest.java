@@ -1,5 +1,8 @@
 package com.amaris.blackjack_simulation_project;
 
+import com.amaris.blackjack_simulation_project.model.Card;
+import com.amaris.blackjack_simulation_project.model.Player;
+import com.amaris.blackjack_simulation_project.model.Table;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
