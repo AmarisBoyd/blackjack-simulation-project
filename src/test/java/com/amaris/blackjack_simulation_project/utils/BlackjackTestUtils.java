@@ -24,7 +24,7 @@ public class BlackjackTestUtils {
                 });
     }
 
-    private static ArrayList<Card> parseShoe(String cards) {
+    public static ArrayList<Card> parseShoe(String cards) {
         ArrayList<Card> shoe = Arrays.stream(cards.split(","))
                 .map(String::trim)
                 .map(Integer::parseInt)
@@ -33,6 +33,44 @@ public class BlackjackTestUtils {
 
         Collections.reverse(shoe);
         return shoe;
+    }
+
+    //method for parsing score based test
+    public static Stream<Arguments> parseScoreTests(String testInputs) {
+        return Arrays.stream(testInputs.split(";"))
+                .map(String::trim)
+                .filter(line -> !line.isEmpty())
+                .map(line -> {
+                    String[] parts = line.split(":");
+                    String testName = parts[0].trim();
+                    ArrayList<Card> shoe = parseShoe(parts[1]);
+
+
+                    Integer expectedScore = Integer.parseInt(parts[2].trim());
+
+                    return Arguments.of(testName, shoe, expectedScore);
+                });
+    }
+
+    //method for parsing results based test
+    public static Stream<Arguments> parseResultsTests(String testInputs) {
+        return Arrays.stream(testInputs.split(";"))
+                .map(String::trim)
+                .filter(line -> !line.isEmpty())
+                .map(line -> {
+                    String[] parts = line.split(":");
+                    String testName = parts[0].trim();
+
+                    // Parse both hands using your existing logic
+                    ArrayList<Card> playerDeck = parseShoe(parts[1]);
+                    ArrayList<Card> dealerDeck = parseShoe(parts[2]);
+
+                    int wins = Integer.parseInt(parts[3].trim());
+                    int losses = Integer.parseInt(parts[4].trim());
+                    int pushes = Integer.parseInt(parts[5].trim());
+
+                    return Arguments.of(testName, playerDeck, dealerDeck, wins, losses, pushes);
+                });
     }
 }
 
