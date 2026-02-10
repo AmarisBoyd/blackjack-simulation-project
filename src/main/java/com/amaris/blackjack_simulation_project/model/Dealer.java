@@ -1,4 +1,4 @@
-package com.amaris.blackjack_simulation_project;
+package com.amaris.blackjack_simulation_project.model;
 
 import java.util.ArrayList;
 import java.util.stream.IntStream;
@@ -27,7 +27,7 @@ public class Dealer extends Person {
         if (this.dealerHand.getScore() == 21)
             //stay
             return 1;
-        if (this.rules.getHitSoft17()) {
+        if (this.rules.doesHitSoft17()) {
             if (this.dealerHand.getScore() >= 17) {
                 if (this.dealerHand.getIsSoft()) {
                     return 0;

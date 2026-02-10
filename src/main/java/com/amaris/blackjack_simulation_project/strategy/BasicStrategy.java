@@ -1,6 +1,10 @@
-package com.amaris.blackjack_simulation_project;
+package com.amaris.blackjack_simulation_project.strategy;
 
-import static com.amaris.blackjack_simulation_project.BlackjackAction.*;
+import com.amaris.blackjack_simulation_project.model.BlackjackAction;
+import com.amaris.blackjack_simulation_project.model.Card;
+import com.amaris.blackjack_simulation_project.model.Hand;
+
+import static com.amaris.blackjack_simulation_project.model.BlackjackAction.*;
 
 
 public class BasicStrategy implements Strategy {

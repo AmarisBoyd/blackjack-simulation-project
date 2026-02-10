@@ -1,4 +1,6 @@
-package com.amaris.blackjack_simulation_project;
+package com.amaris.blackjack_simulation_project.model;
+
+import com.amaris.blackjack_simulation_project.strategy.Strategy;
 
 //Class for a player that follows a no-bust strategy (yes, they exist ive seen them)
 public class NoBustPlayer implements Strategy {

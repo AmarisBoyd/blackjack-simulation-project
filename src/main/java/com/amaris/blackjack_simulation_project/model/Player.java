@@ -1,5 +1,8 @@
-package com.amaris.blackjack_simulation_project;
+package com.amaris.blackjack_simulation_project.model;
 
+
+import com.amaris.blackjack_simulation_project.strategy.BasicStrategy;
+import com.amaris.blackjack_simulation_project.strategy.Strategy;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -271,5 +274,9 @@ public class Player extends Person {
 
     public boolean isAbleToSplit() {
         return this.ableToSplit;
+    }
+
+    public Strategy getStrategy() {
+        return this.strategy;
     }
 }

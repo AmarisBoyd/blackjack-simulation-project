@@ -1,4 +1,4 @@
-package com.amaris.blackjack_simulation_project;
+package com.amaris.blackjack_simulation_project.model;
 
 public class TableRules {
     //Variables to hold table rules/settings
@@ -119,22 +119,22 @@ public class TableRules {
     }
 
     //getter for dealer hits soft 17
-    public boolean getHitSoft17() {
+    public boolean doesHitSoft17() {
         return this.dealerHitsSoft17;
     }
 
     //getter for if surrender is allowed
-    public boolean getSurrender() {
+    public boolean canSurrender() {
         return this.surrenderAllowed;
     }
 
     // getter for if doubling after splits is allowed
-    public boolean getDoubleAfterSplit() {
+    public boolean canDoubleAfterSplit() {
         return this.doubleAfterSplitAllowed;
     }
 
     //getter for if resplitting aces is allowed
-    public boolean getResplitAces() {
+    public boolean canResplitAces() {
         return this.resplitAcesAllowed;
     }
 

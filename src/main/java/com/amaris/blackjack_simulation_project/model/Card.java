@@ -1,4 +1,4 @@
-package com.amaris.blackjack_simulation_project;
+package com.amaris.blackjack_simulation_project.model;
 
 //
 public class Card {

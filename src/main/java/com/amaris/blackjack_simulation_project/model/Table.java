@@ -1,4 +1,4 @@
-package com.amaris.blackjack_simulation_project;
+package com.amaris.blackjack_simulation_project.model;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import static com.amaris.blackjack_simulation_project.BlackjackAction.*;
+import static com.amaris.blackjack_simulation_project.model.BlackjackAction.*;
 
 // Class to represent a blackjack table
 public class Table {
@@ -160,10 +160,10 @@ public class Table {
         //check for rules regarding splits
         if (currentPlayer.isHasSplit()) {
             //if the player can double after split set can double to true otherwise set it to false
-            currentPlayer.setCanDouble(rules.getDoubleAfterSplit());
+            currentPlayer.setCanDouble(rules.canDoubleAfterSplit());
             //if the player has split aces
             if (currentPlayer.hasSplitAces()) {
-                currentPlayer.setAbleToSplit(rules.getResplitAces());
+                currentPlayer.setAbleToSplit(rules.canResplitAces());
             }
             //if the players hands equal max splits -1 (indexing from 0) set it so they cant split
             if (currentPlayer.getTotalHands() == rules.getMaxSplits() - 1) {
@@ -200,7 +200,7 @@ public class Table {
             //give original hand a card
             currentPlayer.dealCard(shoe);
             //if the rules allow resplitting of aces or hitting on split aces
-            if (rules.getResplitAces() || rules.canHitSplitAces()) {
+            if (rules.canResplitAces() || rules.canHitSplitAces()) {
                 //return hit so we can check if the current hand is a pair and then proceed
                 return HIT;
 
@@ -518,6 +518,14 @@ public class Table {
 
     public void setLastHand(boolean b) {
         this.lastHand = b;
+    }
+
+    public Object getDeck() {
+        return this.deck;
+    }
+
+    public TableRules getRules() {
+        return this.rules;
     }
 }
 
