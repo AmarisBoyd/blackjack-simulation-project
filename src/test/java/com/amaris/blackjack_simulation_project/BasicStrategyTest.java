@@ -32,7 +32,7 @@ class BasicStrategyTest {
     /*
   Test of pair strategy
    */
-    private static Object[][] pairValues() {
+    private static Stream<Arguments> pairValues() {
         /*String to hold the test inputs
          format Test name: Mock Shoe: Expected Return
          ***Note***
@@ -80,50 +80,9 @@ class BasicStrategyTest {
                         Tens on ace:10,11,10,8:STA;\
                         Aces on ace:11,11,11,8:SPL;\
                         Error:21,2,2,2:SPL""";
-        ArrayList<Card> mockShoe = new ArrayList<>();
-        String testName;
-        //create an array of strings with the first parse of the test inputs
-        String[] firstParseInputs = testInputs.split(";");
-
-        // set the number of rows in the object array equal to the size of the first parse array
-        Object[][] pairValues = new Object[firstParseInputs.length][3];
-        for (int k = 0; k < firstParseInputs.length; k++) {
-            //Parse each string in the new array a second time to get individual values
-            String[] secondParseInputs = firstParseInputs[k].split(":");
-            testName = secondParseInputs[0];
-            BlackjackAction expectedResult = BlackjackAction.valueOf(secondParseInputs[2]);
-            String[] thirdParseInputs = secondParseInputs[1].split(",");
-            for (String thirdParseInput : thirdParseInputs) {
-                mockShoe.add(new Card(Integer.parseInt(thirdParseInput.trim())));
-            }
-            //reverse the shoe so it works as expected
-            mockShoe = new ArrayList<>(mockShoe.reversed());
-
-
-            //Add the now parsed values to a new object and store it in row "k" of the object array
-            pairValues[k] = new Object[]{testName, mockShoe.clone(), expectedResult};
-            mockShoe.clear();
-        }
-        return pairValues;
+        return BlackjackTestUtils.parseTestInputs(testInputs);
     }
 
-    @ParameterizedTest
-    @MethodSource("pairValues")
-    void checkPAirStrategy_Test(String testName, ArrayList<Card> mockShoe, BlackjackAction expectedAction) {
-        Hand currentHand = testPlayer.getHand()[testPlayer.getCurrentHand()];
-        testTable.setShoe(mockShoe);
-        testTable.getRules().setDoubleAfterSplitAllowed(false);
-        testTable.dealInitialCards();
-
-
-        try {
-            System.out.println("Running Pair Test: " + testName.trim());
-            assertEquals(expectedAction, testPlayer.getStrategy().checkPairStrategy(testTable.getDealer().getUpCard(), currentHand));
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
-        }
-
-    }
 
     private static Stream<Arguments> hardValues() {
          /*String to hold the test inputs
@@ -185,24 +144,6 @@ class BasicStrategyTest {
     }
 
 
-    @ParameterizedTest(name = "[{index}] {0} | Expected: {2}")
-    @MethodSource("hardValues")
-    void hard_Strategy_Test(String testName, ArrayList<Card> mockShoe, BlackjackAction expectedAction) {
-
-        Hand currentHand = testPlayer.getHand()[testPlayer.getCurrentHand()];
-        testTable.setShoe(mockShoe);
-        testTable.getRules().setDoubleAfterSplitAllowed(false);
-        testTable.dealInitialCards();
-
-
-        try {
-            assertEquals(expectedAction, testPlayer.getStrategy().checkHardStrategy(testTable.getDealer().getUpCard(), currentHand));
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
-        }
-
-    }
-
 
     public static Stream<Arguments> softValues() {
            /*String to hold the test inputs
@@ -246,5 +187,42 @@ Test soft strategy
         }
 
     }
+
+    @ParameterizedTest(name = "[{index}] {0} | Expected: {2}")
+    @MethodSource("hardValues")
+    void hard_Strategy_Test(String testName, ArrayList<Card> mockShoe, BlackjackAction expectedAction) {
+
+        Hand currentHand = testPlayer.getHand()[testPlayer.getCurrentHand()];
+        testTable.setShoe(mockShoe);
+        testTable.getRules().setDoubleAfterSplitAllowed(false);
+        testTable.dealInitialCards();
+
+
+        try {
+            assertEquals(expectedAction, testPlayer.getStrategy().checkHardStrategy(testTable.getDealer().getUpCard(), currentHand));
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
+
+    }
+
+    @ParameterizedTest
+    @MethodSource("pairValues")
+    void checkPAirStrategy_Test(String testName, ArrayList<Card> mockShoe, BlackjackAction expectedAction) {
+        Hand currentHand = testPlayer.getHand()[testPlayer.getCurrentHand()];
+        testTable.setShoe(mockShoe);
+        testTable.getRules().setDoubleAfterSplitAllowed(false);
+        testTable.dealInitialCards();
+
+
+        try {
+            System.out.println("Running Pair Test: " + testName.trim());
+            assertEquals(expectedAction, testPlayer.getStrategy().checkPairStrategy(testTable.getDealer().getUpCard(), currentHand));
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
+
+    }
+
 
 }
