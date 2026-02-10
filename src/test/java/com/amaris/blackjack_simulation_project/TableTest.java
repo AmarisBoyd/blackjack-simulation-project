@@ -133,7 +133,7 @@ public class TableTest {
     @Test
     void loadDeck_Test() {
 
-        Assertions.assertNotNull(testTable.deck);
+        Assertions.assertNotNull(testTable.getDeck());
 
     }
 
@@ -178,7 +178,7 @@ public class TableTest {
         //make a copy of the shoe to compare
         ArrayList<Card> oldShoe = new ArrayList<>(testTable.getShoe());
         //set cut position to one deck in;
-        int cutPosition = testTable.shoe.size() - 52;
+        int cutPosition = testTable.getShoe().size() - 52;
         testTable.cutShoe(cutPosition);
         Assertions.assertFalse(Objects.deepEquals(oldShoe, testTable.getShoe()));
         Assertions.assertNotEquals(0, testTable.getCutPosition());
@@ -189,7 +189,7 @@ public class TableTest {
     void addPlayer_Test() {
         Player playerOne = new Player();
         testTable.addPlayer(playerOne);
-        Assertions.assertNotNull(testTable.players[0]);
+        Assertions.assertNotNull(testTable.getPlayers()[0]);
 
 
     }
@@ -200,8 +200,8 @@ public class TableTest {
         testTable.addPlayer(playerOne);
         Player playerTwo = new Player();
         testTable.addPlayer(playerTwo);
-        Assertions.assertNotNull(testTable.players[0]);
-        Assertions.assertNotNull(testTable.players[1]);
+        Assertions.assertNotNull(testTable.getPlayers()[0]);
+        Assertions.assertNotNull(testTable.getPlayers()[1]);
 
     }
 
@@ -213,26 +213,26 @@ public class TableTest {
             testTable.addPlayer(players[i]);
         }
         for (int j = 0; j < 5; j++) {
-            Assertions.assertNotNull(testTable.players[j]);
+            Assertions.assertNotNull(testTable.getPlayers()[j]);
         }
     }
 
     @Test
     void dealInitialCards_One_Player_Test() {
-        int cutPosition = testTable.shoe.size() - 52;
+        int cutPosition = testTable.getShoe().size() - 52;
         testTable.cutShoe(cutPosition);
         Player playerOne = new Player();
         testTable.addPlayer(playerOne);
 
         testTable.dealInitialCards();
 
-        Assertions.assertNotNull(testTable.players[0].getHand());
+        Assertions.assertNotNull(testTable.getPlayers()[0].getHand());
         Assertions.assertNotNull(testTable.getDealer().getDealerHand());
     }
 
     @Test
     void dealInitialCards_Two_Players_Test() {
-        int cutPosition = testTable.shoe.size() - 52;
+        int cutPosition = testTable.getShoe().size() - 52;
         testTable.cutShoe(cutPosition);
         Player playerOne = new Player();
         testTable.addPlayer(playerOne);
@@ -240,7 +240,7 @@ public class TableTest {
         testTable.addPlayer(playerTwo);
         testTable.dealInitialCards();
         for (int i = 0; i < testTable.getPlayerCount(); i++) {
-            Assertions.assertNotNull(testTable.players[i].getHand());
+            Assertions.assertNotNull(testTable.getPlayers()[i].getHand());
         }
         Assertions.assertNotNull(testTable.getDealer().getDealerHand());
 
@@ -256,7 +256,7 @@ public class TableTest {
 
         testTable.dealInitialCards();
         for (int i = 0; i < testTable.getPlayerCount(); i++) {
-            Assertions.assertNotNull(testTable.players[i].getHand());
+            Assertions.assertNotNull(testTable.getPlayers()[i].getHand());
 
         }
         Assertions.assertNotNull(testTable.getDealer().getDealerHand());
