@@ -1,6 +1,7 @@
 package com.amaris.blackjack_simulation_project;
 
 import com.amaris.blackjack_simulation_project.model.*;
+import com.amaris.blackjack_simulation_project.utils.BlackjackTestUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,68 +23,17 @@ public class DealerTest {
     Player testPlayer;
 
 
-    public static Object[][] checkStateValuesNoSplit() {
+    public static Stream<Arguments> checkStateValuesNoSplit() {
         // String to hold the test inputs
         // format [Test name]:[player hand cards]:[dealer hand cards]:[expected wins]:[expected losses]:[expected pushes]
-        String testInputs = """
-                Player stays Dealer wins:10,7:10,9:0:1:0;\
-                Player stays Player wins:10,11:10,10:1:0:0;\
-                Push:10,10:10,10:0:0:1;\
-                Player bust:10,5,8:10,10:0:1:0;\
-                Dealer bust:10,7,:10,5,8:1:0:0""";
-        // Hand to hold the players cards
-        Hand playerHand = new Hand();
-        // hand to hold the dealers cards
-        Hand dealerHand = new Hand();
-        String testName = "";
-        // Integer to store number of expected wins
-        int expectedWins = 0;
-        // Integer to store number of expected losses
-        int expectedLosses = 0;
-        // Integer to store number of expected pushes
-        int expectedPushes = 0;
-
-        //create an array of strings with the first parse of the test inputs
-        String[] firstParseInputs = testInputs.split(";");
-
-        // set the number of rows in the object array equal to the size of the first parse array
-        Object[][] dealerActionValues = new Object[firstParseInputs.length][4];
-        for (int k = 0; k < firstParseInputs.length; k++) {
-            //Parse each string in the new array a second time to get individual values
-            String[] secondParseInputs = firstParseInputs[k].split(":");
-            //loop over the second array of strings that is formed
-            for (int i = 0; i < secondParseInputs.length; i++) {
-                testName = secondParseInputs[0];
-                //set expected wins to second parses 4th value
-                expectedWins = Integer.parseInt(secondParseInputs[3]);
-                //set expected losses to the second parses 5th value
-                expectedLosses = Integer.parseInt(secondParseInputs[4]);
-                //set expected pushes to the second parses 6th value
-                expectedPushes = Integer.parseInt(secondParseInputs[5]);
-                // run a third parse to get the individual cards to add
-                String[] thirdParseInputs = secondParseInputs[i].split(",");
-                //loop over the third array
-                for (String thirdParseInput : thirdParseInputs) {
-                    // if we are in the first value of the second array add the card to the player hand
-                    if (i == 1) {
-                        playerHand.addCard(new Card(Integer.parseInt(thirdParseInput)));
-                    }
-                    //if we are in the second value of the second array add the card to the dealer hand
-                    if (i == 2) {
-                        dealerHand.addCard(new Card(Integer.parseInt(thirdParseInput)));
-                    }
-                }
-
-            }
-
-            //Add the now parsed values to a new object and store it in row "k" of the object array
-            dealerActionValues[k] = new Object[]{testName, new Hand(playerHand), new Hand(dealerHand), expectedWins, expectedLosses, expectedPushes};
-            //reset player hand and dealer hand so the next time we do the loop we have an empty hand
-            playerHand = new Hand();
-            dealerHand = new Hand();
-
-        }
-        return dealerActionValues;
+        String data = """
+                Player stays Dealer wins: 10,7 : 10,9  : 0 : 1 : 0;
+                Player stays Player wins: 10,11: 10,10 : 1 : 0 : 0;
+                Push:                     10,10: 10,10 : 0 : 0 : 1;
+                Player bust:              10,5,8:10,10 : 0 : 1 : 0;
+                Dealer bust:              10,7 : 10,5,8: 1 : 0 : 0
+                """;
+        return BlackjackTestUtils.parseResultsTests(data);
     }
 
     public static Object[][] checkStateSplitValues() {
@@ -303,16 +253,21 @@ public class DealerTest {
 
     }
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "{0}")
     @MethodSource("checkStateValuesNoSplit")
-    void checkState_No_Split_Test(String testName, Hand playerHand, Hand dealerHand, int expectedWins, int expectedLosses, int expectedPushes) {
+    void checkState_No_Split_Test(String testName, ArrayList<Card> playerHand, ArrayList<Card> dealerHand,
+                                  int expectedWins, int expectedLosses, int expectedPushes) {
 
         int[] expectedResults = {expectedWins, expectedLosses, expectedPushes};
         int[] actualResults;
         Player tempPlayer = this.testTable.getPlayers()[0];
         Dealer tempDealer = this.testTable.getDealer();
-        tempPlayer.debugSetHand(playerHand.getCards());
-        tempDealer.setDealerHand(dealerHand);
+        while (!playerHand.isEmpty()) {
+            tempPlayer.dealCard(playerHand);
+        }
+        while (!dealerHand.isEmpty()) {
+            tempDealer.dealCard(dealerHand);
+        }
         // check if the player has bust
         if (tempDealer.checkBust(tempPlayer.getHand()[0])) {
             //if they have set that flag as it wouldn't be set since we added the cards directly
@@ -325,6 +280,11 @@ public class DealerTest {
                 testTable.getPlayers()[0].getPushes()};
         //check them against the expected results
         assertArrayEquals(expectedResults, actualResults);
+        assertAll("Blackjack Results Logic",
+                () -> assertEquals(expectedWins, tempPlayer.getWins(), "Wins count mismatch"),
+                () -> assertEquals(expectedLosses, tempPlayer.getLosses(), "Losses count mismatch"),
+                () -> assertEquals(expectedPushes, tempPlayer.getPushes(), "Pushes count mismatch")
+        );
 
 
     }
