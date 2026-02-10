@@ -145,6 +145,31 @@ public class Table {
 
     }
 
+    private boolean checkIfNextHand(Player currentPlayer) {
+        //player stands check if we need to move to next split
+        //if the current player has split and they are not aces
+        if (currentPlayer.isHasSplit() && !currentPlayer.hasSplitAces()) {
+            //if the current hand is not equal to the max number of total hands
+            if (!(currentPlayer.getCurrentHand() == currentPlayer.getTotalHands())) {
+                //set the current hand for the player to the next hand they have
+                currentPlayer.setCurrentHand(currentPlayer.getCurrentHand() + 1);
+                //if the current hand still only has one card
+                if (currentPlayer.getHand()[currentPlayer.getCurrentHand()].getHandSize() == 1) {
+                    //give them another card
+                    hit(currentPlayer);
+                    return true;
+                }
+
+
+            }
+        } else if (currentPlayer.isHasSplit() && currentPlayer.hasSplitAces()) {
+            //TODO handle split ace logic
+
+        }
+        //if they have not split at all return false as there is no next hand
+        return false;
+    }
+
     private void checkRules(Player currentPlayer) {
         //check for rules regarding splits
         if (currentPlayer.isHasSplit()) {
