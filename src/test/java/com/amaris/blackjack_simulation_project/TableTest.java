@@ -3,10 +3,12 @@ package com.amaris.blackjack_simulation_project;
 import com.amaris.blackjack_simulation_project.model.Card;
 import com.amaris.blackjack_simulation_project.model.Player;
 import com.amaris.blackjack_simulation_project.model.Table;
+import com.amaris.blackjack_simulation_project.utils.BlackjackTestUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -16,56 +18,13 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 @SpringBootTest
 public class TableTest {
     Table testTable;
 
-    private static Object[][] playerActionValues() {
-        Object[][] actionValues = new Object[4][2];
-        /*
-         * player card
-         * dealer card
-         * player card
-         * works backwards
-         * */
-        ArrayList<Card> hardValueTest = new ArrayList<>(List.of(
-                new Card(8),
-                new Card(10),
-                new Card(2),
-                new Card(10),
-                new Card(8)
-        ));
-        ArrayList<Card> softValueTest = new ArrayList<>(List.of(
-                new Card(10),
-                new Card(3),
-                new Card(10),
-                new Card(5),
-                new Card(10),
-                new Card(11)
-        ));
-        ArrayList<Card> splitTest = new ArrayList<>(List.of(
-                new Card(10),
-                new Card(10),
-                new Card(9),
-                new Card(10),
-                new Card(8),
-                new Card(10),
-                new Card(8)
-        ));
-        ArrayList<Card> bustTest = new ArrayList<>(List.of(
-                new Card(10),
-                new Card(10),
-                new Card(3),
-                new Card(10),
-                new Card(10)
-        ));
-        actionValues[0] = new Object[]{hardValueTest, 18};
-        actionValues[1] = new Object[]{softValueTest, 19};
-        actionValues[2] = new Object[]{splitTest, 17};
-        actionValues[3] = new Object[]{bustTest, 0};
-        return actionValues;
-    }
+
 
     private static Object[][] dealerActionValues() {
         Object[][] actionValues = new Object[4][3];
@@ -301,5 +260,15 @@ public class TableTest {
         Assertions.assertEquals(expectedDealerHandValue, testTable.getDealer().getDealerHand().getScore());
 
 
+    }
+
+    private static Stream<Arguments> playerActionValues() {
+        String testInputs = """
+                Hard Value 18: 10,2,10,8:18;
+                Soft Value 19: 5,10,3,10,11:19;
+                Split Test 17: 10,8,10,8,9,10,10:17;
+                Bust Test 0:   10,3,10,10:0
+                """;
+        return BlackjackTestUtils.parseScoreTests(testInputs);
     }
 }
