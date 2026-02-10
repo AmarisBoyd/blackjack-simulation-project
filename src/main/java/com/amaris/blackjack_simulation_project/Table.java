@@ -80,6 +80,7 @@ public class Table {
                 }
                 //check if previous action caused the player to bust
                 this.dealer.checkBust(currentPlayer.getHand()[currentPlayer.getCurrentHand()]);
+                //check the rules this is for observers later
                 checkRules(currentPlayer);
                 //check the strategy based on the hand
                 action = currentPlayer.strategy(dealer.getUpCard());
@@ -178,7 +179,7 @@ public class Table {
         }
     }
 
-    //TODO examine if "currentAction" is necessary in logic still
+
     private BlackjackAction splitAces(Player currentPlayer, BlackjackAction currentAction) {
         //if the player can split
         if (currentPlayer.isAbleToSplit()) {
@@ -194,19 +195,55 @@ public class Table {
             secondHand.addCard(originalhand.getCards().remove(1));
             //set original hand size to one
             originalhand.setHandSize(1);
+            //set the original hand so its no longer seen as a pair
+            originalhand.setIsPair(false);
             //give original hand a card
             currentPlayer.dealCard(shoe);
-            //increment working hand
-            currentPlayer.setCurrentHand(1);
-            //give next hand a card
-            currentPlayer.dealCard(shoe);
+            //if the rules allow resplitting of aces or hitting on split aces
+            if (rules.getResplitAces() || rules.canHitSplitAces()) {
+                //return hit so we can check if the current hand is a pair and then proceed
+                return HIT;
+
+
+            }
+            //if neither of those are true we are done with the first hand
+            else {
+                //increment working hand
+                currentPlayer.setCurrentHand(currentPlayer.getCurrentHand() + 1);
+                //give next hand a card
+                currentPlayer.dealCard(shoe);
+                //since we know we are not splitting or hitting that hand either return stand
+                return STA;
+            }
         }
-        //if the player cannot split again then return stand
+        //if the player cannot split the aces again  check which version of split was sent
         else {
-            return STA;
+            //if they wanted to split or stand return stand
+            if (currentAction.getExpansion().equalsIgnoreCase("Split if double after split  is offered otherwise stand")) {
+                return STA;
+            }
+            // if they wanted to split or hit return the results of hit
+            else if (currentAction == SDH) {
+                return hit(currentPlayer);
+            }
+            // if the action was a standard split
+            else if (currentAction == SPL) {
+                if (rules.canHitSplitAces()) {
+                    //if they can hit split aces we need to figure out if they hit or stay for now returning hit
+                    // to avoid the issue of it being an soft 12 which doesn't exist in most strategies
+                    //TODO figure this out
+
+                    return HIT;
+                } else {
+                    //if they cannot hit split aces and cannot split again just stand since they cant do anything
+                    return STA;
+                }
+            }
+
         }
-        //Return hit so the loop continues
-        return HIT;
+        //this should be unreachable but return stand  so the loop continues with the next hand
+        //TODO add logging in the case this is ever reached
+        return STA;
     }
 
     private boolean checkAces(Player currentPlayer) {
@@ -237,17 +274,18 @@ public class Table {
 
         } else {
             if (currentAction == SPL) {
-                //if the player only sent split return hit so the loop continues, and we can try to get another answer
+                //if the player only sent split, and we are unable to split instead of a pair
+                // Return hit this in combination with the false isAbleToSplit will cause it to default to hard totals
                 return HIT;
             } else if (currentAction == SDS) {
                 //if the player sent Split or Stand return stand
                 return STA;
             } else if (currentAction == SDH) {
                 //if the player returned split or hit then hit
-                hit(currentPlayer);
+                return hit(currentPlayer);
             }
         }
-        //return zero so the dealer loop continues
+        //return HIT so the dealer loop continues
         return HIT;
     }
 
