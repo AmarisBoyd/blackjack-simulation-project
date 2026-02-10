@@ -1,6 +1,7 @@
 package com.amaris.blackjack_simulation_project;
 
 import java.util.ArrayList;
+import java.util.stream.IntStream;
 
 
 public class Dealer extends Person {
@@ -305,7 +306,6 @@ public class Dealer extends Person {
     //Non-functional
     public boolean checkBustSoftAce(Hand hand) {
         //local variables for readability
-        ArrayList<Integer> softAces = hand.getSoftAceLocations();
         ArrayList<Card> handCards = hand.getCards();
 
         //if the score of the current hand isn't higher than 21
@@ -313,29 +313,43 @@ public class Dealer extends Person {
             //return false so we don't bother with other logic
             return false;
         //if the hand is not soft
-        if (!hand.checkSoft(hand.getCards())) {
+        if (!hand.getIsSoft()) {
             //and hand score is over 21 return true
-
             return hand.getScore() > 21;
         }
-        for (int i = 0; i < softAces.size(); i++) {
-            if (hand.getScore() > 21) {
-                //set the value of the ace to 1
-                int location = softAces.get(i);
-                handCards.get(location).setValue(1);
-                //decrement the hand score by 10
-                hand.setScore(hand.getScore() - 10);
-                softAces.remove(i);
+        //if the hand is soft
+        else {
+            boolean checkAces = true;
+            while (checkAces) {
+                //get the index of the first soft ace
+                int index = IntStream.range(0, handCards.size())
+                        .filter(i -> handCards.get(i).getValue() == 11)
+                        .findFirst().orElse(-1);
+                if (index == -1) {
+                    //then the hand cant be soft so set isSoft to false
+                    hand.setIsSoft(false);
+                    //if there is no soft ace stop checking
+                    checkAces = false;
+                } else {
+                    //otherwise set the value to one
+                    handCards.get(index).setValue(1);
+                    //add the index to the hard ace locations
+                    hand.addHardAceLocation(index);
+                    //update the score
+                    hand.updateScore();
+
+                }
 
 
-            } else {
-                //if the hand score is no longer  above 21 leave the loop
-                return false;
             }
+            //after all the aces have been checked return the result of if the hand is over 21
+            return hand.getScore() >= 21;
+
+
         }
 
-        return true;
     }
+
 
     public Hand getDealerHand() {
         return this.dealerHand;
