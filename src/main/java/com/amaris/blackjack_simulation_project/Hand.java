@@ -5,6 +5,7 @@ import java.util.ArrayList;
 public class Hand {
     //arraylist to keep track of where soft aces are in hand so we don't have to search
     private final ArrayList<Integer> softAceLocations;
+    private final ArrayList<Integer> hardAceLocations;
     //Create array with max hand size of 11 cards (theoretical max in blackjack) this could be an arraylist but for simplicity using array
     private ArrayList<Card> cards;
     //integer to track current score of hand
@@ -24,6 +25,7 @@ public class Hand {
         this.cards = new ArrayList<>();
 
         softAceLocations = new ArrayList<>();
+        hardAceLocations = new ArrayList<>();
     }
 
 
@@ -35,6 +37,7 @@ public class Hand {
         this.handSize = hand.handSize;
         this.hasBust = hand.hasBust;
         this.softAceLocations = hand.softAceLocations;
+        this.hardAceLocations = hand.hardAceLocations;
 
 
     }
@@ -82,6 +85,7 @@ public class Hand {
         //if no Ace found acting as 11 return false
         return false;
     }
+
 
 
     //check for pair
@@ -175,4 +179,7 @@ public class Hand {
     }
 
 
+    public void addHardAceLocation(int index) {
+        hardAceLocations.add(index);
+    }
 }
