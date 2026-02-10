@@ -17,7 +17,7 @@ public class Player extends Person {
     //Arrays to hold cards in hand multiple hands for splits for our each player will otherwise have only one hand
     protected Hand[] hands;
     //Strategy to hold player behavior
-    Strategy strategy;
+    protected Strategy strategy;
     //Record of wins losses and pushes for player
     protected int wins = 0;
     protected int losses = 0;
