@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 
@@ -26,51 +25,7 @@ public class TableTest {
 
 
 
-    private static Object[][] dealerActionValues() {
-        Object[][] actionValues = new Object[4][3];
-        /*
-         * player card
-         * dealer card
-         * player card
-         * works backwards
-         * */
-        ArrayList<Card> playerStandsDealerWins = new ArrayList<>(List.of(
-                new Card(8),
-                new Card(3),
-                new Card(10),
-                new Card(10),
-                new Card(8)
-        ));
-        ArrayList<Card> playerStandsDealerLoses = new ArrayList<>(List.of(
-                new Card(10),
-                new Card(3),
-                new Card(8),
-                new Card(9),
-                new Card(10),
-                new Card(11)
-        ));
-        ArrayList<Card> playerBustDealerWins = new ArrayList<>(List.of(
-                new Card(10),
-                new Card(10),
-                new Card(9),
-                new Card(7),
-                new Card(8),
-                new Card(10),
-                new Card(5)
-        ));
-        ArrayList<Card> playerBustOneHand = new ArrayList<>(List.of(
-                new Card(10),
-                new Card(2),
-                new Card(3),
-                new Card(10),
-                new Card(10)
-        ));
-        actionValues[0] = new Object[]{playerStandsDealerWins, 21};
-        actionValues[1] = new Object[]{playerStandsDealerLoses, 18};
-        actionValues[2] = new Object[]{playerBustDealerWins, 17};
-        actionValues[3] = new Object[]{playerBustOneHand, 12};
-        return actionValues;
-    }
+
 
     @BeforeEach
     public void setUp() {
@@ -223,9 +178,9 @@ public class TableTest {
 
     }
 
-    @ParameterizedTest
+    @ParameterizedTest(name = "Routing Test: {0}")
     @MethodSource("playerActionValues")
-    void one_Player_Player_Action_Test(ArrayList<Card> testShoe, int expectedValue) {
+    void one_Player_Player_Action_Test(String testName, ArrayList<Card> testShoe, int expectedValue) {
         Table onePlayerTestTable = new Table();
 
         // create the player
@@ -243,7 +198,7 @@ public class TableTest {
 
     @ParameterizedTest
     @MethodSource("dealerActionValues")
-    void one_Player_Dealer_ActionTest(ArrayList<Card> testShoe, int expectedDealerHandValue) {
+    void one_Player_Dealer_ActionTest(String testName, ArrayList<Card> testShoe, int expectedDealerHandValue) {
         // create the player
         Player playerOne = new Player();
         //add the player
@@ -264,11 +219,26 @@ public class TableTest {
 
     private static Stream<Arguments> playerActionValues() {
         String testInputs = """
-                Hard Value 18: 10,2,10,8:18;
-                Soft Value 19: 5,10,3,10,11:19;
-                Split Test 17: 10,8,10,8,9,10,10:17;
-                Bust Test 0:   10,3,10,10:0
+                Hard Value 18: 8,2,10,8:18;
+                Soft Value 19: 5,10,11,10,3:19;
+                Split Test 17: 8,10,8,10,9,10,10:17;
+                Bust Test 0:   10,10,5,10,10:0
                 """;
         return BlackjackTestUtils.parseScoreTests(testInputs);
     }
+
+
+    private static Stream<Arguments> dealerActionValues() {
+
+        String testInputs = """
+                Player Stands Dealer wins:8,3,10,10,8:21;
+                Player Stand Dealer Looses: 11,10,9,8,3,10:18;
+                Player Bust Dealer Wins:10,10,9,7,8,10,5:17;
+                Player Bust one Hand :10,10,3,2,10 : 12
+                """;
+
+        return BlackjackTestUtils.parseScoreTests(testInputs);
+    }
+
+
 }
