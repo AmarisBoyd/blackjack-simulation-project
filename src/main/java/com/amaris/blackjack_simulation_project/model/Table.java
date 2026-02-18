@@ -1,6 +1,7 @@
 package com.amaris.blackjack_simulation_project.model;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+
+import tools.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.IOException;
