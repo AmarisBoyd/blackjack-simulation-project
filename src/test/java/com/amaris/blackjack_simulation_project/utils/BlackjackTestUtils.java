@@ -25,6 +25,7 @@ public class BlackjackTestUtils {
                 });
     }
 
+    //Given a string of cards return an arraylist to act as the test "shoe"
     public static ArrayList<Card> parseShoe(String cards) {
         ArrayList<Card> shoe = Arrays.stream(cards.split(","))
                 .map(String::trim)
@@ -36,7 +37,8 @@ public class BlackjackTestUtils {
         return shoe;
     }
 
-    //method for parsing score based test
+    //For parsing test that rely on a score being what is expected. EX if a players hand score needs to be
+    // A certain number after actions are taken
     public static Stream<Arguments> parseScoreTests(String testInputs) {
         return Arrays.stream(testInputs.split(";"))
                 .map(String::trim)
@@ -53,7 +55,7 @@ public class BlackjackTestUtils {
                 });
     }
 
-    //method for parsing results based test
+    // For test that are determined by the end results of the game
     public static Stream<Arguments> parseResultsTests(String testInputs) {
         return Arrays.stream(testInputs.split(";"))
                 .map(String::trim)
