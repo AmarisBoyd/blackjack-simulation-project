@@ -80,7 +80,7 @@ class BasicStrategyTest {
                         Tens on ace:10,11,10,8:STA;\
                         Aces on ace:11,11,11,8:SPL;\
                         Error:21,2,2,2:SPL""";
-        return BlackjackTestUtils.parseTestInputs(testInputs);
+        return BlackjackTestUtils.parseActionTest(testInputs);
     }
 
 
@@ -139,7 +139,7 @@ class BasicStrategyTest {
                         Nineteen on ace:10,11,9,8:STA;\
                         Twenty on ace: 10,11,10,8:STA
                         """;
-        return BlackjackTestUtils.parseTestInputs(testInputs);
+        return BlackjackTestUtils.parseActionTest(testInputs);
 
     }
 
@@ -163,7 +163,7 @@ class BasicStrategyTest {
                         Soft Twenty on Two:    11,2,9,2:STA""";
 
 
-        return BlackjackTestUtils.parseTestInputs(testInputs);
+        return BlackjackTestUtils.parseActionTest(testInputs);
 
 
     }

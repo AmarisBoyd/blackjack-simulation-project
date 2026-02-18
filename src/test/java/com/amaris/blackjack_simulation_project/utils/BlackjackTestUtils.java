@@ -10,7 +10,8 @@ import java.util.Collections;
 import java.util.stream.Stream;
 
 public class BlackjackTestUtils {
-    public static Stream<Arguments> parseTestInputs(String testInputs) {
+    // For test that are checking to see if a specific BlackJackAction will be taken
+    public static Stream<Arguments> parseActionTest(String testInputs) {
         return Arrays.stream(testInputs.split(";"))
                 .map(String::trim)
                 .filter(line -> !line.isEmpty())
