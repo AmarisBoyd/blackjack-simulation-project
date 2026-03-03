@@ -198,7 +198,7 @@ public class Table {
 
     private void checkLastHand() {
         if (this.shoe.size() < this.getCutPosition()) {
-            lastHand = true;
+            this.lastHand = true;
         }
     }
 
