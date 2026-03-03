@@ -135,25 +135,32 @@ public class Table {
 
     private boolean checkIfNextHand(Player currentPlayer) {
         //player stands check if we need to move to next split
-        //if the current player has split and they are not aces
-        if (currentPlayer.isHasSplit() && !currentPlayer.hasSplitAces()) {
+        //if the current player has split
+        if (currentPlayer.isHasSplit()) {
+            //check if they have split aces
+            if (currentPlayer.hasSplitAces()) {
+                //if the player cannot resplit aces
+                if (!rules.canResplitAces()) {
+                    //return the value of can hit split aces as if its true we continue and if false then the hand is over
+                    return rules.canHitSplitAces();
+                }
+                //if they can resplit aces by this time they would have already split them so it looks like normal split logic
+            }
             //if the current hand is not equal to the max number of total hands
             if (!(currentPlayer.getCurrentHand() == currentPlayer.getTotalHands())) {
-                //set the current hand for the player to the next hand they have
-                currentPlayer.setCurrentHand(currentPlayer.getCurrentHand() + 1);
-                //if the current hand still only has one card
-                if (currentPlayer.getHand()[currentPlayer.getCurrentHand()].getHandSize() == 1) {
-                    //give them another card
-                    hit(currentPlayer);
-                    return true;
-                }
+                //set up the next hand
+                nextHandSetup(currentPlayer);
+                // return true as there is a new hand to check
+                return true;
 
-
+            }//if the current hand is equal to the total number of hands
+            else {
+                //return false because by this point they stood and there is no next hand
+                return false;
             }
-        } else if (currentPlayer.isHasSplit() && currentPlayer.hasSplitAces()) {
-            //TODO handle split ace logic
-
         }
+
+
         //if they have not split at all return false as there is no next hand
         return false;
     }
