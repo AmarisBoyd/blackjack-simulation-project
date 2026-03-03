@@ -110,6 +110,7 @@ public class Table {
                         if (checkIfNextHand(currentPlayer)) {
                             action = HIT;
                         }
+                        //else we leave the action as STA
                         break;
                     case SUR:
                         //logic for surrender to be done later for now just stay
