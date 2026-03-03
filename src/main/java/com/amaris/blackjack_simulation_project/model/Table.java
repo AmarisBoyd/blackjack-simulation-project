@@ -72,6 +72,8 @@ public class Table {
         for (int i = 0; i < this.playerCount; i++) {
             //select current player from the array for easier access
             currentPlayer = this.players[i];
+            //check the rules this is for observers later
+            checkRules(currentPlayer);
 
             //while this player hasn't stood on their last hand
             while (action != BlackjackAction.STA) {
