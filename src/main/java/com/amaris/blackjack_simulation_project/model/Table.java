@@ -166,6 +166,19 @@ public class Table {
         return false;
     }
 
+    private void nextHandSetup(Player currentPlayer) {
+        //set the current hand for the player to the next hand they have
+        currentPlayer.setCurrentHand(currentPlayer.getCurrentHand() + 1);
+        //if the current hand still only has one card
+        if (currentPlayer.getHand()[currentPlayer.getCurrentHand()].getHandSize() == 1) {
+            //give them another card as no two combinations of cards can equal a bust we don't need the return
+            hit(currentPlayer);
+
+        }
+        //else we don't do anything as its two cards in a hand and thats what we expect
+
+    }
+
     private void checkRules(Player currentPlayer) {
         //check for rules regarding splits
         if (currentPlayer.isHasSplit()) {
