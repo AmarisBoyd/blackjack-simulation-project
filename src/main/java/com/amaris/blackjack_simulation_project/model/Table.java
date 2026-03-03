@@ -83,8 +83,7 @@ public class Table {
                 }
                 //check if previous action caused the player to bust
                 this.dealer.checkBust(currentPlayer.getHand()[currentPlayer.getCurrentHand()]);
-                //check the rules this is for observers later
-                checkRules(currentPlayer);
+
                 //check the strategy based on the hand
                 action = currentPlayer.strategy(dealer.getUpCard());
 
