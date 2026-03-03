@@ -281,6 +281,7 @@ public class Table {
     }
 
     private BlackjackAction splitHand(Player currentPlayer, BlackjackAction currentAction) {
+
         int currentHand = currentPlayer.getCurrentHand();
         int nextHand = currentPlayer.getCurrentHand() + 1;
         //if the player is not trying to split more times than allowed
@@ -299,22 +300,28 @@ public class Table {
             currentPlayer.setHasSplit(true);
             //set the current hand to no longer a pair so they don't try to split
             currentPlayer.getHand()[currentPlayer.getCurrentHand()].setIsPair(false);
+            //return hit so the loop continues
+            return HIT;
 
         } else {
-            if (currentAction == SPL) {
+            return switch (currentAction) {
                 //if the player only sent split, and we are unable to split instead of a pair
-                // Return hit this in combination with the false isAbleToSplit will cause it to default to hard totals
-                return HIT;
-            } else if (currentAction == SDS) {
-                //if the player sent Split or Stand return stand
-                return STA;
-            } else if (currentAction == SDH) {
-                //if the player returned split or hit then hit
-                return hit(currentPlayer);
-            }
+                case SPL ->
+                    // Return hit this in combination with the false isAbleToSplit will cause it to default to hard totals
+                        HIT;
+                case SDS ->
+                    //if the player sent Split or Stand return stand
+                        STA;
+                case SDH ->
+                    //if the player returned split or hit then hit
+                        hit(currentPlayer);
+                default ->
+                    //If somehow they got into the switch method without using a switch action return dead hand
+                        DEA;
+            };
+
         }
-        //return HIT so the dealer loop continues
-        return HIT;
+
     }
 
 
