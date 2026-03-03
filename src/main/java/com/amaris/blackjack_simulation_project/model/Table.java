@@ -226,8 +226,6 @@ public class Table {
             if (rules.canResplitAces() || rules.canHitSplitAces()) {
                 //return hit so we can check if the current hand is a pair and then proceed
                 return HIT;
-
-
             }
             //if neither of those are true we are done with the first hand
             else {
@@ -245,18 +243,25 @@ public class Table {
             if (currentAction.getExpansion().equalsIgnoreCase("Split if double after split  is offered otherwise stand")) {
                 return STA;
             }
-            // if they wanted to split or hit return the results of hit
+            // if they wanted to split or hit
             else if (currentAction == SDH) {
-                return hit(currentPlayer);
+                //and they can hit
+                if (rules.canResplitAces()) {
+                    //return the results of hit
+                    return hit(currentPlayer);
+                }
+                //if they cannot hit and cannot split they are done
+                else return STA;
             }
+
+
             // if the action was a standard split
             else if (currentAction == SPL) {
                 if (rules.canHitSplitAces()) {
-                    //if they can hit split aces we need to figure out if they hit or stay for now returning hit
-                    // to avoid the issue of it being an soft 12 which doesn't exist in most strategies
+                    //if they can hit split aces we need to figure out if they hit or stay for now returning the results of
+                    // hit to avoid the issue of it being an soft 12 which doesn't exist in most strategies
                     //TODO figure this out
-
-                    return HIT;
+                    return hit(currentPlayer);
                 } else {
                     //if they cannot hit split aces and cannot split again just stand since they cant do anything
                     return STA;
