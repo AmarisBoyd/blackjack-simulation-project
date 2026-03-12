@@ -1,5 +1,6 @@
 package com.amaris.blackjack_simulation_project;
 
+import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.util.Scanner;
@@ -17,7 +18,7 @@ public class BlackjackSimulationProjectApplication {
         } else {
             arguments = args;
         }
-//        SpringApplication.run(BlackjackSimulationProjectApplication.class, args);
+        SpringApplication.run(BlackjackSimulationProjectApplication.class, args);
 
         try {
             SimulatorDriver.driver(arguments);
