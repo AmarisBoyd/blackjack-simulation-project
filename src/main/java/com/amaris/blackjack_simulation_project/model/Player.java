@@ -3,6 +3,8 @@ package com.amaris.blackjack_simulation_project.model;
 
 import com.amaris.blackjack_simulation_project.strategy.BasicStrategy;
 import com.amaris.blackjack_simulation_project.strategy.Strategy;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -11,7 +13,9 @@ import java.util.Arrays;
 /*
 Class to act as a "player"  holding the score of the hand  basic player will follow the basic strategy */
 public class Player extends Person {
-    protected int playerID;
+    @Setter
+    @Getter
+    protected String playerID;
     //Integer to track current hand for splits
     protected int currentHand = 0;
     //used to track if we have reached the end of the hands counting first hand as "hand Zero"
@@ -54,6 +58,7 @@ public class Player extends Person {
             hands[i] = new Hand();
         }
         this.strategy = new BasicStrategy();
+        this.playerID = this.strategy.strategyName();
 
     }
 
@@ -139,6 +144,16 @@ public class Player extends Person {
         // then remove it from the shoe
         shoe.remove(shoe.getLast());
     }
+
+    public int dealCard(ArrayList<Card> shoe, int index) {
+        //Add the last card of the shoe to current hand
+        this.hands[currentHand].addCard(shoe.getLast());
+        // then remove it from the shoe
+        shoe.remove(shoe.getLast());
+        index++;
+        return index;
+    }
+
 
     @Override
     public TableRules getTableRules() {
@@ -259,10 +274,6 @@ public class Player extends Person {
                 '}';
     }
 
-    public void setPlayerID(int i) {
-        this.playerID = i;
-    }
-
     public boolean isCanDouble() {
         return this.canDouble;
     }
@@ -283,4 +294,5 @@ public class Player extends Person {
     public Strategy getStrategy() {
         return this.strategy;
     }
+
 }
