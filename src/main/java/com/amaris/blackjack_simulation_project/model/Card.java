@@ -19,6 +19,7 @@ public class Card {
 
     //Constructor to initialize suitAndRank and value
     public Card(String suitAndRank, int value) {
+        //TODO these constructors need to be input validated
         this.suitAndRank = suitAndRank;
         this.value = value;
     }
@@ -28,6 +29,37 @@ public class Card {
         //Joker is often seen as wildcard, and it looks better when printing than having a null rank
         this.rank = "Joker";
         this.value = value;
+    }
+
+    public String getAbbrev() {
+        if (this.suit.isEmpty() || this.rank.isEmpty() || this.value == 0)
+            return "";
+        String abbrev = "";
+        if (this.value != 10) {
+            abbrev += this.value;
+        } else switch (this.rank.toLowerCase()) {
+            case "jack":
+                abbrev += "J";
+                break;
+            case "queen":
+                abbrev += "Q";
+                break;
+            case "king":
+                abbrev += "K";
+                break;
+            case "ace":
+                abbrev += "A";
+                break;
+            case "ten":
+                abbrev += "10";
+                break;
+            default:
+                abbrev += "?";
+                break;
+
+        }
+        abbrev += (this.suitAndRank.charAt(0));
+        return abbrev.toUpperCase();
     }
 
     public Card(String suit, String rank, int value) {
