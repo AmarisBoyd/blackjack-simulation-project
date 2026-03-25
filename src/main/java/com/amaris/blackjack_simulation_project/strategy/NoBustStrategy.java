@@ -1,9 +1,11 @@
-package com.amaris.blackjack_simulation_project.model;
+package com.amaris.blackjack_simulation_project.strategy;
 
-import com.amaris.blackjack_simulation_project.strategy.Strategy;
+import com.amaris.blackjack_simulation_project.model.BlackjackAction;
+import com.amaris.blackjack_simulation_project.model.Card;
+import com.amaris.blackjack_simulation_project.model.Hand;
 
 //Class for a player that follows a no-bust strategy (yes, they exist ive seen them)
-public class NoBustPlayer implements Strategy {
+public class NoBustStrategy implements Strategy {
 
     @Override
     public BlackjackAction checkSoftStrategy(Card dealerCard, Hand hand) {
