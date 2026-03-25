@@ -13,5 +13,9 @@ public interface Strategy {
 
     BlackjackAction checkSurrenderStrategy(Card dealerCard, Hand hand);
 
+    //Method to get the name of the strategy in use by a player
+    default String strategyName() {
+        return this.getClass().getSimpleName();
+    }
 
 }
