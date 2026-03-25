@@ -51,7 +51,7 @@ public class SimulatorDriver {
             for (int i = 0; i < numPlayers; i++) {
 
                 defaultTable.addPlayer(new Player());
-                defaultTable.getPlayers()[i].setPlayerID(i + 1);
+
             }
             //try and load the deck
             defaultTable.loadDeck();
