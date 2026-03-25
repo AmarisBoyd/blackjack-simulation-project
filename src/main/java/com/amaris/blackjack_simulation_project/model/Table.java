@@ -1,6 +1,7 @@
 package com.amaris.blackjack_simulation_project.model;
 
 
+import lombok.Getter;
 import tools.jackson.databind.ObjectMapper;
 
 import java.io.File;
@@ -15,12 +16,14 @@ public class Table {
     //Array to hold a single deck of cards for loading the shoe
     Card[] deck;
     //Array to hold "shoe" of cards (multiple decks)
+    @Getter
     ArrayList<Card> shoe;
     //Arraylist to hold the discard pile
     ArrayList<Card> discard;
     //Array to hold players at the table
     Player[] players;
     //Object to hold specific table rules
+    @Getter
     TableRules rules;
     //integer to keep track of where the cut card is to stop the shoe
     int cutCard = 0;
@@ -30,6 +33,13 @@ public class Table {
     private int playerCount = 0;
     //boolean to track if this is the last hand of the shoe
     private boolean lastHand;
+    //Initial configuration of the shoe to be saved
+    private String initialShoe;
+    //Where we are in the shoe
+    @Getter
+    private int index;
+    //History of where each player has sat during each round
+    private final ArrayList<String> seatingHistory;
 
     // constructor using default blackjack  house rules
     public Table() {
@@ -38,10 +48,21 @@ public class Table {
         this.dealer = new Dealer();
         shoe = new ArrayList<>();
         discard = new ArrayList<>();
+        seatingHistory = new ArrayList<>();
+        index = 0;
+
 
 
     }
 
+    public void updateSeatingHistory() {
+        StringBuilder seating = new StringBuilder();
+        for (Player player : players) {
+            seating.append(player.getPlayerID());
+
+        }
+        seatingHistory.add(seating.toString());
+    }
 
     public void dealInitialCards() {
         //Deal two cards to each player and dealer from the shoe
@@ -49,7 +70,8 @@ public class Table {
 
             for (int j = 0; j < this.playerCount; j++) {
 
-                players[j].dealCard(shoe);
+                this.index = players[j].dealCard(shoe, this.index);
+
 
 
             }
@@ -221,7 +243,7 @@ public class Table {
             //set the original hand so its no longer seen as a pair
             originalhand.setIsPair(false);
             //give original hand a card
-            currentPlayer.dealCard(shoe);
+            currentPlayer.dealCard(shoe, this.index);
             //if the rules allow resplitting of aces or hitting on split aces
             if (rules.canResplitAces() || rules.canHitSplitAces()) {
                 //return hit so we can check if the current hand is a pair and then proceed
@@ -232,7 +254,7 @@ public class Table {
                 //increment working hand
                 currentPlayer.setCurrentHand(currentPlayer.getCurrentHand() + 1);
                 //give next hand a card
-                currentPlayer.dealCard(shoe);
+                currentPlayer.dealCard(shoe, index);
                 //since we know we are not splitting or hitting that hand either return stand
                 return STA;
             }
@@ -475,11 +497,6 @@ public class Table {
         playerCount++;
     }
 
-    public ArrayList<Card> getShoe() {
-        return this.shoe;
-    }
-
-    //Setter for the shoe for making deterministic shoes
     public void setShoe(ArrayList<Card> testShoe) {
         this.shoe = testShoe;
     }
@@ -559,9 +576,6 @@ public class Table {
         return this.deck;
     }
 
-    public TableRules getRules() {
-        return this.rules;
-    }
 }
 
     
