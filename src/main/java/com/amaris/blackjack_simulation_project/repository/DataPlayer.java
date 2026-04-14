@@ -1,12 +1,11 @@
-package com.amaris.blackjack_simulation_project.model;
+package com.amaris.blackjack_simulation_project.repository;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import lombok.Data;
 
-//Temporary data structure used to test connecting to database
-//TODO decide if i want to use a data structure like this or the @Transient on all the fields we don't store
+//Data Structure to hold the player data before its transferred to the database
 @Entity
 @Data
 
@@ -15,6 +14,7 @@ public class DataPlayer {
     @GeneratedValue
     private int id;
     private int wins;
+    private String strategyName;
     private int losses;
     private int draws;
 

@@ -1,4 +1,4 @@
-package com.amaris.blackjack_simulation_project.model;
+package com.amaris.blackjack_simulation_project.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
