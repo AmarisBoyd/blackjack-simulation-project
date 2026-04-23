@@ -66,6 +66,8 @@ public class Player extends Person {
         }
         this.strategy = new BasicStrategy();
         this.playerID = this.strategy.strategyName();
+        //generate an id
+        generateID();
 
     }
 
