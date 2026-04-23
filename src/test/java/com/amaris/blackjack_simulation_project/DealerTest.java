@@ -170,13 +170,15 @@ public class DealerTest {
 
     @Test
     void dealCard_Score_UpDated_Hand_Not_Null_Test() {
+
         Dealer testDealer = testTable.getDealer();
 
         ArrayList<Card> mockShoe = new ArrayList<>();
         mockShoe.add(new Card(10));
 
         assertNotNull(testDealer.getDealerHand());
-        testDealer.dealCard(mockShoe);
+        //deal the card giving a fake index to be updated but never used
+        testDealer.dealCard(mockShoe, 0);
         assertEquals(10, testDealer.getDealerHand().getScore());
 
     }
@@ -244,7 +246,7 @@ public class DealerTest {
         System.out.println(testCards);
         Dealer dealer = new Dealer();
         while (!testCards.isEmpty()) {
-            testPlayer.dealCard(testCards);
+            testPlayer.dealCard(testCards, 0);
         }
         System.out.println(curHand);
         Assertions.assertEquals(expectedResult, dealer.checkBustSoftAce(curHand));
@@ -262,10 +264,10 @@ public class DealerTest {
         Player tempPlayer = this.testTable.getPlayers()[0];
         Dealer tempDealer = this.testTable.getDealer();
         while (!playerHand.isEmpty()) {
-            tempPlayer.dealCard(playerHand);
+            tempPlayer.dealCard(playerHand, 0);
         }
         while (!dealerHand.isEmpty()) {
-            tempDealer.dealCard(dealerHand);
+            tempDealer.dealCard(dealerHand, 0);
         }
         // check if the player has bust
         if (tempDealer.checkBust(tempPlayer.getHand()[0])) {
