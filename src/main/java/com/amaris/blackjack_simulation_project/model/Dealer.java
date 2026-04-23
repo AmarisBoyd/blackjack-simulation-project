@@ -12,12 +12,8 @@ public class Dealer extends Person {
         this.rules = new TableRules();
     }
 
-    @Override
-    public void dealCard(ArrayList<Card> shoe) {
-        //add the card to the hand
-        this.dealerHand.addCard(shoe.removeLast());
 
-    }
+
 
     public int strategy() {
         if (this.dealerHand.getScore() > 21 && !(this.dealerHand.getIsSoft())) {
@@ -375,5 +371,14 @@ public class Dealer extends Person {
         return "Dealer{" +
                 "hand=" + dealerHand.toString() +
                 '}';
+    }
+
+    public int dealCard(ArrayList<Card> shoe, int index) {
+        //Add the last card of the shoe to current hand
+        this.dealerHand.addCard(shoe.getLast());
+        // then remove it from the shoe
+        shoe.remove(shoe.getLast());
+        index++;
+        return index;
     }
 }
