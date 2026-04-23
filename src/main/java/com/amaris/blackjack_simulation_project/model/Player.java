@@ -158,12 +158,6 @@ public class Player extends Person {
     }
 
 
-    public void dealCard(ArrayList<Card> shoe) {
-        //Add the last card of the shoe to current hand
-        this.hands[currentHand].addCard(shoe.getLast());
-        // then remove it from the shoe
-        shoe.remove(shoe.getLast());
-    }
 
     public int dealCard(ArrayList<Card> shoe, int index) {
         //Add the last card of the shoe to current hand
