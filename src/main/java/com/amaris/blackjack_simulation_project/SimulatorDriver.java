@@ -63,7 +63,8 @@ public class SimulatorDriver {
 
             System.out.println("Running " + numHands + " hands for " + numPlayers + " players");
             for (int i = 0; i < numHands; i++) {
-
+                //log where each player is
+                defaultTable.logSeating();
                 //deal initial cards
                 defaultTable.dealInitialCards();
                 //Have the players do their actions
