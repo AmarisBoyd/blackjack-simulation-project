@@ -10,20 +10,26 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-/*
-Class to act as a "player"  holding the score of the hand  basic player will follow the basic strategy */
+/**
+ * Class to act as a "player"  holding the score of the hand  basic player will follow the basic strategy
+ */
 public class Player extends Person {
     @Setter
     @Getter
-    protected String playerID;
-    //Integer to track current hand for splits
+
+    public String playerID;
+
+    /**
+     * Integer to track current hand for splits
+     */
     protected int currentHand = 0;
-    //used to track if we have reached the end of the hands counting first hand as "hand Zero"
+    /**used to track if we have reached the end of the hands counting first hand as "hand Zero" */
     protected int totalHands = 0;
 
-    //Arrays to hold cards in hand multiple hands for splits for our each player will otherwise have only one hand
+    /**Arrays to hold cards in hand multiple hands for splits for our each player will otherwise have only one hand */
     protected Hand[] hands;
-    //Strategy to hold player behavior
+    /** Strategy to hold player behavior
+     */
     protected Strategy strategy;
     //Record of wins losses and pushes for player
     protected int wins = 0;
@@ -61,6 +67,10 @@ public class Player extends Person {
         this.playerID = this.strategy.strategyName();
 
     }
+
+    /**
+     <p> Generate a unique playerID by combining a random uuid and the strategy name of the player
+
 
      */
     public void generateID() {
