@@ -35,7 +35,7 @@ class PlayerRoutingTest {
 
         // 3. Deal until the shoe is empty
         while (!shoe.isEmpty()) {
-            player.dealCard(shoe);
+            player.dealCard(shoe, 0);
         }
         //create a dealer card
         Card dealerCard = new Card(dealerVal);
