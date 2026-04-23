@@ -62,6 +62,13 @@ public class Player extends Person {
 
     }
 
+     */
+    public void generateID() {
+        UUID uuid = UUID.randomUUID();
+        this.playerID = this.strategy.strategyName() + uuid;
+
+
+    }
     public void setStrategy(Strategy strategy) {
         this.strategy = strategy;
     }
