@@ -7,6 +7,7 @@ import tools.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 import static com.amaris.blackjack_simulation_project.model.BlackjackAction.*;
@@ -36,7 +37,6 @@ public class Table {
     //Initial configuration of the shoe to be saved
     private String initialShoe;
     //Where we are in the shoe
-    @Getter
     private int index;
     //History of where each player has sat during each round
     private final ArrayList<String> seatingHistory;
@@ -45,6 +45,9 @@ public class Table {
     public Table() {
         this.rules = new TableRules();
         this.players = new Player[this.rules.getMaxPlayers()];
+        //Filling the array with null values just to be sure
+        Arrays.fill(this.players, null);
+        //create a new dealer
         this.dealer = new Dealer();
         shoe = new ArrayList<>();
         discard = new ArrayList<>();
@@ -76,7 +79,7 @@ public class Table {
 
             }
             //give the dealer the next card
-            this.dealer.dealCard(shoe);
+            this.index = this.dealer.dealCard(shoe, this.index);
             //check if this is the last hand
             this.checkLastHand();
 
@@ -315,7 +318,7 @@ public class Table {
             //decrement the current hands hand size
             currentPlayer.getHand()[currentHand].setHandSize(currentPlayer.getHand()[currentHand].getHandSize() - 1);
             //give them a new card to the current hand
-            currentPlayer.dealCard(shoe);
+            this.index = currentPlayer.dealCard(shoe, index);
             //unset pair so it doesn't skip checking
             currentPlayer.getHand()[currentHand].setIsPair(false);
             //set it so the table knows the player has split at least once
@@ -349,7 +352,7 @@ public class Table {
 
     private BlackjackAction hit(Player currentPlayer) {
         Hand workingHand = currentPlayer.getHand()[currentPlayer.getCurrentHand()];
-        currentPlayer.dealCard(shoe);
+        this.index = currentPlayer.dealCard(shoe, index);
         //If the player bust return STA since they can no longer hit
         if (dealer.checkBust(workingHand)) {
             dealer.clearBust(currentPlayer, discard);
@@ -416,7 +419,7 @@ public class Table {
 
             } else {
                 //the dealer hits
-                this.dealer.dealCard(shoe);
+                this.index = this.dealer.dealCard(shoe, index);
                 //after the dealer hits check if they bust
                 if (this.dealer.dealerCheckBust(this.dealer.getDealerHand())) {
                     //if they have stop drawing cards
@@ -533,6 +536,47 @@ public class Table {
         }
 
         return shoeString.toString();
+    }
+
+    /**
+     * Add the current order of players to the seating history
+     */
+    public void logSeating() {
+        StringBuilder seatingChart = new StringBuilder();
+        for (int i = 0; i < this.playerCount; i++) {
+            if (players[i] == null) {
+                seatingChart.append("Empty, ");
+            }
+            if (players[i] != null) {
+                seatingChart.append(this.players[i].getPlayerID()).append(", ");
+            }
+
+
+        }
+        this.seatingHistory.add(seatingChart.toString());
+
+    }
+
+    //Move player from one seat to another
+    public int movePlayer(Player player, int desiredSeat) {
+        // if the desired seat isn't empty return -1 for failure
+        if (players[desiredSeat] != null)
+            return -1;
+        //if the player exist at the table
+        if (Arrays.asList(players).contains(player)) {
+            //get the index of their current seat
+            int currentSeat = Arrays.asList(players).indexOf(player);
+            //move the player to the seat we already checked was empty
+            players[desiredSeat] = player;
+            //set their current seat to null
+            players[currentSeat] = null;
+            //return 0 for a successful move
+            return 0;
+        }
+        //if the player doesn't already exist at the table return -1 for now
+        else {
+            return -1;
+        }
     }
 
     public void addDealer(Dealer dealerOne) {
