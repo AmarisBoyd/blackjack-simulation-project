@@ -11,8 +11,10 @@ public abstract class Person {
 
     }
 
-    public abstract void dealCard(ArrayList<Card> Shoe);
+
 
 
     public abstract TableRules getTableRules();
+
+    public abstract int dealCard(ArrayList<Card> Shoe, int index);
 }
