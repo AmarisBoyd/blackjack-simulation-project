@@ -103,8 +103,13 @@ public class SimulatorDriver {
             }
             //add the rest of the shoe to the discard
             defaultTable.getDiscard().addAll(defaultTable.getShoe().reversed());
-            //write the final state of discard to output file
+            //Store into database (probably will need to be broken out to its own class)
             try {
+                //get one of the connections from the pool
+                //write "table state" including seating chart history
+                //store each hand for each player including its decision history
+
+
                 Files.writeString(filePath, "\n\nFinal discard: \n" + defaultTable.getDiscard().toString(), StandardOpenOption.APPEND);
             } catch (IOException e) {
                 throw new RuntimeException(e);
