@@ -14,9 +14,16 @@ public class CLIMainMenu {
         System.out.println(menu);
     }
 
-    static public int getInput() {
+    static public int getIntInput() {
         Scanner input = new Scanner(System.in);
-        return input.nextInt();
+        String userInput = input.nextLine();
+        try {
+            return Integer.parseInt(userInput);
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid input");
+            return -1;
+        }
+
     }
 
 }
