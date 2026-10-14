@@ -1,3 +1,4 @@
+
 package com.amaris.blackjack_simulation_project.strategy;
 
 import com.amaris.blackjack_simulation_project.model.BlackjackAction;
@@ -6,10 +7,20 @@ import com.amaris.blackjack_simulation_project.model.Hand;
 
 import static com.amaris.blackjack_simulation_project.model.BlackjackAction.*;
 
-
+/***
+ *Implements Blackjack "Basic" strategy using four lookup tables
+ * <ul>
+ *     <li>{@link #HARD_TOTALS} Hands that do not have "soft" ace acting as 11 and 1 </li>
+ *     <li>{@link #SOFT_TOTALS} Hands with an ace acting as an 11 and 1</li>
+ *     <li> {@link #PAIR_TOTALS} Hands where the first two cards are a pair</li>
+ *     <li> {@link #SUR_TOTALS_HARD} Hard hands that should surrender when it's an option</li>
+ * </ul>
+ */
 public class BasicStrategy implements Strategy {
-
-
+    /*** Two dimensional array of {@link BlackjackAction} {@link java.lang.Enum}'s
+     * that represent the choices based on a players hand that does not have any aces acting as both 11 and 1
+     *
+     */
     private static final BlackjackAction[][] HARD_TOTALS = {
             // Dealer's upcard:
             //      2     3    4    5    6    7    8   9    10    A
@@ -28,6 +39,10 @@ public class BasicStrategy implements Strategy {
             /*20*/ {STA, STA, STA, STA, STA, STA, STA, STA, STA, STA}
 
     };
+    /*** Two dimensional array of {@link BlackjackAction} {@link java.lang.Enum}'s
+     * that represent the choices based on a players hand that has at least one ace(s) acting as both 11 and 1
+     *
+     */
     private static final BlackjackAction[][] SOFT_TOTALS = {
             // Dealer's upcard:
             //      2     3    4    5    6    7    8   9    10    A
@@ -40,6 +55,10 @@ public class BasicStrategy implements Strategy {
             /*19*/ {STA, STA, STA, STA, STA, STA, STA, STA, STA, STA},
             /*20*/ {STA, STA, STA, STA, STA, STA, STA, STA, STA, STA}
     };
+    /*** Two dimensional array of {@link BlackjackAction} {@link java.lang.Enum}'s
+     * that represent the choices based on a players starting hand that were a pair
+     * to determine if a split is desired
+     */
     private static final BlackjackAction[][] PAIR_TOTALS = {
             // Dealer's upcard:
             //      2     3    4    5    6    7    8   9    10    A
@@ -53,6 +72,10 @@ public class BasicStrategy implements Strategy {
             /*9*/ {SPL, SPL, SPL, SPL, SPL, STA, SPL, SPL, STA, STA},
             /*10*/{STA, STA, STA, STA, STA, STA, STA, STA, STA, STA},
             /*A*/ {SPL, SPL, SPL, SPL, SPL, SPL, SPL, SPL, SPL, SPL}};
+    /***
+     * Unused Two dimensional array that represents hands that surrender would be preferable
+     *
+     */
     private static final BlackjackAction[][] SUR_TOTALS_HARD = {
             // Dealer's upcard:
             //      2     3    4    5    6    7    8   9    10    A
@@ -63,7 +86,15 @@ public class BasicStrategy implements Strategy {
     };
 
 
-    // Method to check soft hand strategy
+    /***
+     * Method to check soft hand strategy
+     * Checks against the {@link #SOFT_TOTALS} table to try and find the appropriate {@link BlackjackAction}
+     * @param dealerCard The {@link Card } object that represents the information the player has about the dealers hand
+     * @param hand A list of  {@link Card} objects that represent the player's hand
+     * @return The correct {@link BlackjackAction} based on the {@link #SOFT_TOTALS } table
+     * @throws Exception  with a message telling the cards that failed to find a result
+     *
+     */
     public BlackjackAction checkSoftStrategy(Card dealerCard, Hand hand) throws Exception {
 
         try {
@@ -75,8 +106,16 @@ public class BasicStrategy implements Strategy {
         }
     }
 
+    /***
+     * Method to check hard hand strategy
+     * Checks against the {@link #HARD_TOTALS} table to try and find the appropriate {@link BlackjackAction}
+     * @param dealerCard The {@link Card } object that represents the information the player has about the dealers hand
+     * @param hand A list of  {@link Card} objects that represent the player's hand
+     * @return The correct {@link BlackjackAction} based on the {@link #HARD_TOTALS } table
+     * @throws Exception  with a message telling the cards that failed to find a result
+     *
+     */
     @Override
-    // Method to check hard hand strategy
     public BlackjackAction checkHardStrategy(Card dealerCard, Hand hand) throws Exception {
         // Table for hard hand strategy Starts at 8 because the table only covers 8-20
         int score = hand.getScore();
@@ -99,6 +138,13 @@ public class BasicStrategy implements Strategy {
         }
     }
 
+    /***
+     * Checks against the {@link #PAIR_TOTALS} table to try and find the appropriate {@link BlackjackAction}
+     * @param dealerCard The {@link Card } object that represents the information the player has about the dealers hand
+     * @param hand A list of  {@link Card} objects that represent the player's hand
+     * @return The correct {@link BlackjackAction} based on the {@link #PAIR_TOTALS} table
+     * @throws Exception  with a message telling the cards that failed to find a result
+     */
     @Override
     public BlackjackAction checkPairStrategy(Card dealerCard, Hand hand) throws Exception {
         int value = hand.getCards().getFirst().getValue();
@@ -112,6 +158,14 @@ public class BasicStrategy implements Strategy {
         }
     }
 
+    /***
+     * Determines whether the player should surrender. Basic strategy as
+     * Implemented here never surrenders, so this always returns {@code STA}.
+     * @param dealerCard The {@link Card } object that represents the information the player has about the dealers hand
+     * @param hand A list of  {@link Card} objects that represent the player's hand
+     * @return Will always return {@code STA}
+     *
+     */
     @Override
     public BlackjackAction checkSurrenderStrategy(Card dealerCard, Hand hand) {
         return STA;
